@@ -29,3 +29,5 @@ private:
     SSL *ssl;
     sockaddr_in socket_adress;
 };
+
+void foo();
