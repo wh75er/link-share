@@ -1,14 +1,16 @@
-#ifndef INC_HTTP_CLIENT_HPP_
-#define INC_HTTP_CLIENT_HPP_
-
 #include "http_client.hpp"
 
-http_client::http_client() {
-    std::cout << "privet";
-    puts("gg");
-    socket_fd = 0;
+http_client::http_client() { socket_fd = 0; }
+
+std::string http_client::create_request(const std::string &url) {
+    std::string request = "some string";
+    return request;
 }
 
-void foo() { std::cout << "Hello world"; }
+enum client_exit_status http_client::recieve(std::string *path_to_response) {
+    return SUCCESS;
+}
 
-#endif // INC_HTTP_CLIENT_HPP_
+enum client_exit_status http_client::send(const std::string &request) {
+    return CONNECTION_ERROR;
+}

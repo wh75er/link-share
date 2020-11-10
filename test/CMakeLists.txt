@@ -24,7 +24,7 @@ include_directories("${PROJECT_SOURCE_DIR}/inc")
 file(GLOB sources "${PROJECT_SOURCE_DIR}/src/*.cpp")
 file(GLOB tests "${PROJECT_SOURCE_DIR}/test/*.cpp")
 
-add_definitions(-Wall -Werror -Wpedantic)
+#add_definitions(-Wall -Werror -Wpedantic)
 
 foreach(file ${tests})
   set(name)
