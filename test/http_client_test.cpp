@@ -2,7 +2,7 @@
 
 #include "http_client.hpp"
 
-TEST(http_client_test, create_request_test) {
+TEST(http_client, create_request_test) {
     http_client new_client;
     std::string request =
         new_client.create_request("https://www.any.com/something");
@@ -11,19 +11,19 @@ TEST(http_client_test, create_request_test) {
         request.c_str());
 }
 
-TEST(http_client_test, send_test_1) {
+TEST(http_client, send_test_1) {
     http_client new_client;
     ASSERT_EQ(new_client.send("asd"), BAD_REQUEST_ERROR);
 }
 
-TEST(http_client_test, send_test_2) {
+TEST(http_client, send_test_2) {
     http_client new_client;
     ASSERT_EQ(new_client.send("GET https://www.example.com HTTP/1.1\r\nHost: "
                               "www.example.com\r\n"),
               SUCCESS);
 }
 
-TEST(http_client_test, recieve_test) {
+TEST(http_client, recieve_test) {
     http_client new_client;
     ASSERT_EQ(new_client.send("GET https://www.example.com HTTP/1.1\r\nHost: "
                               "www.example.com\r\n"),
