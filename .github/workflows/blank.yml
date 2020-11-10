@@ -1,0 +1,57 @@
+
+name: CI
+
+on:
+  push:
+    branches: [ scraper ]
+  pull_request:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      # Runs a single command using the runners shell
+      - name: install linters
+        run: sudo apt-get install -y cppcheck
+        
+      - name: install valgrind
+        run: sudo apt install valgrind
+        
+      - name: install gcovr and lcov
+        run: |
+          sudo apt install gcovr
+          sudo apt install lcov
+          
+      - name: run linters
+        run: cd src && cppcheck *.c
+        
+      - name: build
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          
+      - name: test http_client lib
+        run: |
+          cd build
+          valgrind --leak-check=full ./test/http_client_test_tests
+
+      - name: coverage
+        run: |
+          cd build
+          make gcov
+          make lcov
+
+      - name: archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report_linear
+          path: build/test/lcoverage
