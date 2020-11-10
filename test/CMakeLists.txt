@@ -19,7 +19,7 @@ set(BUILD_GTEST ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 
-include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}/inc")
 
 file(GLOB sources "${PROJECT_SOURCE_DIR}/src/*.cpp")
 file(GLOB tests "${PROJECT_SOURCE_DIR}/test/*.cpp")
