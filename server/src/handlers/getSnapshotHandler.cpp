@@ -1,6 +1,6 @@
 #include "handlers/getSnapshotHandler.hpp"
 
-GetSnapshotHandler::GetSnapshotHandler(WebLink &request, Respnse &response)
+GetSnapshotHandler::GetSnapshotHandler(WebLink &request, Response &response)
   : request_(request), response_(response)
 {
 }

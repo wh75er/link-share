@@ -3,11 +3,13 @@
 #include <string>
 
 #include "handlers/baseHandler.hpp"
+#include "webLink.hpp"
+#include "response.hpp"
 
 class DeleteLinkHandler: BaseHandler {
 public:
   DeleteLinkHandler(WebLink &request, Response &response);
-  ~DeleteLinkHandler() override;
+  ~DeleteLinkHandler() override {}
 
   void execute() override;
 
