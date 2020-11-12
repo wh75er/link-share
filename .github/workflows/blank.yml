@@ -43,7 +43,7 @@ jobs:
           cd build
           valgrind --leak-check=full ./test/response_tests
       
-          - name: test request
+      - name: test request
         run: |
           cd build
           valgrind --leak-check=full ./test/request_tests
