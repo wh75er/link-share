@@ -1,10 +1,16 @@
 #pragma once
 
+#include <string.h>
+#include <memory>
+
+#define BOOST_ASIO_HAS_MOVE
+
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
-#include <string.h>
 
-class Connection {
+#include "requestHandler.hpp"
+
+class Connection : public std::enable_shared_from_this<Connection> {
 public:
   explicit Connection(boost::asio::ip::tcp::socket socket);
   ~Connection();
@@ -14,5 +20,5 @@ public:
 
 private:
   boost::asio::ip::tcp::socket socket_;
-  RequestManager rm;
+  std::unique_ptr<RequestHandler> rh;
 };
