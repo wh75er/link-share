@@ -1,4 +1,4 @@
-#include "http_client.hpp"
+#include "../inc/http_client.hpp"
 
 http_client::http_client() { socket_fd = 0; }
 
@@ -13,4 +13,9 @@ enum client_exit_status http_client::recieve(std::string *path_to_response) {
 
 enum client_exit_status http_client::send(const std::string &request) {
     return CONNECTION_ERROR;
+}
+
+http_client::~http_client() {
+    int a = 0;
+    a++;
 }
