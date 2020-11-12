@@ -27,15 +27,37 @@ jobs:
         
       - name: build
         run: |
+          cd client
           mkdir build
           cd build
           cmake ..
           make
           
+      - name: test socket
+        run: |
+          cd build
+          valgrind --leak-check=full ./test/socket_tests
+
+      - name: test client lib
+        run: |
+          cd build
+          valgrind --leak-check=full ./test/response_tests
+      
+          - name: test client lib
+        run: |
+          cd build
+          valgrind --leak-check=full ./test/request_tests
+
       - name: test client lib
         run: |
           cd build
           valgrind --leak-check=full ./test/client_tests
+      
+      - name: test client lib
+        run: |
+          cd build
+          valgrind --leak-check=full ./test/application_tests
+
       - name: coverage
         run: |
           cd build
