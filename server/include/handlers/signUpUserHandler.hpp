@@ -14,6 +14,6 @@ public:
   void execute() override;
 
 private:
-  User request_;
-  Response response_;
+  User& request_;
+  Response& response_;
 };
