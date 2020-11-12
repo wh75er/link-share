@@ -6,7 +6,7 @@
 #include "room.hpp"
 #include "response.hpp"
 
-class DeleteRoomHandler: BaseHandler {
+class DeleteRoomHandler: public BaseHandler {
 public:
   DeleteRoomHandler(Room &request, Response &response);
   ~DeleteRoomHandler() override {}

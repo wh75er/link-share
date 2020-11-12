@@ -6,7 +6,7 @@
 #include "webLink.hpp"
 #include "response.hpp"
 
-class AddTagForLinkHandler: BaseHandler {
+class AddTagForLinkHandler: public BaseHandler {
 public:
   AddTagForLinkHandler(WebLink &request, Response &response);
   ~AddTagForLinkHandler() override {}

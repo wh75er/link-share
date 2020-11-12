@@ -6,7 +6,7 @@
 #include "webLink.hpp"
 #include "response.hpp"
 
-class DeleteLinkHandler: BaseHandler {
+class DeleteLinkHandler: public BaseHandler {
 public:
   DeleteLinkHandler(WebLink &request, Response &response);
   ~DeleteLinkHandler() override {}

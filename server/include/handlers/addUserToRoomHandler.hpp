@@ -3,17 +3,17 @@
 #include <string>
 
 #include "handlers/baseHandler.hpp"
-#include "user.hpp"
+#include "room.hpp"
 #include "response.hpp"
 
-class AddUserToRoomHandler: BaseHandler {
+class AddUserToRoomHandler: public BaseHandler {
 public:
-  AddUserToRoomHandler(User &request, Response &response);
+  AddUserToRoomHandler(Room &request, Response &response);
   ~AddUserToRoomHandler() override {}
 
   void execute() override;
 
 private:
-  User& request_;
+  Room& request_;
   Response& response_;
 };

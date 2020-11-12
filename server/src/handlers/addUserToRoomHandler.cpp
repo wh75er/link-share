@@ -1,6 +1,6 @@
 #include "handlers/addUserToRoomHandler.hpp"
 
-AddUserToRoomHandler::AddUserToRoomHandler(User &request, Response &response)
+AddUserToRoomHandler::AddUserToRoomHandler(Room &request, Response &response)
   : request_(request), response_(response)
 {
 }

@@ -6,7 +6,7 @@
 #include "webLink.hpp"
 #include "response.hpp"
 
-class GetSnapshotHandler: BaseHandler {
+class GetSnapshotHandler: public BaseHandler {
 public:
   GetSnapshotHandler(WebLink &request, Response &response);
   ~GetSnapshotHandler() override {}

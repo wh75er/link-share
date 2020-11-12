@@ -6,7 +6,7 @@
 #include "room.hpp"
 #include "response.hpp"
 
-class CreateRoomHandler: BaseHandler {
+class CreateRoomHandler: public BaseHandler {
 public:
   CreateRoomHandler(Room &request, Response &response);
   ~CreateRoomHandler() override {}
