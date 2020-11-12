@@ -3,11 +3,13 @@
 #include <string>
 
 #include "handlers/baseHandler.hpp"
+#include "webLink.hpp"
+#include "response.hpp"
 
 class AddLinkHandler: BaseHandler {
 public:
   AddLinkHandler(WebLink &request, Response &response);
-  ~AddLinkHandler() override;
+  ~AddLinkHandler() override {}
 
   void execute() override;
 

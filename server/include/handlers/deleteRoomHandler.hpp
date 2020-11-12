@@ -3,11 +3,13 @@
 #include <string>
 
 #include "handlers/baseHandler.hpp"
+#include "room.hpp"
+#include "response.hpp"
 
 class DeleteRoomHandler: BaseHandler {
 public:
   DeleteRoomHandler(Room &request, Response &response);
-  ~DeleteRoomHandler() override;
+  ~DeleteRoomHandler() override {}
 
   void execute() override;
 

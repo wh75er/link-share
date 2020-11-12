@@ -3,11 +3,13 @@
 #include <string>
 
 #include "handlers/baseHandler.hpp"
+#include "user.hpp"
+#include "response.hpp"
 
 class SignUpUserHandler: BaseHandler {
 public:
   SignUpUserHandler(User &request, Response &response);
-  ~SignUpUserHandler() override;
+  ~SignUpUserHandler() override {}
 
   void execute() override;
 

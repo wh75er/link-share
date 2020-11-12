@@ -3,7 +3,7 @@
 #include <string.h>
 #include <memory>
 
-#define BOOST_ASIO_HAS_MOVE
+#define BOOST_ASIO_HAS_MOVE 1
 
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>

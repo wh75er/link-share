@@ -10,7 +10,7 @@ namespace pt = boost::property_tree;
 class BodyParser {
 public:
   BodyParser();
-  ~BodyParser();
+  ~BodyParser() {};
 
   void parse(std::string data);
 

@@ -2,10 +2,10 @@
 
 class BaseHandler {
 public:
-  BaseHandler();
-  virtual ~BaseHandler();
+  BaseHandler() {};
+  virtual ~BaseHandler() {};
 
-  virtual void execute();
+  virtual void execute() {}
 
 private:
 };

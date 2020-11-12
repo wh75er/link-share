@@ -1,6 +1,6 @@
 #include "handlers/addTagForLinkHandler.hpp"
 
-AddTagForLinkHandler::AddTagForLinkHandler(Tag &request, Respnse &response)
+AddTagForLinkHandler::AddTagForLinkHandler(WebLink &request, Response &response)
   : request_(request), response_(response)
 {
 }

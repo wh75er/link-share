@@ -3,11 +3,13 @@
 #include <string>
 
 #include "handlers/baseHandler.hpp"
+#include "webLink.hpp"
+#include "response.hpp"
 
 class GetSnapshotHandler: BaseHandler {
 public:
   GetSnapshotHandler(WebLink &request, Response &response);
-  ~GetSnapshotHandler() override;
+  ~GetSnapshotHandler() override {}
 
   void execute() override;
 
