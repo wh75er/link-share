@@ -30,10 +30,11 @@ jobs:
           sudo apt install lcov
           
       - name: run linters
-        run: cd src && cppcheck *.cpp
+        run: cd archiver/src && cppcheck *.cpp
         
       - name: build
         run: |
+          cd archiver
           mkdir build
           cd build
           cmake ..
@@ -41,11 +42,25 @@ jobs:
           
       - name: test http_client lib
         run: |
+          cd archiver
           cd build
           valgrind --leak-check=full ./test/http_client_test_tests
+          
+      - name: test parser lib
+        run: |
+          cd archiver
+          cd build
+          valgrind --leak-check=full ./test/parser_test_tests
+          
+      - name: test create_new_page lib
+        run: |
+          cd archiver
+          cd build
+          valgrind --leak-check=full ./test/create_new_page_test_tests
 
       - name: coverage
         run: |
+          cd archiver
           cd build
           make gcov
           make lcov
