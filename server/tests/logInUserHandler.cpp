@@ -5,8 +5,8 @@
 
 #include "room.hpp"
 #include "response.hpp"
-#include "handlers/LogInUserHandler.hpp"
-#include "handlers/SignUpUserHandler.hpp"
+#include "handlers/logInUserHandler.hpp"
+#include "handlers/signUpUserHandler.hpp"
 
 TEST(HandlersSuit, LogInUserSuccessCase) {
   User user("Test", "qwerty", "", 0);
