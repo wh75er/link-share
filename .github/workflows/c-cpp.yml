@@ -13,22 +13,20 @@ jobs:
       run: sudo apt-get install -y valgrind
     - name: Install gcovr
       run: sudo apt-get install python3-setuptools && sudo pip3 install git+https://github.com/gcovr/gcovr.git
+    - name: Install boost
+      run: sudo apt-get install libboost-all-dev
     - name: Install cppcheck
       run: sudo apt-get install -y cppcheck
     - name: Run Linter
       run: cd server/src && cppcheck *.cpp
-        #    - name: Configure
-        #      run: cd server && ./configure.sh 1
-        #    - name: Make
-        #      run: cd server && cd build && make
-        #    - name: Test
-        #      run: cd server && cd build && make coverage
-        #    - name: Prepare stress test
-        #      run: cd server/tests/stress_tests && ./generate_big_file.sh
-        #    - name: Stress test
-        #      run: cd server/tests/stress_tests && BUILD_DIR=../../build ./stress_test.sh
-        #    - name: Archive code coverage results
-        #      uses: actions/upload-artifact@v2
-        #      with:
-        #        name: code-coverage-report
-        #        path: server/build/coverage
+    - name: Configure
+      run: cd server && ./configure.sh 1
+    - name: Make
+      run: cd server && cd build && make
+    - name: Test
+      run: cd server && cd build && make coverage
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-coverage-report
+        path: server/build/coverage
