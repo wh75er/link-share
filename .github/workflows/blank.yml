@@ -1,4 +1,4 @@
-name: CI
+name: CI_client
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
           sudo apt install lcov
           
       - name: run cppcheck
-        run: cd src && cppcheck *.cpp
+        run: cd client/src && cppcheck *.cpp
         
       - name: build
         run: |
@@ -35,36 +35,36 @@ jobs:
           
       - name: test socket
         run: |
-          cd build
+          cd client/build
           valgrind --leak-check=full ./test/socket_tests
 
       - name: test response
         run: |
-          cd build
+          cd client/build
           valgrind --leak-check=full ./test/response_tests
       
       - name: test request
         run: |
-          cd build
+          cd client/build
           valgrind --leak-check=full ./test/request_tests
 
       - name: test client
         run: |
-          cd build
+          cd client/build
           valgrind --leak-check=full ./test/client_tests
       
       - name: test application
         run: |
-          cd build
+          cd client/build
           valgrind --leak-check=full ./test/application_tests
 
       - name: coverage
         run: |
-          cd build
+          cd client/build
           make gcov
           make lcov
       - name: archive code coverage results
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage-report_linear
-          path: build/test/lcoverage
+          path: client/build/test/lcoverage
