@@ -14,6 +14,6 @@ public:
   void execute() override;
 
 private:
-  Room request_;
-  Response response_;
+  Room& request_;
+  Response& response_;
 };

@@ -14,6 +14,6 @@ public:
   void execute() override;
 
 private:
-  WebLink request_;
-  Response response_;
+  WebLink& request_;
+  Response& response_;
 };
