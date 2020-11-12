@@ -32,3 +32,8 @@ TEST(http_client, recieve_test) {
     ASSERT_EQ(new_client.recieve(path_to_file), SUCCESS);
     ASSERT_EQ(path_to_file->c_str(), "example.html");
 }
+
+TEST(http_client, connect_test) {
+    http_client new_client;
+    ASSERT_EQ(new_client.connect("https://www.example.com"), SUCCESS);
+}

@@ -23,7 +23,7 @@ public:
     http_client &operator=(const http_client &other) = delete;
     ~http_client();
 
-    enum client_exit_status connect();
+    enum client_exit_status connect(const std::string &url);
     enum client_exit_status recieve(std::string *path_to_response);
     enum client_exit_status send(const std::string &request);
     std::string create_request(const std::string &url);
