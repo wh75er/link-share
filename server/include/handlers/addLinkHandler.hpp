@@ -6,7 +6,7 @@
 #include "webLink.hpp"
 #include "response.hpp"
 
-class AddLinkHandler: BaseHandler {
+class AddLinkHandler: public BaseHandler {
 public:
   AddLinkHandler();
   AddLinkHandler(WebLink &request, Response &response);

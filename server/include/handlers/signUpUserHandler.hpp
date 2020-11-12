@@ -6,7 +6,7 @@
 #include "user.hpp"
 #include "response.hpp"
 
-class SignUpUserHandler: BaseHandler {
+class SignUpUserHandler: public BaseHandler {
 public:
   SignUpUserHandler(User &request, Response &response);
   ~SignUpUserHandler() override {}

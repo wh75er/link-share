@@ -6,7 +6,7 @@
 #include "user.hpp"
 #include "response.hpp"
 
-class LogInUserHandler: BaseHandler {
+class LogInUserHandler: public BaseHandler {
 public:
   LogInUserHandler(User &request, Response &response);
   ~LogInUserHandler() override {}

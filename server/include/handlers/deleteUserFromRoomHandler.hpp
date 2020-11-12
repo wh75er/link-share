@@ -3,17 +3,17 @@
 #include <string>
 
 #include "handlers/baseHandler.hpp"
-#include "user.hpp"
+#include "room.hpp"
 #include "response.hpp"
 
-class DeleteUserFromRoomHandler: BaseHandler {
+class DeleteUserFromRoomHandler: public BaseHandler {
 public:
-  DeleteUserFromRoomHandler(User &request, Response &response);
+  DeleteUserFromRoomHandler(Room &request, Response &response);
   ~DeleteUserFromRoomHandler() override {}
 
   void execute() override;
 
 private:
-  User& request_;
+  Room& request_;
   Response& response_;
 };
