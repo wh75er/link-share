@@ -7,6 +7,7 @@
 
 class WebLink {
 public:
+  WebLink();
   WebLink(std::string url, std::string snapshotId, User user, std::vector<std::string> tags);
   ~WebLink() {};
 

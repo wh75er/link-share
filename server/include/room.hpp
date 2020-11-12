@@ -7,6 +7,7 @@
 
 class Room {
 public:
+  Room();
   Room(int id, std::vector<std::string> users, User user);
   ~Room() {};
 

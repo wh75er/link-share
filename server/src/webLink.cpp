@@ -1,5 +1,13 @@
 #include "webLink.hpp"
 
+WebLink::WebLink()
+  : url_(""),
+    snapshotId_(""),
+    user_(User()),
+    tags_()
+{
+}
+
 WebLink::WebLink(std::string url, std::string snapshotId, User user, std::vector<std::string> tags)
   : url_(url),
     snapshotId_(snapshotId),

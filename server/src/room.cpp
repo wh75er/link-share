@@ -1,5 +1,12 @@
 #include "room.hpp"
 
+Room::Room()
+  : id_(0),
+    users_(),
+    user_(User())
+{
+}
+
 Room::Room(int id, std::vector<std::string> users, User user)
   : id_(id),
     users_(users),

@@ -10,6 +10,7 @@ enum ResponseError {
 
 class Response {
 public:
+  Response();
   Response(enum ResponseError error, std::string token, bool hasFiles, std::string snapshotId, std::vector<std::string> fileNames);
   ~Response() {};
 

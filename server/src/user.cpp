@@ -1,5 +1,12 @@
 #include "user.hpp"
 
+User::User()
+  : name_(""),
+    token_(""),
+    roomId_(0)
+{
+}
+
 User::User(std::string name, std::string token, int roomId)
   : name_(name),
     token_(token),
