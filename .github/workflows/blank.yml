@@ -36,27 +36,27 @@ jobs:
       - name: test socket
         run: |
           cd client/build
-          valgrind --leak-check=full ./test/socket_tests
+          valgrind --leak-check=full ./client/test/socket_tests
 
       - name: test response
         run: |
           cd client/build
-          valgrind --leak-check=full ./test/response_tests
+          valgrind --leak-check=full ./client/test/response_tests
       
       - name: test request
         run: |
           cd client/build
-          valgrind --leak-check=full ./test/request_tests
+          valgrind --leak-check=full ./client/test/request_tests
 
       - name: test client
         run: |
           cd client/build
-          valgrind --leak-check=full ./test/client_tests
+          valgrind --leak-check=full ./client/test/client_tests
       
       - name: test application
         run: |
           cd client/build
-          valgrind --leak-check=full ./test/application_tests
+          valgrind --leak-check=full ./client/test/application_tests
 
       - name: coverage
         run: |
