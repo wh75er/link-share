@@ -20,7 +20,7 @@ jobs:
     - name: Run Linter
       run: cd server/src && cppcheck *.cpp
     - name: Configure
-      run: cd server && ./configure.sh 1
+      run: cd server && ./configure.sh
     - name: Make
       run: cd server && cd build && make
     - name: Test
