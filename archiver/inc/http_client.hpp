@@ -30,7 +30,4 @@ public:
 
 private:
     int socket_fd;
-    int ssl_socket_fd;
-    SSL *ssl;
-    sockaddr_in socket_adress;
 };
