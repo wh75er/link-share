@@ -1,4 +1,4 @@
-#include "parser.hpp"
+#include "../inc/parser.hpp"
 
 parser_exit_status html_parser::parse(const std::string &path_to_file) {
     return SUCCESS_PARSE;
