@@ -8,6 +8,7 @@
 
 class AddLinkHandler: BaseHandler {
 public:
+  AddLinkHandler();
   AddLinkHandler(WebLink &request, Response &response);
   ~AddLinkHandler() override {}
 

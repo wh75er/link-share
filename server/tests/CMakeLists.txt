@@ -23,8 +23,6 @@ foreach(file ${tests})
 
   get_filename_component(name ${file} NAME_WE)
 
-  message("Sources are : ${sources}")
-
   add_executable("${name}_tests"
     ${sources}
     ${file})

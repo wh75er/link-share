@@ -1,5 +1,14 @@
 #include "response.hpp"
 
+Response::Response()
+  : error_(SUCCESS),
+    token_(""),
+    hasFiles_(false),
+    snapshotId_(""),
+    fileNames_()
+{
+}
+
 Response::Response(enum ResponseError error, std::string token, bool hasFiles, std::string snapshotId, std::vector<std::string> fileNames)
   : error_(error),
     token_(token),

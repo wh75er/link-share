@@ -4,6 +4,7 @@
 
 class User {
 public:
+  User();
   User(std::string name, std::string token, int roomId);
   ~User() {};
 
