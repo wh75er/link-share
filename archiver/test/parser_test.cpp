@@ -4,7 +4,7 @@
 #include "parser.hpp"
 
 TEST(html_parser_test, parse_test) {
-    http_client new_client;
+    http_client new_client("www.example.com");
     ASSERT_EQ(new_client.send("GET https://www.example.com HTTP/1.1\r\nHost: "
                               "www.example.com\r\n"),
               SUCCESS);
