@@ -41,12 +41,14 @@ public:
     ~http_client();
 
     enum client_exit_status connect();
-    enum client_exit_status recieve(std::string *path_to_response);
-    enum client_exit_status send(const std::string &request);
+    enum client_exit_status recieve(std::string *response);
+    enum client_exit_status send();
+
     std::string create_request(const std::string &url);
 
 private:
     int socket_fd;
+    SSL *ssl;
     http_request request;
     http_response response;
     struct sockaddr_in addr;
