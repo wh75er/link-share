@@ -1,11 +1,24 @@
 #include "http_client.hpp"
 
 http_request::http_request(const std::string &url) {
-    std::string::size_type pos = url.find("//");
-    /*error*/
-    host = url.substr(pos + 2, url.find("/", pos + 2) - pos - 2);
-    /*error*/
-    query = "GET " + url + " HTTP/1.1\n\r";
+    std::string::size_type host_start_pos = url.find("//");
+    if (host_start_pos == std::string::npos) {
+        host_start_pos = 0;
+    } else {
+        host_start_pos += 2;
+    }
+    std::string::size_type host_end_pos = url.find("/", host_start_pos);
+    if (host_end_pos == std::string::npos) {
+        host_end_pos = url.size();
+    }
+
+    host = url.substr(host_start_pos, host_end_pos - host_start_pos);
+
+    std::string info = url.substr(host_end_pos, url.size() - host_end_pos);
+    if (url.size() == host_end_pos) {
+        info = host;
+    }
+    query = "GET " + info + " HTTP/1.1\n\r";
     query += "Host: " + host + "\r\n";
     query += "\r\n";
 }
@@ -24,7 +37,8 @@ http_client::http_client(const std::string &url) {
     }
     request = http_request(url);
     memset(&addr, 0, sizeof(addr));
-    addr = resolve(url);
+
+    addr = resolve(request.host);
 
     int connected =
         ::connect(socket_fd, (struct sockaddr *)&addr, sizeof(addr));
@@ -66,18 +80,6 @@ enum client_exit_status http_client::connect() {
 struct sockaddr_in http_client::resolve(const std::string &url) {
     struct hostent *hp = gethostbyname(url.c_str());
     /*обработать ошибку*/
-    char **pAddr = hp->h_addr_list;
-    while (*pAddr) {
-        unsigned char *ipf = reinterpret_cast<unsigned char *>(*pAddr);
-        uint32_t cur_interface_ip = 0;
-        uint8_t *rimap_local_ip_ptr =
-            reinterpret_cast<uint8_t *>(&cur_interface_ip);
-        rimap_local_ip_ptr[0] = ipf[0];
-        rimap_local_ip_ptr[1] = ipf[1];
-        rimap_local_ip_ptr[2] = ipf[2];
-        rimap_local_ip_ptr[3] = ipf[3];
-        ++pAddr;
-    }
 
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
@@ -105,6 +107,7 @@ enum client_exit_status http_client::recieve(std::string *response) {
 }
 
 enum client_exit_status http_client::send() {
+    std::cout << request.query.c_str() << '\n';
     int len =
         SSL_write(ssl, request.query.c_str(), strlen(request.query.c_str()));
     if (len < 0) {
