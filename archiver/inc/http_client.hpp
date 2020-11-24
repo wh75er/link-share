@@ -1,13 +1,15 @@
-#include <iostream>
-
 #include <arpa/inet.h>
+#include <fstream>
+#include <iostream>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <openssl/err.h>
 #include <openssl/ssl.h>
+#include <stdexcept>
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 enum client_exit_status {
     SUCCESS,
@@ -15,7 +17,8 @@ enum client_exit_status {
     CONNECTION_SUCCESS,
     BAD_REQUEST_ERROR,
     SOCKET_CREATION_ERROR,
-    RESOLV_ERROR
+    RESOLV_ERROR,
+    FAILURE
     /* some other errors */
 };
 
@@ -40,8 +43,7 @@ public:
     http_client &operator=(const http_client &other) = delete;
     ~http_client();
 
-    enum client_exit_status connect();
-    enum client_exit_status recieve(std::string *response);
+    enum client_exit_status recieve();
     enum client_exit_status send();
 
     std::string create_request(const std::string &url);
