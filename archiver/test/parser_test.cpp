@@ -3,7 +3,7 @@
 #include "http_client.hpp"
 #include "parser.hpp"
 
-TEST(html_parser_test, parse_test) {
+/*TEST(html_parser_test, parse_test) {
     http_client new_client("www.example.com");
     ASSERT_EQ(new_client.send("GET https://www.example.com HTTP/1.1\r\nHost: "
                               "www.example.com\r\n"),
@@ -48,4 +48,4 @@ TEST(css_parser_test, get_src_url_from_string_test) {
     str += ")";
     ASSERT_NE(new_parser.get_src_url_from_string(str), nullptr);
     ASSERT_STREQ(new_parser.get_src_url_from_string(str)->c_str(), "url");
-}
+}*/
