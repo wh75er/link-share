@@ -60,4 +60,4 @@ add_custom_command(TARGET lcov
 
 set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES gcoverage)
 
-target_link_libraries(gtest_main -fprofile-arcs)
+target_link_libraries(gtest_main -fprofile-arcs  OpenSSL::SSL OpenSSL::Crypto)

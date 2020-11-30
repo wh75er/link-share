@@ -13,11 +13,7 @@
 
 enum client_exit_status {
     SUCCESS,
-    CONNECTION_FAILURE,
-    CONNECTION_SUCCESS,
-    BAD_REQUEST_ERROR,
-    SOCKET_CREATION_ERROR,
-    RESOLV_ERROR,
+    REDIRECT,
     FAILURE
     /* some other errors */
 };
@@ -34,19 +30,19 @@ struct http_response {
     http_response(const std::string &response);
     std::string query;
     std::string html_body;
+    size_t code;
 };
 
 class http_client {
 public:
     http_client(const std::string &url);
     http_client(const http_client &other) = delete;
-    http_client &operator=(const http_client &other) = delete;
     ~http_client();
 
     enum client_exit_status recieve();
     enum client_exit_status send();
 
-    std::string create_request(const std::string &url);
+    void redirect();
 
 private:
     int socket_fd;
