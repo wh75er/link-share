@@ -9,10 +9,10 @@ RequestHandler::RequestHandler(std::shared_ptr<Connection> connection)
 
 void RequestHandler::handle(std::string data) {
   // Create parser & parse data
-  
-  // Create handle for corresponding command
-  
-  // execute handle
+
+  // Produce command for corresponding command id
+
+  // execute command
 
   // use sender to send data back to client
 
