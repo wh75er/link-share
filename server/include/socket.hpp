@@ -21,7 +21,7 @@ class BaseTcpSocket {
     virtual int create();
     virtual int bind_();
     virtual int listen_();
-    virtual BaseTcpSocket accept_();
+    virtual int accept_();
     virtual ssize_t send_(const void *msg);
     virtual ssize_t recv_(void *buf, size_t len);
     virtual void close_();
@@ -51,7 +51,7 @@ class TcpSocket : public BaseTcpSocket {
     int create() override;
     int bind_() override;
     int listen_() override;
-    BaseTcpSocket accept_() override;
+    int accept_() override;
     ssize_t send_(const void *msg) override;
     ssize_t recv_(void *buf, size_t len) override;
     void close_() override;
