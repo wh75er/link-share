@@ -1,9 +1,10 @@
 #include "connection.hpp"
 
-Connection::Connection(boost::asio::ip::tcp::socket socket)
+Connection::Connection(BaseTcpSocket socket)
   : socket_(std::move(socket)), 
     rh(nullptr)
 {
+  std::cout << "Connection constructor\n" << std::endl;
 }
 
 std::string Connection::read() {
