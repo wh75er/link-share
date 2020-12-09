@@ -8,7 +8,7 @@ class Connection;
 class Sender {
 public:
   explicit Sender(std::shared_ptr<Connection> cnct);
-  ~Sender();
+  ~Sender() {}
 
   void send(std::string data);
 

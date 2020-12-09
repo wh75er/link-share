@@ -1,12 +1,15 @@
 #include "socket.hpp"
 
-#define TRY_AGAIN -1
+#include <iostream>
+
+#define TRY_ACCEPT_AGAIN -1
+#define FUTURE_TIMEOUT_MILLS 100
 
 TcpSocket::TcpSocket(
   int _sd, 
   int _domain,
-  char* _address,
-  char* _port,
+  std::string _address,
+  std::string _port,
   bool _non_blocking,
   size_t _max_listen_connections
 ) : sd(_sd),
@@ -19,8 +22,8 @@ TcpSocket::TcpSocket(
 
 TcpSocket::TcpSocket(
   int _domain,
-  char* _address,
-  char* _port,
+  std::string _address,
+  std::string _port,
   bool _non_blocking,
   size_t _max_listen_connections
 ) : domain(_domain),
@@ -46,7 +49,7 @@ TcpSocket::Builder& TcpSocket::Builder::address(char *__address) {
 }
 
 TcpSocket::Builder& TcpSocket::Builder::address(std::string &__address) {
-  _address = (char *)__address.c_str();
+  _address = __address;
   return *this;
 }
 
@@ -56,7 +59,7 @@ TcpSocket::Builder& TcpSocket::Builder::port(char *__port) {
 }
 
 TcpSocket::Builder& TcpSocket::Builder::port(std::string &__port) {
-  _port = (char *)__port.c_str();
+  _port = __port;
   return *this;
 }
 
@@ -94,20 +97,23 @@ int TcpSocket::create() {
   hints.ai_family = domain;
   hints.ai_socktype = SOCK_STREAM;
 
-  if (!address) {
+  if (address.empty()) {
     hints.ai_flags = AI_PASSIVE;
   }
 
+  std::cout << "Address is : " << address << std::endl;
+  std::cout << "Port is : " << port << std::endl;
+
   int status = 0;
-  if ((status = getaddrinfo(address, port, &hints, &servinfo))) {
+  if ((status = getaddrinfo(address.c_str(), port.c_str(), &hints, &servinfo))) {
     throw AddrInfoException(
-        AddrInfoDefaultError(status)
+        std::make_shared<AddrInfoDefaultError>(status)
     );
   }
 
   if ((status = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol)) < 0) {
     throw SocketException(
-        SocketDefaultError(errno)
+        std::make_shared<SocketDefaultError>(errno)
     );
   }
 
@@ -120,7 +126,7 @@ int TcpSocket::bind_() {
   int status = 0;
   if ((status = bind(sd, servinfo->ai_addr, servinfo->ai_addrlen)) < 0) {
     throw SocketException(
-        SocketDefaultError(errno)
+        std::make_shared<SocketDefaultError>(errno)
     );
   }
 
@@ -131,7 +137,7 @@ int TcpSocket::listen_() {
   int status = 0;
   if ((status = listen(sd, max_listen_connections)) < 0) {
     throw SocketException(
-        SocketDefaultError(errno)
+        std::make_shared<SocketDefaultError>(errno)
     );
   }
 
@@ -140,6 +146,8 @@ int TcpSocket::listen_() {
 
 int TcpSocket::accept_() {
 
+  std::cout << "Current socket descriptor: "  << sd << std::endl;
+
   struct sockaddr_storage client_addr;
   socklen_t addr_size = sizeof(client_addr);
 
@@ -147,10 +155,10 @@ int TcpSocket::accept_() {
   if ((socket_descriptor = accept(sd, (struct sockaddr *)&client_addr, &addr_size)) < 0) {
     if (errno != EAGAIN && errno != EWOULDBLOCK) {
       throw SocketException(
-          SocketDefaultError(errno)
+          std::make_shared<SocketDefaultError>(errno)
       );
     } else {
-      return TRY_AGAIN;
+      return TRY_ACCEPT_AGAIN;
     }
   }
 
@@ -162,7 +170,7 @@ ssize_t TcpSocket::send_(const void *msg) {
 
   if ((bytes_sent = send(sd, msg, sizeof(msg), 0)) == -1) {
     throw SocketException(
-        SocketDefaultError(errno)
+        std::make_shared<SocketDefaultError>(errno)
     );
   }
 
@@ -174,7 +182,7 @@ ssize_t TcpSocket::recv_(void *buf, size_t len) {
 
   if ((bytes_recv = recv(sd, buf, len, 0)) == -1) {
     throw SocketException(
-        SocketDefaultError(errno)
+        std::make_shared<SocketDefaultError>(errno)
     );
   }
   
@@ -184,7 +192,7 @@ ssize_t TcpSocket::recv_(void *buf, size_t len) {
 void TcpSocket::close_() {
   if (close(sd) < 0) {
     throw SocketException(
-        SocketDefaultError(errno)
+        std::make_shared<SocketDefaultError>(errno)
     );
   }
 

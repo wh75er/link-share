@@ -1,47 +1,114 @@
 #include "server.hpp"
 
+#include <iostream>
+
+#define TRY_ACCEPT_AGAIN -1
+
 TCPserver::TCPserver(std::string address, std::string port):
   address_(address), 
-  port_(port)
+  port_(port), 
+  running_(false)
 {
-  // Create non-blocking socket and bind it
-  socket_ = TcpSocket::Builder()
+//  std::cout << "Came Address is : " << address << std::endl;
+//  std::cout << "Came Port is : " << port << std::endl;
+//
+//  std::cout << "Address is : " << address_ << std::endl;
+//  std::cout << "Port is : " << port_ << std::endl;
+
+  workers_count = std::thread::hardware_concurrency();
+
+  std::cout << "Worker count is : " << workers_count << std::endl;
+
+  socket_ = std::make_shared<TcpSocket>(TcpSocket::Builder()
     .address(address)
     .port(port)
     .non_blocking()
-    .build();
+    .build()
+  );
 
   try {
-    socket_.create();
+    socket_->create();
   } 
   catch (const BaseException& except) {
-    throw ServerException(except.error);
+    throw ServerException(except.error, "Failed to create socket!");
   }
 
   try {
-    socket_.bind_();
+    socket_->bind_();
   }
   catch (const BaseException& except) {
-    throw ServerException(except.error);
+    throw ServerException(except.error, "Failed to bind socket!");
   }
 }
 
-void TCPserver::accept(std::shared_ptr<Connection> connection) {
-  // Accept connection and create Connection object
+TCPserver::~TCPserver() {
+  socket_->close_();
+
+  for (auto i = 0; i < futures.size(); i++) {
+    futures[i].wait();
+  }
+}
+
+void TCPserver::accept() {
+  running_ = true;
+
+  while (running_) {
+    // If connection available, accept it(create Connection)
+    int connection_sd = TRY_ACCEPT_AGAIN;
+    try {
+      connection_sd = socket_->accept_();
+    }
+    catch (const BaseException& except) {
+      throw ServerException(except.error, "Failed to accept socket connection!");
+    }
+
+    if (connection_sd == TRY_ACCEPT_AGAIN) {
+      std::cout << "There's no connections!" << std::endl;
+      continue;
+    }
+
+    std::cout << "Got a connection!" << std::endl;
+
+    TcpSocket connection_socket = TcpSocket::Builder()
+      .socket(connection_sd)
+      .build();
+
+    // Accept connection and create Connection object
+    if (futures.size() < workers_count) {
+      futures.push_back(std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket);}));
+    } else {
+      bool slot_found = false;
+
+      while (!slot_found) {
+        std::chrono::milliseconds time (100);
+        for (auto i = 0; i < futures.size(); i++) {
+          if (futures[i].wait_for(time) == std::future_status::ready) {
+            futures[i] = std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket);});
+            slot_found = true;
+          }
+        }
+      }
+    }
+
+    // Continue to listen for other connections
+  }
 }
 
 void TCPserver::listen() {
   // listen for connections
   try {
-    socket_.listen_();
+    socket_->listen_();
   }
   catch (const BaseException& except) {
-    throw ServerException(except.error);
+    throw ServerException(except.error, "Failed to set socket to listening!");
   }
-  
-  // If connection available, accept it(create Connection)
-  
-  // Run Connection
+  std::cout << "Socket is listening!" << std::endl;
+}
 
-  // Continue to listen for other connections
+bool TCPserver::is_running() {
+  return running_;
+}
+
+void TCPserver::stop_listen(int _) {
+  running_ = false;
 }

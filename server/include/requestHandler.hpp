@@ -12,7 +12,7 @@ class Connection;
 class RequestHandler {
 public:
   explicit RequestHandler(std::shared_ptr<Connection> connection);
-  ~RequestHandler();
+  ~RequestHandler() {}
 
   void handle(std::string data);
 

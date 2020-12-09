@@ -1,21 +1,34 @@
 #pragma once
 
-#include <string>
+#include <chrono>
+#include <future>
+#include <functional>
+#include <fcntl.h>
+#include <errno.h>
 #include <memory>
+#include <string>
 
 #include "connection.hpp"
 #include "socket.hpp"
 
+void exit_handler(int s);
+
 class TCPserver {
 public:
-  TCPserver(std::string address, std::string port);
+  explicit TCPserver(std::string address, std::string port);
   ~TCPserver();
 
-  void accept(std::shared_ptr<Connection> connection);
+  void accept();
   void listen();
+  bool is_running();
 
 private:
-  BaseTcpSocket socket_;
-  std::string address_;
-  std::string port_;
+  void stop_listen(int _);
+
+  std::shared_ptr<BaseTcpSocket> socket_;
+  std::string address_ = "";
+  std::string port_ = "";
+  bool running_;
+  size_t workers_count;
+  std::vector<std::future<void>> futures;
 };

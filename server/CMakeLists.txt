@@ -37,9 +37,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}_lib PUBLIC ${Boost_LIBRARIES})
 target_include_directories(${CMAKE_PROJECT_NAME}_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
-#add_executable(main ${PROJECT_SOURCE_DIR}/src/main.cpp)
-#target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-#target_link_libraries(main ${Boost_LIBRARIES} ${CMAKE_PROJECT_NAME}_lib)
+add_executable(main ${PROJECT_SOURCE_DIR}/src/main.cpp)
+target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(main ${Boost_LIBRARIES} ${CMAKE_PROJECT_NAME}_lib)
 
 
 enable_testing()

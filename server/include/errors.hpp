@@ -5,6 +5,7 @@
 #include <string>
 #include <string.h>
 #include <netdb.h>
+#include <memory>
 
 class BaseError {
   public:
@@ -12,7 +13,7 @@ class BaseError {
       code(_code)
       {}
 
-    virtual const char* from() const;
+    virtual const char* from() const = 0;
     virtual int get_code() const;
 
   protected:
@@ -39,21 +40,32 @@ class SocketDefaultError : public BaseError {
 
 class BaseException : public std::exception {
   public: 
-    explicit BaseException(const BaseError _e):
-      error(_e)
+    explicit BaseException(std::shared_ptr<BaseError> _e):
+      error(_e),
+      msg("")
+      {}
+
+    explicit BaseException(std::shared_ptr<BaseError> _e, const std::string& _msg):
+      error(_e),
+      msg(_msg)
       {}
 
     virtual ~BaseException() noexcept {}
 
-    virtual const char* what() const noexcept;
+    virtual const char* what() const noexcept = 0;
 
-    BaseError error;
+    std::shared_ptr<BaseError> error;
+    std::string msg;
 };
 
 class AddrInfoException : public BaseException {
   public: 
-    explicit AddrInfoException(const BaseError _e):
+    explicit AddrInfoException(std::shared_ptr<BaseError> _e):
       BaseException(_e)
+      {}
+
+    explicit AddrInfoException(std::shared_ptr<BaseError> _e, const std::string& _msg):
+      BaseException(_e, _msg)
       {}
 
     virtual ~AddrInfoException() noexcept {}
@@ -63,8 +75,12 @@ class AddrInfoException : public BaseException {
 
 class SocketException : public BaseException {
   public: 
-    explicit SocketException(const BaseError _e):
+    explicit SocketException(std::shared_ptr<BaseError> _e):
       BaseException(_e)
+      {}
+
+    explicit SocketException(std::shared_ptr<BaseError> _e, const std::string& _msg):
+      BaseException(_e, _msg)
       {}
 
     virtual ~SocketException() noexcept {}
@@ -74,8 +90,12 @@ class SocketException : public BaseException {
 
 class ServerException : public BaseException{
   public: 
-    explicit ServerException(const BaseError _e):
+    explicit ServerException(std::shared_ptr<BaseError> _e):
       BaseException(_e)
+      {}
+
+    explicit ServerException(std::shared_ptr<BaseError> _e, const std::string& _msg):
+      BaseException(_e, _msg)
       {}
 
     virtual ~ServerException() noexcept {}
