@@ -7,10 +7,10 @@ enum parser_exit_status { SUCCESS_PARSE, FAILURE_PARSE };
 
 class parser {
 protected:
-    std::vector<std::string> sources;
     std::string url;
 
 public:
+    std::vector<std::string> sources;
     parser(){};
     parser(const std::string &_url) : url(_url){};
     virtual bool is_source(const std::string &str) = 0;
@@ -25,6 +25,7 @@ public:
     bool is_source(const std::string &str);
     enum parser_exit_status parse(const std::string &path_to_file);
     void get_src_url_from_string(const std::string &str);
+    std::string file_type(const std::string &url);
     bool is_css(const std::string &str);
 };
 

@@ -4,11 +4,35 @@
 html_parser::html_parser(const std::string &_url) : parser(_url){};
 
 bool is_file(const std::string &str) {
+    std::cout << str;
+    puts("\n");
+    // std::string::size_type src_url_start_pos = str.find_last_of('.');
+
     //проверяет имеет ли ресурс расширение(ищет точку
     //и проверяте что после нее нет '/')
-    std::string::size_type src_format = str.find_last_of('.');
-    if (src_format != std::string::npos) {
-        if (str.find('/', src_format) == -1) {
+    std::string::size_type src_url_start_pos = str.find('"');
+    if (src_url_start_pos == std::string::npos) {
+        src_url_start_pos = str.find_last_of("'");
+    }
+    if (src_url_start_pos != std::string::npos) {
+        std::string::size_type src_url_end_pos =
+            str.find('"', src_url_start_pos + 1);
+        if (src_url_end_pos == std::string::npos) {
+            src_url_end_pos = str.find("'", src_url_start_pos + 1);
+        }
+        if (src_url_end_pos == std::string::npos) {
+            return false;
+        }
+        std::string buf =
+            str.substr(src_url_start_pos, src_url_end_pos - src_url_start_pos);
+        std::string::size_type src_format_start_pos = buf.find_last_of(".");
+        if (src_format_start_pos == std::string::npos) {
+            return false;
+        }
+        std::string format =
+            buf.substr(src_format_start_pos, buf.size() - src_format_start_pos);
+        std::cout << "format: " << format << '\n';
+        if (format.find("/") == std::string::npos) {
             return true;
         }
     }
@@ -16,9 +40,23 @@ bool is_file(const std::string &str) {
     return false;
 }
 
+std::string html_parser::file_type(const std::string &url) {
+    std::string::size_type last_pos = url.find_last_of('/');
+    std::string buf = url.substr(last_pos, url.size() - last_pos);
+    std::string::size_type format_start_pos = buf.find('.');
+    std::string format =
+        buf.substr(format_start_pos, buf.size() - format_start_pos);
+
+    return format;
+}
+
 bool html_parser::is_source(const std::string &str) {
-    if (str.find("<link") != std::string::npos) {
-        std::string::size_type src_start_pos = str.find("href=");
+    std::string::size_type src_start_pos = str.find("<LINK");
+    if (src_start_pos == std::string::npos) {
+        src_start_pos = str.find("<link");
+    }
+    if (src_start_pos != std::string::npos) {
+        src_start_pos = str.find("href=");
         if (src_start_pos != std::string::npos) {
             src_start_pos += strlen("href=");
             if (is_file(
@@ -28,7 +66,7 @@ bool html_parser::is_source(const std::string &str) {
         }
     }
 
-    std::string::size_type src_start_pos = str.find("src=");
+    src_start_pos = str.find("src=");
     if (src_start_pos != std::string::npos) {
         if (is_file(str.substr(src_start_pos, str.size() - src_start_pos))) {
             return true;
@@ -50,7 +88,7 @@ parser_exit_status html_parser::parse(const std::string &path_to_file) {
         // html_file >> src_string;
         std::getline(html_file, src_string, '>');
         if (is_source(src_string)) {
-            puts("...............");
+            puts("\n...............");
             // std::cout << src_string << "\n";
             // puts("\t");
 

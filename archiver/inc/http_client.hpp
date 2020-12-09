@@ -45,9 +45,10 @@ public:
     const std::string &get_response();
 
     void redirect();
-    // void create_new_request();
+    void new_request(const std::string &url);
 
 private:
+    void socket_setings(const std::string &url);
     int socket_fd;
     SSL *ssl;
     http_request request;

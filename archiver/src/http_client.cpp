@@ -45,7 +45,7 @@ http_response::http_response(const std::string &response) {
     }
 }
 
-http_client::http_client(const std::string &url) {
+void http_client::socket_setings(const std::string &url) {
     socket_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_fd == -1) {
         throw std::runtime_error("connection error: " +
@@ -109,6 +109,8 @@ http_client::http_client(const std::string &url) {
     }
 }
 
+http_client::http_client(const std::string &url) { socket_setings(url); }
+
 http_client::~http_client() {
     ::close(socket_fd);
     SSL_shutdown(ssl);
@@ -135,6 +137,7 @@ enum client_exit_status http_client::recieve() {
     int len = -1;
     char buf[1024];
     bzero(buf, 1024);
+    /*
     do {
         len = SSL_read(ssl, buf, 1023);
         if (len < 0) {
@@ -143,12 +146,23 @@ enum client_exit_status http_client::recieve() {
                                      std::string(strerror(ssl_err)));
             return FAILURE;
         }
-        std::cout << buf;
+        // std::cout << buf;
         ret.append(buf, strlen(buf));
         bzero(buf, 1024);
-    } while (len == 1023);
+        std::cout << "\n\n|||" << len << "\n\n";
+    } while (len >= 0);
+    */
+    std::cout << request.query << '\n';
+    puts("..............\n");
+    while (SSL_read(ssl, buf, 1023) >= 0) {
+        ret.append(buf, strlen(buf));
+        // std::cout << buf;
+        bzero(buf, 1024);
+    }
+    // std::cout << ret;
 
     response = http_response(ret);
+    std::cout << response.query;
 
     switch (response.code) {
     case 200:
@@ -169,10 +183,13 @@ enum client_exit_status http_client::recieve() {
 const std::string &http_client::get_response() { return response.html_body; };
 
 void http_client::redirect() {
-    std::cout << request.query;
+    // std::cout << request.query;
     std::string::size_type pos = response.query.find("Location: ");
     if (pos == std::string::npos) {
-        throw std::invalid_argument("redirection location not found");
+        pos = response.query.find("location: ");
+        if (pos == std::string::npos) {
+            throw std::invalid_argument("redirection location not found");
+        }
     }
 
     std::string buf = response.query.substr(pos + strlen("Location: "),
@@ -192,64 +209,26 @@ void http_client::redirect() {
     }
 
     ::close(socket_fd);
-    socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (socket_fd == -1) {
-        throw std::runtime_error("connection error: " +
-                                 std::string(strerror(errno)));
-    }
-    request = http_request(buf);
-    memset(&addr, 0, sizeof(addr));
+    socket_setings(buf);
+}
 
-    addr = resolve(request.host);
-
-    int connected =
-        ::connect(socket_fd, (struct sockaddr *)&addr, sizeof(addr));
-    if (connected == -1) {
-        throw std::runtime_error("connect error: " +
-                                 std::string(strerror(errno)));
+void http_client::new_request(const std::string &url) {
+    if (url.find("http") != std::string::npos) {
+        ::close(socket_fd);
+        socket_setings(url);
+        return;
     }
 
-    const SSL_METHOD *meth = TLS_client_method();
-    if (meth == NULL) {
-        int ssl_err = SSL_get_error(ssl, ERR_get_error());
-        throw std::runtime_error("cration of a SSL_METHOD object failed: " +
-                                 std::string(strerror(ssl_err)));
+    if (url.find("//") != std::string::npos) {
+        ::close(socket_fd);
+        socket_setings("https:" + url);
+        return;
     }
 
-    SSL_CTX *ctx = SSL_CTX_new(meth);
-    if (ctx == NULL) {
-        int ssl_err = SSL_get_error(ssl, ERR_get_error());
-        throw std::runtime_error("creation of a new SSL_CTX object failed: " +
-                                 std::string(strerror(ssl_err)));
-    }
-
-    ssl = SSL_new(ctx);
-    if (!ssl) {
-        int ssl_err = SSL_get_error(ssl, ERR_get_error());
-        throw std::runtime_error("creation of a new SSL structure failed: " +
-                                 std::string(strerror(ssl_err)));
-    }
-
-    int sock_set = SSL_set_fd(ssl, socket_fd);
-    if (sock_set == -1) {
-        int ssl_err = SSL_get_error(ssl, sock_set);
-        throw std::runtime_error("connecting SSL object with a fd failed: " +
-                                 std::string(strerror(ssl_err)));
-    }
-
-    int err = SSL_connect(ssl);
-    if (err != 1) {
-        int ssl_err = SSL_get_error(ssl, err);
-        throw std::runtime_error("TLS/SSL handshake was not saccessful: " +
-                                 std::string(strerror(ssl_err)));
-    }
-
-    struct timeval tv;
-    tv.tv_sec = 3;
-    tv.tv_usec = 0;
-    if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) != 0) {
-        throw std::runtime_error("rcvtimeout: " + std::string(strerror(errno)));
-    }
+    request.query = "GET /" + url + " HTTP/1.1\r\n";
+    request.query += "Host: " + request.host + "\r\n";
+    request.query += "\r\n";
+    return;
 }
 
 enum client_exit_status http_client::send() {
