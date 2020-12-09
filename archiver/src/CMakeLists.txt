@@ -1,3 +1,5 @@
+set(CMAKE_CXX_FLAGS "-std=c++17")
+
 add_library(http_client STATIC http_client.cpp)
 target_include_directories(http_client PUBLIC "${PROJECT_SOURCE_DIR}/inc")
 
@@ -12,3 +14,6 @@ target_include_directories(create_new_page PUBLIC "${PROJECT_SOURCE_DIR}/inc")
 add_definitions(-Wreturn-type)
 
 
+add_executable(main main.cpp)
+
+target_link_libraries(main PUBLIC http_client parser create_new_page OpenSSL::SSL OpenSSL::Crypto)

@@ -9,7 +9,7 @@ http_request::http_request(const std::string &url) {
     if (host_start_pos == std::string::npos) {
         host_start_pos = 0;
     } else {
-        host_start_pos += 2;
+        host_start_pos += strlen("//");
     }
     std::string::size_type host_end_pos = url.find("/", host_start_pos);
     if (host_end_pos == std::string::npos) {
@@ -136,16 +136,17 @@ enum client_exit_status http_client::recieve() {
     char buf[1024];
     bzero(buf, 1024);
     do {
-        len = SSL_read(ssl, buf, 1024);
+        len = SSL_read(ssl, buf, 1023);
         if (len < 0) {
             int ssl_err = SSL_get_error(ssl, len);
             throw std::runtime_error("the read operation was not successful: " +
                                      std::string(strerror(ssl_err)));
             return FAILURE;
         }
+        std::cout << buf;
         ret.append(buf, strlen(buf));
         bzero(buf, 1024);
-    } while (len == 1024);
+    } while (len == 1023);
 
     response = http_response(ret);
 
@@ -165,7 +166,10 @@ enum client_exit_status http_client::recieve() {
     }
 }
 
+const std::string &http_client::get_response() { return response.html_body; };
+
 void http_client::redirect() {
+    std::cout << request.query;
     std::string::size_type pos = response.query.find("Location: ");
     if (pos == std::string::npos) {
         throw std::invalid_argument("redirection location not found");

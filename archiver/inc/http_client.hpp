@@ -42,7 +42,10 @@ public:
     enum client_exit_status recieve();
     enum client_exit_status send();
 
+    const std::string &get_response();
+
     void redirect();
+    // void create_new_request();
 
 private:
     int socket_fd;
