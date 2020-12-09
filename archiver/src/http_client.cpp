@@ -41,6 +41,7 @@ http_response::http_response(const std::string &response) {
         throw std::invalid_argument("broken response");
     } else {
         query = response.substr(0, pos);
+
         html_body = response.substr(pos, response.size() - pos);
     }
 }
@@ -102,7 +103,7 @@ void http_client::socket_setings(const std::string &url) {
     }
 
     struct timeval tv;
-    tv.tv_sec = 3;
+    tv.tv_sec = 2;
     tv.tv_usec = 0;
     if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) != 0) {
         throw std::runtime_error("rcvtimeout: " + std::string(strerror(errno)));
@@ -153,7 +154,7 @@ enum client_exit_status http_client::recieve() {
     } while (len >= 0);
     */
     std::cout << request.query << '\n';
-    puts("..............\n");
+    // puts("..............\n");
     while (SSL_read(ssl, buf, 1023) >= 0) {
         ret.append(buf, strlen(buf));
         // std::cout << buf;
@@ -162,20 +163,26 @@ enum client_exit_status http_client::recieve() {
     // std::cout << ret;
 
     response = http_response(ret);
-    std::cout << response.query;
+    // std::cout << response.query;
 
     switch (response.code) {
     case 200:
+        puts("200");
         return SUCCESS;
     case 301:
+        puts("301");
         return REDIRECT;
     case 302:
+        puts("302");
         return REDIRECT;
     case 303:
+        puts("303");
         return REDIRECT;
     case 307:
+        puts("307");
         return REDIRECT;
     default:
+        puts("fail");
         return FAILURE;
     }
 }
@@ -222,6 +229,13 @@ void http_client::new_request(const std::string &url) {
     if (url.find("//") != std::string::npos) {
         ::close(socket_fd);
         socket_setings("https:" + url);
+        return;
+    }
+
+    if (url[0] == '/') {
+        request.query = "GET " + url + " HTTP/1.1\r\n";
+        request.query += "Host: " + request.host + "\r\n";
+        request.query += "\r\n";
         return;
     }
 
