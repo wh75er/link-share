@@ -82,10 +82,11 @@ void TCPserver::accept() {
       bool slot_found = false;
 
       while (!slot_found) {
-        std::cout << "Found finished future!" << std::endl;
+        std::cout << "Trying to finished future!" << std::endl;
         std::chrono::milliseconds time (100);
         for (auto i = 0; i < futures.size() && !slot_found; i++) {
           if (futures[i].wait_for(time) == std::future_status::ready) {
+            std::cout << "Found finished future!" << std::endl;
             std::cout << "Occupying feature # " << i << std::endl;
             futures[i] = std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket);});
             slot_found = true;
