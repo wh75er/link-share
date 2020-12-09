@@ -39,17 +39,16 @@ int main(int argc, char **argv) {
     path_to_static += "/static";
     std::filesystem::create_directories(path_to_static);
 
-    std::string path_to_html(argv[2]);
-    path_to_html += "/index.html";
-    std::ofstream file(path_to_html);
+    std::string path_to_unedited_html(argv[2]);
+    path_to_unedited_html += "/index1.html";
+    std::ofstream file(path_to_unedited_html);
     file << my_client.get_response();
 
     html_parser my_html_parser(argv[1]);
-    my_html_parser.parse(path_to_html);
-
-    puts("1");
+    my_html_parser.parse(path_to_unedited_html);
 
     int k = 0;
+    std::string edit_html = my_client.get_response();
 
     for (std::string url : my_html_parser.sources) {
         try {
@@ -58,38 +57,57 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        puts("2");
-
         my_client.send();
-
-        puts("3");
 
         enum client_exit_status recv = my_client.recieve();
 
         while (recv == REDIRECT) {
-            puts("4");
             try {
                 my_client.redirect();
-            } catch (std::runtime_error) {
+            } catch (std::exception) {
                 break;
             }
             my_client.send();
-            recv = my_client.recieve();
-            puts("5");
+            try {
+                recv = my_client.recieve();
+            } catch (std::exception) {
+                break;
+            }
         }
 
         if (recv == REDIRECT) {
             continue;
         }
 
-        puts("6");
-        std::string path_to_new_static_file("saving/static/");
+        std::string path_to_new_static_file(argv[2]);
+        path_to_new_static_file += "/static/";
         path_to_new_static_file += std::to_string(k++);
         path_to_new_static_file += my_html_parser.file_type(url);
-        std::cout << "\n||||" << path_to_new_static_file << "\n";
         std::ofstream static_file(path_to_new_static_file);
         static_file << my_client.get_response();
+
+        while (true) {
+            std::string::size_type start_pos = edit_html.find(url);
+            if (start_pos == std::string::npos) {
+                break;
+                // std::cout << edit_html;
+                // std::cout << '|' << url << '|' << '\n';
+                // std::cout << edit_html.size() << '\n';
+                // puts("wtf");
+            }
+            edit_html.erase(start_pos, url.size());
+            std::cout << "||" << path_to_new_static_file << "||";
+            path_to_new_static_file.erase(0, strlen(argv[2]));
+            path_to_new_static_file.insert(0, ".");
+            edit_html.insert(start_pos, path_to_new_static_file);
+        }
     }
+
+    std::string path_to_edited_html(argv[2]);
+    path_to_edited_html += "/index.html";
+
+    std::ofstream edited_file(path_to_edited_html);
+    edited_file << edit_html;
 
     return 0;
 }
