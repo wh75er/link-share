@@ -2,9 +2,14 @@
 
 #include "connection.hpp"
 
+#include <unistd.h>
+
 RequestHandler::RequestHandler(std::shared_ptr<Connection> connection)
   : sender(connection)
 {
+  std::cout <<  "RequestHandler constructor" << std::endl;
+  unsigned int microseconds = 3 * 1e+6;
+  usleep(microseconds);
 }
 
 void RequestHandler::handle(std::string data) {

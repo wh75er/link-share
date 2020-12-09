@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <string>
 #include <memory>
 
@@ -12,7 +14,7 @@ class Connection;
 class RequestHandler {
 public:
   explicit RequestHandler(std::shared_ptr<Connection> connection);
-  ~RequestHandler() {}
+  ~RequestHandler() { std::cout << "RequestHandler destructor" << std::endl;};
 
   void handle(std::string data);
 
