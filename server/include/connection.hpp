@@ -10,13 +10,13 @@
 
 class Connection : public std::enable_shared_from_this<Connection> {
 public:
-  explicit Connection(BaseTcpSocket socket);
-  ~Connection();
+  explicit Connection(const BaseTcpSocket& socket);
+  ~Connection() {}
 
   std::string read();
   void write(std::string data);
 
 private:
-  BaseTcpSocket socket_;
+  const BaseTcpSocket& socket_;
   std::unique_ptr<RequestHandler> rh;
 };

@@ -1,12 +1,13 @@
 #pragma once
 
-#include <fcntl.h>
 #include <netdb.h>
 #include <stdexcept>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <thread>
+#include <vector>
 
 #include "errors.hpp"
 
@@ -15,16 +16,16 @@
 
 class BaseTcpSocket {
   public:
-    BaseTcpSocket();
-    virtual ~BaseTcpSocket();
+//    BaseTcpSocket() {};
+    virtual ~BaseTcpSocket() {};
 
-    virtual int create();
-    virtual int bind_();
-    virtual int listen_();
-    virtual int accept_();
-    virtual ssize_t send_(const void *msg);
-    virtual ssize_t recv_(void *buf, size_t len);
-    virtual void close_();
+    virtual int create() = 0;
+    virtual int bind_() = 0;
+    virtual int listen_() = 0;
+    virtual int accept_() = 0;
+    virtual ssize_t send_(const void *msg) = 0;
+    virtual ssize_t recv_(void *buf, size_t len) = 0;
+    virtual void close_() = 0;
 };
 
 class TcpSocket : public BaseTcpSocket {
@@ -33,16 +34,16 @@ class TcpSocket : public BaseTcpSocket {
 
     TcpSocket(
         int _domain,
-        char* _address,
-        char* _port,
+        std::string _address,
+        std::string _port,
         bool _non_blocking,
         size_t _max_listen_connections
       );
     TcpSocket(
         int _sd,
         int _domain,
-        char* _address,
-        char* _port,
+        std::string _address,
+        std::string _port,
         bool _non_blocking,
         size_t _max_listen_connections
       );
@@ -59,8 +60,8 @@ class TcpSocket : public BaseTcpSocket {
   private:
     int sd;
     int domain;
-    char *address = nullptr;
-    char *port = nullptr;
+    std::string address = "";
+    std::string port = "";
     struct addrinfo *servinfo = nullptr;
     bool non_blocking = false;
     size_t max_listen_connections;
@@ -68,9 +69,6 @@ class TcpSocket : public BaseTcpSocket {
 
 class TcpSocket::Builder {
   public:
-    Builder();
-    ~Builder();
-
     Builder& socket(int __sd);
     Builder& domain(int __domain);
     Builder& address(char *__address);
@@ -84,8 +82,8 @@ class TcpSocket::Builder {
   private:
     int _sd = NON_INITIALIZED_FD;
     int _domain = AF_INET;
-    char *_address = nullptr;
-    char *_port = nullptr;
+    std::string _address = "";
+    std::string _port = "";
     struct _addrinfo *servinfo = nullptr;
     bool _non_blocking = false;
     size_t _max_listen_connections = DEFAULT_MAXIMUM_CONNECTIONS;

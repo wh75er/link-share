@@ -14,13 +14,13 @@ const char* SocketDefaultError::from() const {
 
 
 const char* AddrInfoException::what() const noexcept {
-  return error.from();
+  return error->from();
 }
 
 const char* SocketException::what() const noexcept {
-  return error.from();
+  return error->from();
 }
 
 const char* ServerException::what() const noexcept {
-  return error.from();
+  return error->from();
 }
