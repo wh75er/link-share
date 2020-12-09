@@ -15,6 +15,7 @@ public:
 
   std::string read();
   void write(std::string data);
+  void start();
 
 private:
   const BaseTcpSocket& socket_;

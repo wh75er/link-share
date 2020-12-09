@@ -76,7 +76,7 @@ void TCPserver::accept() {
     // Accept connection and create Connection object
     if (futures.size() < workers_count) {
       std::cout << "Futures size is " << futures.size() << std::endl;
-      futures.push_back(std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket);}));
+      futures.push_back(std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket)->start();}));
     } else {
       std::cout << "Futures size is full(" << futures.size() << ")" << std::endl;
       bool slot_found = false;
@@ -88,7 +88,7 @@ void TCPserver::accept() {
           if (futures[i].wait_for(time) == std::future_status::ready) {
             std::cout << "Found finished future!" << std::endl;
             std::cout << "Occupying feature # " << i << std::endl;
-            futures[i] = std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket);});
+            futures[i] = std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket)->start();});
             slot_found = true;
           }
         }
