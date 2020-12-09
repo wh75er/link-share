@@ -1,5 +1,7 @@
 #include "socket.hpp"
 
+#define TRY_AGAIN -1
+
 TcpSocket::TcpSocket(
   int _sd, 
   int _domain,
@@ -136,21 +138,23 @@ int TcpSocket::listen_() {
   return status;
 }
 
-BaseTcpSocket TcpSocket::accept_() {
+int TcpSocket::accept_() {
 
   struct sockaddr_storage client_addr;
   socklen_t addr_size = sizeof(client_addr);
 
   int socket_descriptor = 0;
   if ((socket_descriptor = accept(sd, (struct sockaddr *)&client_addr, &addr_size)) < 0) {
-    throw SocketException(
-        SocketDefaultError(errno)
-    );
+    if (errno != EAGAIN && errno != EWOULDBLOCK) {
+      throw SocketException(
+          SocketDefaultError(errno)
+      );
+    } else {
+      return TRY_AGAIN;
+    }
   }
 
-  return TcpSocket::Builder()
-    .socket(socket_descriptor)
-    .build();
+  return socket_descriptor;
 }
 
 ssize_t TcpSocket::send_(const void *msg) {
