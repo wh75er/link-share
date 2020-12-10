@@ -10,7 +10,7 @@ class AddLinkHandler: public BaseHandler {
 public:
   AddLinkHandler();
   AddLinkHandler(WebLink &request, Response &response);
-  ~AddLinkHandler() override {}
+  ~AddLinkHandler() {};
 
   void execute() override;
 

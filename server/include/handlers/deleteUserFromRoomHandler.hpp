@@ -5,15 +5,16 @@
 #include "handlers/baseHandler.hpp"
 #include "room.hpp"
 #include "response.hpp"
+#include "request.hpp"
 
 class DeleteUserFromRoomHandler: public BaseHandler {
 public:
-  DeleteUserFromRoomHandler(Room &request, Response &response);
-  ~DeleteUserFromRoomHandler() override {}
+  DeleteUserFromRoomHandler(UsersRoomRequest &request, Response &response);
+  ~DeleteUserFromRoomHandler() {};
 
   void execute() override;
 
 private:
-  Room& request_;
+  UsersRoomRequest& request_;
   Response& response_;
 };

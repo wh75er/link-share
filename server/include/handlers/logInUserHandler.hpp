@@ -9,7 +9,7 @@
 class LogInUserHandler: public BaseHandler {
 public:
   LogInUserHandler(User &request, Response &response);
-  ~LogInUserHandler() override {}
+  ~LogInUserHandler() {};
 
   void execute() override;
 
