@@ -10,7 +10,11 @@ class Connection;
 class Sender {
 public:
   explicit Sender(std::shared_ptr<Connection> connection);
-  ~Sender() {std::cout << "Sender destructor" << std::endl;};
+  ~Sender() {
+#ifdef DEBUG
+    std::cout << "Sender destructor" << std::endl;
+#endif
+  };
 
   void send(std::string data);
 

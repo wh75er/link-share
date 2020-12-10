@@ -85,7 +85,9 @@ TcpSocket TcpSocket::Builder::build() const {
 }
 
 TcpSocket::~TcpSocket() {
+#ifdef DEBUG
   std::cout << "TcpSocket destructor" << std::endl;
+#endif
   freeaddrinfo(servinfo);
   //close(sd);
 }
@@ -102,8 +104,10 @@ int TcpSocket::create() {
     hints.ai_flags = AI_PASSIVE;
   }
 
+#ifdef DEBUG
   std::cout << "Address is : " << address << std::endl;
   std::cout << "Port is : " << port << std::endl;
+#endif
 
   int status = 0;
   if ((status = getaddrinfo(address.c_str(), port.c_str(), &hints, &servinfo))) {
@@ -147,7 +151,9 @@ int TcpSocket::listen_() {
 
 int TcpSocket::accept_() {
 
+#ifdef DEBUG
   std::cout << "Current socket descriptor: "  << sd << std::endl;
+#endif
 
   struct sockaddr_storage client_addr;
   socklen_t addr_size = sizeof(client_addr);
@@ -181,16 +187,22 @@ ssize_t TcpSocket::send_(const void *msg, size_t len) {
 ssize_t TcpSocket::recv_(void *buf, size_t len) {
   ssize_t bytes_recv = 0;
 
+#ifdef DEBUG
   std::cout << "Socket descriptor for recv is " << sd << std::endl;
+#endif
 
   if ((bytes_recv = recv(sd, buf, len, 0)) == -1) {
+#ifdef DEBUG
     std::cout << "bytes recv is " << bytes_recv << std::endl;
+#endif
     throw SocketException(
         std::make_shared<SocketDefaultError>(errno)
     );
   }
 
+#ifdef DEBUG
   std::cout << "bytes recv is " << bytes_recv << std::endl;
+#endif
   
   return bytes_recv;
 }

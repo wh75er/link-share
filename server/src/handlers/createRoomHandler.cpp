@@ -1,6 +1,6 @@
 #include "handlers/createRoomHandler.hpp"
 
-CreateRoomHandler::CreateRoomHandler(Room &request, Response &response)
+CreateRoomHandler::CreateRoomHandler(RoomRequest &request, Response &response)
   : request_(request), response_(response)
 {
 }

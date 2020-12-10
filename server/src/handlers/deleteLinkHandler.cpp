@@ -1,6 +1,6 @@
 #include "handlers/deleteLinkHandler.hpp"
 
-DeleteLinkHandler::DeleteLinkHandler(WebLink &request, Response &response)
+DeleteLinkHandler::DeleteLinkHandler(LinkRequest &request, Response &response)
   : request_(request), response_(response)
 {
 }
