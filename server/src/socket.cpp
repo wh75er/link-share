@@ -85,8 +85,9 @@ TcpSocket TcpSocket::Builder::build() const {
 }
 
 TcpSocket::~TcpSocket() {
+  std::cout << "TcpSocket destructor" << std::endl;
   freeaddrinfo(servinfo);
-  close(sd);
+  //close(sd);
 }
 
 int TcpSocket::create() {
@@ -165,10 +166,10 @@ int TcpSocket::accept_() {
   return socket_descriptor;
 }
 
-ssize_t TcpSocket::send_(const void *msg) {
+ssize_t TcpSocket::send_(const void *msg, size_t len) {
   ssize_t bytes_sent = 0;
 
-  if ((bytes_sent = send(sd, msg, sizeof(msg), 0)) == -1) {
+  if ((bytes_sent = send(sd, msg, len, 0)) == -1) {
     throw SocketException(
         std::make_shared<SocketDefaultError>(errno)
     );
@@ -180,11 +181,16 @@ ssize_t TcpSocket::send_(const void *msg) {
 ssize_t TcpSocket::recv_(void *buf, size_t len) {
   ssize_t bytes_recv = 0;
 
+  std::cout << "Socket descriptor for recv is " << sd << std::endl;
+
   if ((bytes_recv = recv(sd, buf, len, 0)) == -1) {
+    std::cout << "bytes recv is " << bytes_recv << std::endl;
     throw SocketException(
         std::make_shared<SocketDefaultError>(errno)
     );
   }
+
+  std::cout << "bytes recv is " << bytes_recv << std::endl;
   
   return bytes_recv;
 }
