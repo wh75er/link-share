@@ -8,10 +8,10 @@ Sender::Sender(std::shared_ptr<Connection> connection)
 #ifdef DEBUG
   std::cout << "Sender constructor" << std::endl;
 #endif
-  connection->finish();
-  connection_.reset();
 }
 
 void Sender::send(std::string data) {
-  return;
+    connection_->write(data);
+    connection_->finish();
+    connection_.reset();
 }
