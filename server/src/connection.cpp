@@ -5,7 +5,9 @@
 Connection::Connection(std::shared_ptr<BaseTcpSocket> socket): 
   socket_(socket)
 {
+#ifdef DEBUG
   std::cout << "Connection constructor" << std::endl;
+#endif
 }
 
 std::string Connection::read() {
@@ -49,11 +51,15 @@ void Connection::start() {
     data = read();
   }
   catch(const BaseException& except) {
+#ifdef DEBUG
     std::cout << "Error occured in connection read! : " << except.what() << std::endl;
+#endif
     throw;
   }
 
+#ifdef DEBUG
   std::cout << "Got data from connection" << std::endl;
+#endif
 
   rh = std::make_unique<RequestHandler>(shared_from_this());
 

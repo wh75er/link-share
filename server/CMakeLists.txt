@@ -13,6 +13,11 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
 set(PROJECT_BUILD_DIR ${PROJECT_SOURCE_DIR}/build)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wpedantic")
 
+option(USE_DEBUG "Enter debug mode" OFF)
+if (USE_DEBUG)
+  add_definitions(-DDEBUG)
+endif()
+
 # Code coverage
 if (CMAKE_BUILD_TYPE MATCHES Debug)
   include(CodeCoverage)

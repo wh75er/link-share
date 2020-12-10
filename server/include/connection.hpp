@@ -11,7 +11,11 @@
 class Connection : public std::enable_shared_from_this<Connection> {
 public:
   explicit Connection(std::shared_ptr<BaseTcpSocket> socket);
-  ~Connection() {std::cout << "Connection destructor" << std::endl;};
+  ~Connection() {
+#ifdef DEBUG
+    std::cout << "Connection destructor" << std::endl;
+#endif
+  };
 
   std::string read();
   void write(const std::string& data);

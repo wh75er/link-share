@@ -14,7 +14,11 @@ class Connection;
 class RequestHandler {
 public:
   explicit RequestHandler(std::shared_ptr<Connection> connection);
-  ~RequestHandler() { std::cout << "RequestHandler destructor" << std::endl;};
+  ~RequestHandler() {
+#ifdef DEBUG
+    std::cout << "RequestHandler destructor" << std::endl;
+#endif
+  };
 
   void handle(std::string data);
 

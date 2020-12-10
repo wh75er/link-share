@@ -18,7 +18,9 @@ TCPserver::TCPserver(std::string address, std::string port):
 
   workers_count = std::thread::hardware_concurrency();
 
+#ifdef DEBUG
   std::cout << "Worker count is : " << workers_count << std::endl;
+#endif
 
   socket_ = std::make_shared<TcpSocket>(TcpSocket::Builder()
     .address(address)
@@ -64,11 +66,15 @@ void TCPserver::accept() {
     }
 
     if (connection_sd == TRY_ACCEPT_AGAIN) {
+#ifdef DEBUG
       std::cout << "There's no connections!" << std::endl;
+#endif
       continue;
     }
 
+#ifdef DEBUG
     std::cout << "Got a connection!(with socket )" << connection_sd << std::endl;
+#endif
 
     TcpSocket connection_socket = TcpSocket::Builder()
       .socket(connection_sd)
@@ -76,21 +82,29 @@ void TCPserver::accept() {
 
     // Accept connection and create Connection object
     if (futures.size() < workers_count) {
+#ifdef DEBUG
       std::cout << "Futures size is " << futures.size() << std::endl;
+#endif
       futures.push_back(std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(std::make_shared<TcpSocket>(connection_socket))->start();}));
     } else {
+#ifdef DEBUG
       std::cout << "Futures size is full(" << futures.size() << ")" << std::endl;
+#endif
       bool slot_found = false;
 
       while (!slot_found) {
+#ifdef DEBUG
         std::cout << "Trying to finished future!" << std::endl;
+#endif
 
         std::chrono::milliseconds time (TIMEOUT_MILLS);
 
         for (auto i = 0; i < futures.size() && !slot_found; i++) {
           if (futures[i].wait_for(time) == std::future_status::ready) {
+#ifdef DEBUG
             std::cout << "Found finished future!" << std::endl;
             std::cout << "Occupying feature # " << i << std::endl;
+#endif
 
             futures[i] = std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(std::make_shared<TcpSocket>(connection_socket))->start();});
 
@@ -112,7 +126,9 @@ void TCPserver::listen() {
   catch (const BaseException& except) {
     throw ServerException(except.error, "Failed to set socket to listening!");
   }
+#ifdef DEBUG
   std::cout << "Socket is listening!" << std::endl;
+#endif
 }
 
 bool TCPserver::is_running() {
