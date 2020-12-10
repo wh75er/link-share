@@ -5,15 +5,16 @@
 #include "handlers/baseHandler.hpp"
 #include "webLink.hpp"
 #include "response.hpp"
+#include "request.hpp"
 
 class DeleteLinkHandler: public BaseHandler {
 public:
-  DeleteLinkHandler(WebLink &request, Response &response);
-  ~DeleteLinkHandler() override {}
+  DeleteLinkHandler(LinkRequest &request, Response &response);
+  ~DeleteLinkHandler() {};
 
   void execute() override;
 
 private:
-  WebLink& request_;
+  LinkRequest& request_;
   Response& response_;
 };

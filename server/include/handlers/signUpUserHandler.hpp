@@ -9,7 +9,7 @@
 class SignUpUserHandler: public BaseHandler {
 public:
   SignUpUserHandler(User &request, Response &response);
-  ~SignUpUserHandler() override {}
+  ~SignUpUserHandler() {};
 
   void execute() override;
 

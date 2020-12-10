@@ -9,7 +9,7 @@
 class AddTagForLinkHandler: public BaseHandler {
 public:
   AddTagForLinkHandler(WebLink &request, Response &response);
-  ~AddTagForLinkHandler() override {}
+  ~AddTagForLinkHandler() {};
 
   void execute() override;
 

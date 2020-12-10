@@ -19,7 +19,7 @@ public:
   void handle(std::string data);
 
 private:
-  BodyParser parser;
+  std::shared_ptr<AbstractBodyParser> parser;
   BaseHandler handler;
   Sender sender;
 };

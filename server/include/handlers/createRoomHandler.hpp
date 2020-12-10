@@ -5,15 +5,16 @@
 #include "handlers/baseHandler.hpp"
 #include "room.hpp"
 #include "response.hpp"
+#include "request.hpp"
 
 class CreateRoomHandler: public BaseHandler {
 public:
-  CreateRoomHandler(Room &request, Response &response);
-  ~CreateRoomHandler() override {}
+  CreateRoomHandler(RoomRequest &request, Response &response);
+  ~CreateRoomHandler() {};
 
   void execute() override;
 
 private:
-  Room& request_;
+  RoomRequest& request_;
   Response& response_;
 };

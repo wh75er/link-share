@@ -5,15 +5,16 @@
 #include "handlers/baseHandler.hpp"
 #include "webLink.hpp"
 #include "response.hpp"
+#include "request.hpp"
 
 class GetSnapshotHandler: public BaseHandler {
 public:
-  GetSnapshotHandler(WebLink &request, Response &response);
-  ~GetSnapshotHandler() override {}
+  GetSnapshotHandler(SnapshotRequest &request, Response &response);
+  ~GetSnapshotHandler() {};
 
   void execute() override;
 
 private:
-  WebLink& request_;
+  SnapshotRequest& request_;
   Response& response_;
 };

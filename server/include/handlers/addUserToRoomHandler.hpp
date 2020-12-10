@@ -9,7 +9,7 @@
 class AddUserToRoomHandler: public BaseHandler {
 public:
   AddUserToRoomHandler(Room &request, Response &response);
-  ~AddUserToRoomHandler() override {}
+  ~AddUserToRoomHandler() {};
 
   void execute() override;
 
