@@ -7,10 +7,12 @@ int create_new_page(const std::string &url, const std::string &path_to_dir) {
     http_client my_client(url);
 
     my_client.send();
-
-    while (my_client.recieve() == REDIRECT) {
-        my_client.redirect();
-        my_client.send();
+    try {
+        while (my_client.recieve() == REDIRECT) {
+            my_client.redirect();
+            my_client.send();
+        }
+    } catch (std::exception) {
     }
 
     std::string path_to_static(path_to_dir);
@@ -28,11 +30,9 @@ int create_new_page(const std::string &url, const std::string &path_to_dir) {
     int k = 0;
     std::string edit_html = my_client.get_response();
     for (std::string url : my_html_parser.sources) {
-        std::cout << "\n@@@" << url << "@@@\n";
-
         try {
             my_client.new_request(url);
-        } catch (std::runtime_error) {
+        } catch (std::exception) {
             continue;
         }
 
@@ -54,7 +54,7 @@ int create_new_page(const std::string &url, const std::string &path_to_dir) {
             }
         }
 
-        if (recv == REDIRECT) {
+        if (recv == REDIRECT && recv == FAILURE) {
             continue;
         }
 
@@ -74,7 +74,6 @@ int create_new_page(const std::string &url, const std::string &path_to_dir) {
             my_css_parser.parse(path_to_new_static_file);
 
             for (std::string css_url : my_css_parser.sources) {
-                std::cout << "\n&&&" << css_url << "&&&\n";
                 std::string::size_type new_url_pos = url.find_last_of('/');
                 std::string new_url = url.substr(0, new_url_pos);
                 new_url += "/" + css_url;
@@ -87,7 +86,7 @@ int create_new_page(const std::string &url, const std::string &path_to_dir) {
 
                 try {
                     my_client.new_request(new_url);
-                } catch (std::runtime_error) {
+                } catch (std::exception) {
                     continue;
                 }
 
@@ -113,8 +112,6 @@ int create_new_page(const std::string &url, const std::string &path_to_dir) {
                     continue;
                 }
 
-                /*std::string path_to_new_css_static_file(argv[2]);
-                path_to_new_css_static_file += "/static/";*/
                 std::string path_to_new_css_static_file(path_to_dir);
                 path_to_new_css_static_file += "/static/";
                 path_to_new_css_static_file += std::to_string(k++);
@@ -146,10 +143,6 @@ int create_new_page(const std::string &url, const std::string &path_to_dir) {
             std::string::size_type start_pos = edit_html.find(url);
             if (start_pos == std::string::npos) {
                 break;
-                // std::cout << edit_html;
-                // std::cout << '|' << url << '|' << '\n';
-                // std::cout << edit_html.size() << '\n';
-                // puts("wtf");
             }
             edit_html.erase(start_pos, url.size());
             path_to_new_static_file.erase(0, path_to_dir.size());
