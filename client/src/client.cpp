@@ -1,15 +1,17 @@
 #include "client.hpp"
 
-Client::Client() : sock() {}
+Client::Client(const std::string& _host, int _port) : host(_host), port(_port), sock(-1) {}
 
-Client::~Client() {}
+void Client::Connect() {
+    sock.Connect(host, port);
+}
 
-void Client::connect(const std::string& host, int port) {}
+std::string Client::readFromServer() { 
+    return sock.Recv();
+}
 
-std::string Client::readFromServer() { return "str"; }
-
-void Client::writeToServer(std::string& req) {}
-
-void Client::closeCon() {}
+void Client::writeToServer(std::string& req) {
+    sock.Send(req);
+}
 
 

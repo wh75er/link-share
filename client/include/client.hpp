@@ -1,22 +1,22 @@
 #pragma once
-
-#include "socket.hpp"
-
 #include <netinet/in.h>
 #include <string>
-#include <vector>
+
+#include "socket.hpp"
+#include "socket.hpp"
+
 
 
 class Client {
 public:
-    Client();
-    ~Client();
-    void connect(const std::string& host, int port);
+    Client(const std::string& _host, int _port);
+    ~Client() {}
+    void Connect();
     void writeToServer(std::string& req);
     std::string readFromServer();
-    void closeCon();
-
 private:
+    const std::string& host;
+    int port;
     Socket sock;
 };
 
