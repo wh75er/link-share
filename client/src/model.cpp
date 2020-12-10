@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "model.hpp"
-#include "requestManager.hpp"
 #include "requestHandler.hpp"
 #include "room.hpp"
 #include "userinfo.hpp"
