@@ -1,6 +1,6 @@
 #include "handlers/deleteLinkHandler.hpp"
 
-DeleteLinkHandler::DeleteLinkHandler(LinkRequest &request, Response &response)
+DeleteLinkHandler::DeleteLinkHandler(std::shared_ptr<LinkRequest> request, std::shared_ptr<Response> response)
   : request_(request), response_(response)
 {
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "handlers/baseHandler.hpp"
 #include "room.hpp"
@@ -9,12 +10,12 @@
 
 class DeleteRoomHandler: public BaseHandler {
 public:
-  DeleteRoomHandler(RoomRequest &request, Response &response);
+  DeleteRoomHandler(std::shared_ptr<RoomRequest> request, std::shared_ptr<Response> response);
   ~DeleteRoomHandler() {};
 
   void execute() override;
 
 private:
-  RoomRequest& request_;
-  Response& response_;
+  std::shared_ptr<RoomRequest> request_;
+  std::shared_ptr<Response> response_;
 };
