@@ -1,15 +1,7 @@
 #include "parser.hpp"
 #include <fstream>
 
-html_parser::html_parser(const std::string &_url) : parser(_url){};
-
 bool is_file(const std::string &str) {
-    //    std::cout << str;
-    //  puts("\n");
-    // std::string::size_type src_url_start_pos = str.find_last_of('.');
-
-    //проверяет имеет ли ресурс расширение(ищет точку
-    //и проверяте что после нее нет '/')
     std::string::size_type src_url_start_pos = str.find('"');
     if (src_url_start_pos == std::string::npos) {
         src_url_start_pos = str.find_last_of("'");
@@ -31,10 +23,17 @@ bool is_file(const std::string &str) {
         }
         std::string format =
             buf.substr(src_format_start_pos, buf.size() - src_format_start_pos);
-        // std::cout << "format: " << format << '\n';
         if (format.find("/") == std::string::npos) {
             return true;
         }
+    }
+
+    return false;
+}
+
+bool html_parser::is_css(const std::string &str) {
+    if (str.find(".css") != std::string::npos) {
+        return true;
     }
 
     return false;
@@ -79,36 +78,28 @@ bool html_parser::is_source(const std::string &str) {
     return false;
 }
 
-parser_exit_status html_parser::parse(const std::string &path_to_file) {
+void html_parser::parse(const std::string &path_to_file) {
     std::ifstream html_file(path_to_file);
     if (!html_file) {
+        html_file.close();
         throw std::invalid_argument("file error");
-        return FAILURE_PARSE;
     }
     std::string src_string;
 
     while (!html_file.eof()) {
-        // html_file >> src_string;
         std::getline(html_file, src_string, '>');
         if (is_source(src_string)) {
-            // puts("\n...............");
-            // std::cout << src_string << "\n";
-            // puts("\t");
-
             get_src_url_from_string(src_string);
-            // std::cout << "url: " << sources.back() << '\n';
         }
     }
 
-    return SUCCESS_PARSE;
+    html_file.close();
 }
 
 void html_parser::get_src_url_from_string(const std::string &str) {
     std::string::size_type url_start_pos = str.find("href=");
     if (url_start_pos != std::string::npos) {
-        url_start_pos += strlen("href=") + 1;
-        //как тада засунуть кавычку href=" пока не придумал
-        //поэтмоу просто +1
+        url_start_pos += strlen("href=\"");
         std::string::size_type url_end_pos = str.find('"', url_start_pos);
         if (url_end_pos == std::string::npos) {
             url_end_pos = str.find("'", url_start_pos);
@@ -125,9 +116,7 @@ void html_parser::get_src_url_from_string(const std::string &str) {
 
     url_start_pos = str.find("src=");
     if (url_start_pos != std::string::npos) {
-        url_start_pos += strlen("src=") + 1;
-        //как тада засунуть кавычку href=" пока не придумал
-        //поэтмоу просто +1
+        url_start_pos += strlen("src=\"");
         std::string::size_type url_end_pos = str.find('"', url_start_pos);
         if (url_end_pos == std::string::npos) {
             url_end_pos = str.find("'", url_start_pos);
@@ -149,10 +138,63 @@ void html_parser::get_src_url_from_string(const std::string &str) {
     return;
 }
 
-bool html_parser::is_css(const std::string &str) { return false; }
+void css_parser::parse(const std::string &path_to_file) {
+    std::ifstream css_file(path_to_file);
+    if (!css_file) {
+        throw std::invalid_argument("file error");
+    }
 
-parser_exit_status css_parser::parse(const std::string &path_to_file) {
-    return FAILURE_PARSE;
+    std::string src_string;
+    while (!css_file.eof()) {
+        std::getline(css_file, src_string, ';');
+        if (is_source(src_string)) {
+            get_src_url_from_string(src_string);
+        }
+    }
 }
 
-void css_parser::get_src_url_from_string(const std::string &str) { return; }
+bool css_parser::is_source(const std::string &str) {
+    std::string::size_type url_start_pos = str.find("src:");
+    if (url_start_pos != std::string::npos) {
+        url_start_pos = str.find("url(", url_start_pos);
+        if (url_start_pos != std::string::npos) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void css_parser::get_src_url_from_string(const std::string &str) {
+    std::string::size_type src_start_pos = str.find("url(");
+    if (src_start_pos != std::string::npos) {
+        src_start_pos += strlen("url(");
+        if (str[src_start_pos] == '"' || str[src_start_pos] == '\'') {
+            ++src_start_pos;
+            std::string::size_type src_end_pos = str.find('"', src_start_pos);
+            if (src_end_pos == std::string::npos) {
+                std::string::size_type src_end_pos =
+                    str.find('\'', src_start_pos);
+            }
+            std::string url =
+                str.substr(src_start_pos, src_end_pos - src_start_pos);
+            sources.push_back(url);
+
+        } else {
+            std::string::size_type src_end_pos = str.find(')', src_start_pos);
+            if (src_end_pos != std::string::npos) {
+                std::string url =
+                    str.substr(src_start_pos, src_end_pos - src_start_pos);
+                sources.push_back(url);
+            }
+        }
+    }
+    return;
+}
+
+std::string css_parser::file_type(const std::string &url) {
+    std::string::size_type type_start_pos = url.find_last_of('.');
+    if (type_start_pos == std::string::npos) {
+        throw std::runtime_error("invalid url");
+    }
+    return url.substr(type_start_pos, url.size() - type_start_pos);
+}

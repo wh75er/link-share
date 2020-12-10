@@ -1,51 +1,20 @@
 #include "gtest/gtest.h"
 
-#include "http_client.hpp"
 #include "parser.hpp"
+#include <fstream>
 
-/*TEST(html_parser_test, parse_test) {
-    http_client new_client("www.example.com");
-    ASSERT_EQ(new_client.send("GET https://www.example.com HTTP/1.1\r\nHost: "
-                              "www.example.com\r\n"),
-              SUCCESS);
-    std::string *path_to_file;
-    ASSERT_EQ(new_client.recieve(path_to_file), SUCCESS);
-    ASSERT_EQ(path_to_file->c_str(), "example.html");
+TEST(html_parser_test, parse_test) {
+    puts("\ng\n");
+    std::string path_to_file("parse_test_file.txt");
+    std::ofstream file(path_to_file);
+    assert(file);
+    file << "<div>Some text</div>"
+            "<img src=\"img/src.png\">"
+            "<link href=\"https://style.css\">";
+    file.close();
+    html_parser my_html_parser;
+    my_html_parser.parse(path_to_file);
 
-    html_parser new_parser("https://www.example.com");
-    ASSERT_EQ(new_parser.parse(*path_to_file), SUCCESS_PARSE);
+    EXPECT_EQ(my_html_parser.sources[0], "img/src.png");
+    EXPECT_EQ(my_html_parser.sources[1], "https://style.css");
 }
-
-TEST(html_parser_test, get_src_url_from_string_test) {
-    html_parser new_parser("");
-    std::string str = "<img src=";
-    str += '"';
-    str += "url";
-    str += '"';
-    str += ">";
-    ASSERT_NE(new_parser.get_src_url_from_string(str), nullptr);
-    ASSERT_STREQ(new_parser.get_src_url_from_string(str)->c_str(), "url");
-}
-
-TEST(html_parser_test, is_css_test) {
-    html_parser new_parser("");
-    std::string str = "asd.css";
-    ASSERT_EQ(new_parser.is_css(str), true);
-}
-
-TEST(css_parser_test, parse_test) {
-    css_parser new_parser("");
-    std::string path_to_file("suorce.css");
-    ASSERT_EQ(new_parser.parse(path_to_file), SUCCESS_PARSE);
-}
-
-TEST(css_parser_test, get_src_url_from_string_test) {
-    css_parser new_parser("");
-    std::string str = "background: url(";
-    str += '"';
-    str += "url";
-    str += '"';
-    str += ")";
-    ASSERT_NE(new_parser.get_src_url_from_string(str), nullptr);
-    ASSERT_STREQ(new_parser.get_src_url_from_string(str)->c_str(), "url");
-}*/
