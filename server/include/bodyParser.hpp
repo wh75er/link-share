@@ -19,7 +19,7 @@ enum RequestCommand {
 
 class AbstractBodyParser {
 public:
-  AbstractBodyParser();
+//  AbstractBodyParser() {};
   virtual ~AbstractBodyParser() {};
 
   virtual std::tuple<int, std::shared_ptr<BaseRequest>> parse(std::string data) = 0;
@@ -27,8 +27,8 @@ public:
 
 class TcpStringBodyParser : public AbstractBodyParser {
   public:
-    TcpStringBodyParser();
-    ~TcpStringBodyParser();
+    TcpStringBodyParser() {};
+    ~TcpStringBodyParser() {};
     
     std::tuple<int, std::shared_ptr<BaseRequest>> parse(std::string data) override;
 

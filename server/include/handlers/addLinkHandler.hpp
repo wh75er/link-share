@@ -1,20 +1,22 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "handlers/baseHandler.hpp"
 #include "webLink.hpp"
 #include "response.hpp"
+#include "request.hpp"
 
 class AddLinkHandler: public BaseHandler {
 public:
   AddLinkHandler();
-  AddLinkHandler(WebLink &request, Response &response);
+  AddLinkHandler(std::shared_ptr<LinkRequest> request, std::shared_ptr<Response> response);
   ~AddLinkHandler() {};
 
   void execute() override;
 
 private:
-  WebLink& request_;
-  Response& response_;
+  std::shared_ptr<LinkRequest> request_;
+  std::shared_ptr<Response> response_;
 };

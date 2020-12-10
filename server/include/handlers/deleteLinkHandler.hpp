@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "handlers/baseHandler.hpp"
 #include "webLink.hpp"
@@ -9,12 +10,12 @@
 
 class DeleteLinkHandler: public BaseHandler {
 public:
-  DeleteLinkHandler(LinkRequest &request, Response &response);
+  DeleteLinkHandler(std::shared_ptr<LinkRequest> request, std::shared_ptr<Response> response);
   ~DeleteLinkHandler() {};
 
   void execute() override;
 
 private:
-  LinkRequest& request_;
-  Response& response_;
+  std::shared_ptr<LinkRequest> request_;
+  std::shared_ptr<Response> response_;
 };

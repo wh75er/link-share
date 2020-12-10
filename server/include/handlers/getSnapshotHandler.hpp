@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "handlers/baseHandler.hpp"
 #include "webLink.hpp"
@@ -9,12 +10,12 @@
 
 class GetSnapshotHandler: public BaseHandler {
 public:
-  GetSnapshotHandler(SnapshotRequest &request, Response &response);
+  GetSnapshotHandler(std::shared_ptr<SnapshotRequest> request, std::shared_ptr<Response> response);
   ~GetSnapshotHandler() {};
 
   void execute() override;
 
 private:
-  SnapshotRequest& request_;
-  Response& response_;
+  std::shared_ptr<SnapshotRequest> request_;
+  std::shared_ptr<Response> response_;
 };
