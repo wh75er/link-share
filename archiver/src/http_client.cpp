@@ -1,7 +1,7 @@
 #include "http_client.hpp"
 
 http_request::http_request(const std::string &url) {
-    if (url == "\0") {
+    if (url.empty()) {
         throw std::invalid_argument("empty url");
     }
 
@@ -41,7 +41,6 @@ http_response::http_response(const std::string &response) {
         throw std::invalid_argument("broken response");
     } else {
         query = response.substr(0, pos);
-
         html_body = response.substr(pos, response.size() - pos);
     }
 }
@@ -153,7 +152,7 @@ enum client_exit_status http_client::recieve() {
         std::cout << "\n\n|||" << len << "\n\n";
     } while (len >= 0);
     */
-    std::cout << request.query << '\n';
+    // std::cout << request.query << '\n';
     // puts("..............\n");
     while (SSL_read(ssl, buf, 1023) >= 0) {
         ret.append(buf, strlen(buf));
@@ -220,6 +219,7 @@ void http_client::redirect() {
 }
 
 void http_client::new_request(const std::string &url) {
+    std::cout << '\n' << url << '\n';
     if (url.find("http") != std::string::npos) {
         ::close(socket_fd);
         socket_setings(url);
