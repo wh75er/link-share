@@ -137,51 +137,34 @@ enum client_exit_status http_client::recieve() {
     int len = -1;
     char buf[1024];
     bzero(buf, 1024);
-    /*
-    do {
-        len = SSL_read(ssl, buf, 1023);
-        if (len < 0) {
-            int ssl_err = SSL_get_error(ssl, len);
-            throw std::runtime_error("the read operation was not successful: " +
-                                     std::string(strerror(ssl_err)));
-            return FAILURE;
-        }
-        // std::cout << buf;
-        ret.append(buf, strlen(buf));
-        bzero(buf, 1024);
-        std::cout << "\n\n|||" << len << "\n\n";
-    } while (len >= 0);
-    */
-    // std::cout << request.query << '\n';
-    // puts("..............\n");
     while (SSL_read(ssl, buf, 1023) >= 0) {
         ret.append(buf, strlen(buf));
-        // std::cout << buf;
         bzero(buf, 1024);
     }
-    // std::cout << ret;
+    // std::cout << request.query;
 
     response = http_response(ret);
+
     // std::cout << response.query;
 
     switch (response.code) {
     case 200:
-        puts("200");
+        // puts("200");
         return SUCCESS;
     case 301:
-        puts("301");
+        // puts("301");
         return REDIRECT;
     case 302:
-        puts("302");
+        // puts("302");
         return REDIRECT;
     case 303:
-        puts("303");
+        // puts("303");
         return REDIRECT;
     case 307:
-        puts("307");
+        // puts("307");
         return REDIRECT;
     default:
-        puts("fail");
+        // puts("fail");
         return FAILURE;
     }
 }
@@ -189,7 +172,6 @@ enum client_exit_status http_client::recieve() {
 const std::string &http_client::get_response() { return response.html_body; };
 
 void http_client::redirect() {
-    // std::cout << request.query;
     std::string::size_type pos = response.query.find("Location: ");
     if (pos == std::string::npos) {
         pos = response.query.find("location: ");
@@ -219,7 +201,6 @@ void http_client::redirect() {
 }
 
 void http_client::new_request(const std::string &url) {
-    std::cout << '\n' << url << '\n';
     if (url.find("http") != std::string::npos) {
         ::close(socket_fd);
         socket_setings(url);

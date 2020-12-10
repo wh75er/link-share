@@ -194,7 +194,7 @@ void css_parser::get_src_url_from_string(const std::string &str) {
 std::string css_parser::file_type(const std::string &url) {
     std::string::size_type type_start_pos = url.find_last_of('.');
     if (type_start_pos == std::string::npos) {
-        throw std::runtime_error("invalid url");
+        return "/0";
     }
     return url.substr(type_start_pos, url.size() - type_start_pos);
 }
