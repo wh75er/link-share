@@ -3,6 +3,7 @@
 #include <iostream>
 
 #define TRY_ACCEPT_AGAIN -1
+#define TIMEOUT_MILLS 100
 
 TCPserver::TCPserver(std::string address, std::string port):
   address_(address), 
@@ -67,7 +68,7 @@ void TCPserver::accept() {
       continue;
     }
 
-    std::cout << "Got a connection!" << std::endl;
+    std::cout << "Got a connection!(with socket )" << connection_sd << std::endl;
 
     TcpSocket connection_socket = TcpSocket::Builder()
       .socket(connection_sd)
@@ -76,19 +77,23 @@ void TCPserver::accept() {
     // Accept connection and create Connection object
     if (futures.size() < workers_count) {
       std::cout << "Futures size is " << futures.size() << std::endl;
-      futures.push_back(std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket)->start();}));
+      futures.push_back(std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(std::make_shared<TcpSocket>(connection_socket))->start();}));
     } else {
       std::cout << "Futures size is full(" << futures.size() << ")" << std::endl;
       bool slot_found = false;
 
       while (!slot_found) {
         std::cout << "Trying to finished future!" << std::endl;
-        std::chrono::milliseconds time (100);
+
+        std::chrono::milliseconds time (TIMEOUT_MILLS);
+
         for (auto i = 0; i < futures.size() && !slot_found; i++) {
           if (futures[i].wait_for(time) == std::future_status::ready) {
             std::cout << "Found finished future!" << std::endl;
             std::cout << "Occupying feature # " << i << std::endl;
-            futures[i] = std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(connection_socket)->start();});
+
+            futures[i] = std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(std::make_shared<TcpSocket>(connection_socket))->start();});
+
             slot_found = true;
           }
         }
