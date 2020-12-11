@@ -16,17 +16,18 @@ std::string Connection::read() {
   while (true) {
     int n = socket_->recv_(buf, sizeof(buf));
 
-    if (-1 == n && errno != EAGAIN) {
-      throw std::runtime_error("read failed: " + std::string(strerror(errno)));
-    }
-
-    if (0 == n || -1 == n)  // -1 - timeout
+    if (n == 0) {
       break;
+    }
 
     ret.append(buf, n);
 
     while (ret.back() == '\r' || ret.back() == '\n')
       ret.pop_back();
+
+    if (ret.back() == '|') {
+      break;
+    }
   }
   return ret;
 }
