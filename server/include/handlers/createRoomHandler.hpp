@@ -10,12 +10,11 @@
 
 class CreateRoomHandler: public BaseHandler {
 public:
-  CreateRoomHandler(std::shared_ptr<RoomRequest> request, std::shared_ptr<Response> response);
+  CreateRoomHandler(RoomRequest request);
   ~CreateRoomHandler() {};
 
   void execute() override;
 
 private:
-  std::shared_ptr<RoomRequest> request_;
-  std::shared_ptr<Response> response_;
+  RoomRequest request_;
 };

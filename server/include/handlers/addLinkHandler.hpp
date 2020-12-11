@@ -11,12 +11,11 @@
 class AddLinkHandler: public BaseHandler {
 public:
   AddLinkHandler();
-  AddLinkHandler(std::shared_ptr<LinkRequest> request, std::shared_ptr<Response> response);
+  AddLinkHandler(LinkRequest request);
   ~AddLinkHandler() {};
 
   void execute() override;
 
 private:
-  std::shared_ptr<LinkRequest> request_;
-  std::shared_ptr<Response> response_;
+  LinkRequest request_;
 };

@@ -22,17 +22,15 @@ void RequestHandler::handle(std::string data) {
   // Create parser & parse data
   parser = std::make_shared<TcpStringBodyParser>();
 
-//  int command = 0;
-//  std::shared_ptr<BaseRequest> request;
-//  std::tie(command, request) = parser->parse(data);
+//  handler = parser->parse(data);
 
-    sender.send(data);
+  // set response on handler
 
-  // Produce command for corresponding command id
-
-  // execute command
+  // execute handler
 
   // use sender to send data back to client
+
+  sender.send(data);
 
   return;
 }

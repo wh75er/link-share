@@ -10,12 +10,11 @@
 
 class GetSnapshotHandler: public BaseHandler {
 public:
-  GetSnapshotHandler(std::shared_ptr<SnapshotRequest> request, std::shared_ptr<Response> response);
+  GetSnapshotHandler(SnapshotRequest request);
   ~GetSnapshotHandler() {};
 
   void execute() override;
 
 private:
-  std::shared_ptr<SnapshotRequest> request_;
-  std::shared_ptr<Response> response_;
+  SnapshotRequest request_;
 };

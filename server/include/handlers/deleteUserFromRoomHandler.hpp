@@ -10,12 +10,11 @@
 
 class DeleteUserFromRoomHandler: public BaseHandler {
 public:
-  DeleteUserFromRoomHandler(std::shared_ptr<UsersRoomRequest> request, std::shared_ptr<Response> response);
+  DeleteUserFromRoomHandler(UsersRoomRequest request);
   ~DeleteUserFromRoomHandler() {};
 
   void execute() override;
 
 private:
-  std::shared_ptr<UsersRoomRequest> request_;
-  std::shared_ptr<Response> response_;
+  UsersRoomRequest request_;
 };
