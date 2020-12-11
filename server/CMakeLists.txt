@@ -32,7 +32,7 @@ endif()
 
 
 file(GLOB_RECURSE lib_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*)
 
 
 add_library(${CMAKE_PROJECT_NAME}_lib SHARED ${lib_sources})
