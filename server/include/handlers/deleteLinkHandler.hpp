@@ -10,12 +10,11 @@
 
 class DeleteLinkHandler: public BaseHandler {
 public:
-  DeleteLinkHandler(std::shared_ptr<LinkRequest> request, std::shared_ptr<Response> response);
+  DeleteLinkHandler(LinkRequest request);
   ~DeleteLinkHandler() {};
 
   void execute() override;
 
 private:
-  std::shared_ptr<LinkRequest> request_;
-  std::shared_ptr<Response> response_;
+  LinkRequest request_;
 };
