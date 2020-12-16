@@ -4,9 +4,9 @@
 
 #include <fstream>
 
-/*TEST(https_socket, constructor_test) {
+TEST(https_socket, constructor_test) {
     ASSERT_NO_THROW(HttpsSocket("http://www.example.com/"));
-}*/
+}
 
 TEST(https_socket, send_recv_test_no_exceptions) {
     HttpsSocket my_socket("http://www.example.com/");
@@ -14,17 +14,19 @@ TEST(https_socket, send_recv_test_no_exceptions) {
     ASSERT_NO_THROW(my_socket.recv());
 }
 
-/*TEST(https_socket, send_recv_text_test) {
+TEST(https_socket, send_recv_text_test) {
     HttpsSocket my_socket("http://www.example.com/");
     my_socket.send();
     HttpResponse new_response = my_socket.recv();
 
     std::ifstream file("../test/file1.tst");
 
-    char *test_file = new char[new_response.contentLength];
+    char *test_file = new char[new_response.contentLength - 1];
 
-    file.read(test_file, new_response.contentLength);
+    file.read(test_file, new_response.contentLength - 1);
     EXPECT_STREQ(test_file, new_response.body);
+
+    delete[] test_file;
 
     file.close();
 }
@@ -43,4 +45,4 @@ TEST(https_socket, send_recv_image_test) {
     EXPECT_STREQ(test_file, new_response.body);
 
     file.close();
-}*/
+}

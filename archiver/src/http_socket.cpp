@@ -57,7 +57,6 @@ void HttpResponse::createQuery(const std::string &response) {
     query = response.substr(0, pos);
     std::transform(query.begin(), query.end(), query.begin(),
                    [](unsigned char c) { return std::tolower(c); });
-    // std::tolower(query);
 }
 
 void HttpResponse::findCode() {
@@ -93,6 +92,19 @@ void HttpResponse::findType() {
     return;
 }
 
+HttpResponse &HttpResponse::operator=(const HttpResponse &other) {
+    query = other.query;
+    type = other.type;
+    contentLength = other.contentLength;
+    body = new char[contentLength - 1];
+    memcpy(body, other.body, contentLength - 1);
+    code = other.code;
+
+    return *this;
+}
+
+HttpResponse::HttpResponse(const HttpResponse &other) { *this = other; }
+
 void HttpResponse::createBody(const char *buf) {
     // std::cout << contentLength;
 
@@ -104,12 +116,12 @@ void HttpResponse::createBody(const char *buf) {
         delete[] body;
     }
 
-    body = new char[contentLength];
+    body = new char[contentLength - 1];
     if (body == nullptr) {
         throw std::bad_alloc();
     }
 
-    strncpy(body, buf, contentLength - 1);
+    memcpy(body, buf + query.size() + strlen("\r\n\r\n"), contentLength - 1);
 
     // std::cout << body;
 }

@@ -4,17 +4,6 @@
 
 #define BUFFSIZE 1024
 
-HttpResponse HttpResponse::operator=(const HttpResponse other) {
-    query = other.query;
-    type = other.type;
-    contentLength = other.contentLength;
-    body = new char[contentLength];
-    strncpy(body, other.body, contentLength - 1);
-    code = other.code;
-
-    return *this;
-}
-
 HttpsSocket::HttpsSocket(const std::string &url) : Socket(url) {
     SSLSettings();
 }
