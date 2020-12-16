@@ -94,14 +94,14 @@ void HttpResponse::findType() {
 }
 
 void HttpResponse::createBody(const char *buf) {
-    std::cout << contentLength;
+    // std::cout << contentLength;
 
     if (buf == nullptr) {
         throw std::runtime_error("empty response");
     }
 
     if (body != nullptr) {
-        delete body;
+        delete[] body;
     }
 
     body = new char[contentLength];
@@ -109,7 +109,9 @@ void HttpResponse::createBody(const char *buf) {
         throw std::bad_alloc();
     }
 
-    memcpy(body, buf + query.size() + strlen("\r\n\r\n"), contentLength);
+    strncpy(body, buf, contentLength - 1);
+
+    // std::cout << body;
 }
 
 void HttpResponse::findContentLength() {
@@ -120,12 +122,7 @@ void HttpResponse::findContentLength() {
 
     start_pos += strlen("content-length: ");
 
-    size_t end_pos = query.find(' ', start_pos);
-    if (end_pos == std::string::npos) {
-        throw std::logic_error("brocken response");
-    }
-
-    std::string size = query.substr(start_pos, end_pos - start_pos);
+    std::string size = query.substr(start_pos, query.size() - start_pos);
 
     contentLength = std::stoi(size);
 }
@@ -155,7 +152,7 @@ HttpResponse::HttpResponse(const char *buf) : body(nullptr) {
         throw std::runtime_error("empty response");
     }
 
-    std::string response(buf);
+    std::string response(buf, 1024);
 
     createQuery(response);
     findCode();
@@ -163,6 +160,12 @@ HttpResponse::HttpResponse(const char *buf) : body(nullptr) {
         findType();
         findContentLength();
         createBody(buf);
+    }
+}
+
+HttpResponse::~HttpResponse() {
+    if (body != nullptr) {
+        delete[] body;
     }
 }
 
@@ -192,6 +195,8 @@ Socket::Socket(const std::string &url) : request(url), response() {
     resolve(request.host);
     socketSettings();
 }
+
+Socket::~Socket() { ::close(socketFd); }
 
 void Socket::resolve(const std::string &url) {
     size_t i = 0;
@@ -224,9 +229,8 @@ HttpResponse Socket::recv() {
 
     try {
         response = HttpResponse(buf);
-    } catch (std::exception) {
-        free(buf);
-        throw std::runtime_error("creating response failure");
+    } catch (std::exception &e) {
+        std::cerr << e.what() << '\n';
     }
 
     free(buf);

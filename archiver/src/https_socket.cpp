@@ -4,8 +4,25 @@
 
 #define BUFFSIZE 1024
 
+HttpResponse HttpResponse::operator=(const HttpResponse other) {
+    query = other.query;
+    type = other.type;
+    contentLength = other.contentLength;
+    body = new char[contentLength];
+    strncpy(body, other.body, contentLength - 1);
+    code = other.code;
+
+    return *this;
+}
+
 HttpsSocket::HttpsSocket(const std::string &url) : Socket(url) {
     SSLSettings();
+}
+
+HttpsSocket::~HttpsSocket() {
+    SSL_shutdown(ssl);
+    SSL_free(ssl);
+    ::close(socketFd);
 }
 
 void HttpsSocket::SSLSettings() {
@@ -47,6 +64,8 @@ void HttpsSocket::SSLSettings() {
         throw std::runtime_error("TLS/SSL handshake was not saccessful: " +
                                  std::string(strerror(ssl_err)));
     }
+
+    SSL_CTX_free(ctx);
 }
 
 void HttpsSocket::__send() {
@@ -80,8 +99,9 @@ char *HttpsSocket::__recv() {
 
     int len = 1;
     int size = 0;
-    char *buf = new char[BUFFSIZE];
-    strcpy(buf, "");
+    char *buf = (char *)malloc(BUFFSIZE * sizeof(char));
+    // strcpy(buf, "");
+    bzero(buf, BUFFSIZE);
     char *buf_ptr = buf;
     while (len > 0) {
         len = SSL_read(ssl, buf_ptr, BUFFSIZE);
@@ -94,11 +114,12 @@ char *HttpsSocket::__recv() {
     }
     // puts("g");
 
-    // std::cout << size;
+    // std::cout << buf;
 
     /*std::ofstream file("any.png", std::ios::binary);
     file.write(buf + 764, 2746);
     file.close();*/
+    buf_ptr = nullptr;
 
     return buf;
 }

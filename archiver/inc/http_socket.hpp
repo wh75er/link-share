@@ -21,7 +21,11 @@ struct HttpRequest {
 
 struct HttpResponse {
     HttpResponse() : body(nullptr){};
+    HttpResponse operator=(const HttpResponse other);
     HttpResponse(const char *buf);
+
+    ~HttpResponse();
+
     std::string query;
     enum contentType type;
     char *body;
@@ -41,6 +45,7 @@ struct HttpResponse {
 class Socket {
 public:
     Socket(const std::string &url);
+    ~Socket();
     void send();
     HttpResponse recv();
 
