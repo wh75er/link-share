@@ -38,7 +38,7 @@ jobs:
           cmake ..
           make
           
-      - name: test http_client lib
+      - name: test https_client lib
         run: |
           cd archiver
           cd build
