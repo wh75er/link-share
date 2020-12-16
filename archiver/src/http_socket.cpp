@@ -51,7 +51,7 @@ HttpRequest::HttpRequest(const std::string &url) {
 void HttpResponse::createQuery(const std::string &response) {
     std::string::size_type pos = response.find("\r\n\r\n");
     if (pos == std::string::npos) {
-        throw std::invalid_argument("broken response");
+        throw std::invalid_argument("brocken response");
     }
 
     query = response.substr(0, pos);
@@ -62,7 +62,7 @@ void HttpResponse::createQuery(const std::string &response) {
 void HttpResponse::findCode() {
     std::string::size_type code_pos = query.find(" ");
     if (code_pos == std::string::npos) {
-        throw std::invalid_argument("broken query");
+        throw std::invalid_argument("brocken query");
     }
 
     code = std::stoi(query.substr(code_pos + 1, 3));
@@ -71,7 +71,7 @@ void HttpResponse::findCode() {
 void HttpResponse::findType() {
     std::string::size_type start_pos = query.find("content-type: ");
     if (start_pos == std::string::npos) {
-        throw std::invalid_argument("broken query");
+        throw std::invalid_argument("brocken query");
     }
 
     start_pos += strlen("content-type: ");
@@ -96,7 +96,11 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other) {
     query = other.query;
     type = other.type;
     contentLength = other.contentLength;
-    body = new char[contentLength - 1];
+    body = new char[contentLength];
+    if (body == nullptr) {
+        throw std::bad_alloc();
+    }
+    bzero(body, contentLength);
     memcpy(body, other.body, contentLength - 1);
     code = other.code;
 
@@ -116,14 +120,13 @@ void HttpResponse::createBody(const char *buf) {
         delete[] body;
     }
 
-    body = new char[contentLength - 1];
+    body = new char[contentLength];
     if (body == nullptr) {
         throw std::bad_alloc();
     }
+    bzero(body, contentLength);
 
     memcpy(body, buf + query.size() + strlen("\r\n\r\n"), contentLength - 1);
-
-    // std::cout << body;
 }
 
 void HttpResponse::findContentLength() {
@@ -249,35 +252,3 @@ HttpResponse Socket::recv() {
 
     return response;
 }
-
-/*http_response::http_response(const std::string &response) {
-    std::string::size_type code_pos = response.find(" ");
-    if (code_pos == std::string::npos) {
-        throw std::invalid_argument("broken response");
-    } else {
-        code = std::stoi(response.substr(code_pos + 1, 3));
-    }
-
-    std::string::size_type pos = response.find("\r\n\r\n");
-
-    if (pos == std::string::npos) {
-        throw std::invalid_argument("broken response");
-    } else {
-        query = response.substr(0, pos);
-        html_body = response.substr(pos, response.size() - pos);
-    }
-}*/
-
-/*std::string ret = "\0";
-int len = -1;
-char buf[1024];
-bzero(buf, 1024);
-while (SSL_read(ssl, buf, 1023) >= 0) {
-    ret.append(buf, strlen(buf));
-    bzero(buf, 1024);
-}
-// std::cout << request.query;
-
-response = http_response(ret);
-
-// std::cout << response.q*/

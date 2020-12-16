@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS "-std=c++17 -std=gnu++17 -lstdc++fs -g")
+set(CMAKE_CXX_FLAGS "-std=c++17 -std=gnu++17 -lstdc++fs")
 
 #add_library(http_client STATIC http_client.cpp)
 #target_include_directories(http_client PUBLIC "${PROJECT_SOURCE_DIR}/inc")

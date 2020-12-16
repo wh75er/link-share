@@ -15,7 +15,6 @@ HttpsSocket::~HttpsSocket() {
 }
 
 void HttpsSocket::SSLSettings() {
-    //это потом надо убрать
     SSL_library_init();
     SSLeay_add_ssl_algorithms();
     SSL_load_error_strings();
@@ -68,28 +67,9 @@ void HttpsSocket::__send() {
 }
 
 char *HttpsSocket::__recv() {
-    /*std::cout << request.query;
-    char p[BUFFSIZE];
-    bzero(p, BUFFSIZE);
-
-    int buf_len = 0;
-    std::vector<char *> buf;
-    int len = SSL_read(ssl, p, BUFFSIZE);
-    while (len > 0) {
-        std::cout << len << '\n' << p << "\n";
-        buf.push_back(p);
-
-        bzero(p, 1024);
-        len = SSL_read(ssl, p, BUFFSIZE);
-    }
-    puts("g");
-    char *c = new char[buf.size()];
-    memcpy(c, buf.data(), buf.size());*/
-
     int len = 1;
     int size = 0;
     char *buf = (char *)malloc(BUFFSIZE * sizeof(char));
-    // strcpy(buf, "");
     bzero(buf, BUFFSIZE);
     char *buf_ptr = buf;
     while (len > 0) {
@@ -101,13 +81,7 @@ char *HttpsSocket::__recv() {
         }
         buf_ptr = buf + size;
     }
-    // puts("g");
 
-    // std::cout << buf;
-
-    /*std::ofstream file("any.png", std::ios::binary);
-    file.write(buf + 764, 2746);
-    file.close();*/
     buf_ptr = nullptr;
 
     return buf;
@@ -154,32 +128,3 @@ void HttpsSocket::createNewRequest(const std::string &url) {
     request.query += "\r\n";
     return;
 }
-
-/*void http_client::redirect() {
-    std::string::size_type pos = response.query.find("Location: ");
-    if (pos == std::string::npos) {
-        pos = response.query.find("location: ");
-        if (pos == std::string::npos) {
-            throw std::invalid_argument("redirection location not found");
-        }
-    }
-
-    std::string buf = response.query.substr(pos + strlen("Location: "),
-                                            response.query.size() - pos);
-
-    std::string::size_type end_pos = buf.find("\r\n");
-    if (pos == std::string::npos) {
-        throw std::invalid_argument("redirection location not found");
-    }
-
-    buf = buf.substr(0, end_pos);
-    if (buf[0] == '/') {
-        request.query = "GET " + buf + " HTTP/1.1\r\n";
-        request.query += "Host: " + request.host + "\r\n";
-        request.query += "\r\n";
-        return;
-    }
-
-    ::close(socket_fd);
-    socket_setings(buf);
-}*/

@@ -21,7 +21,9 @@ TEST(https_socket, send_recv_text_test) {
 
     std::ifstream file("../test/file1.tst");
 
-    char *test_file = new char[new_response.contentLength - 1];
+    char *test_file = new char[new_response.contentLength];
+
+    bzero(test_file, new_response.contentLength);
 
     file.read(test_file, new_response.contentLength - 1);
     EXPECT_STREQ(test_file, new_response.body);
