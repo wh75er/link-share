@@ -38,9 +38,33 @@ jobs:
           cmake ..
           make
           
-      - name: test https_socket lib
+      - name: test http_socket lib
         run: |
           cd archiver
           cd build
           valgrind --leak-check=full ./test/https_socket_test_tests 
+          
+      - name: test parser lib
+        run: |
+          cd archiver
+          cd build
+          valgrind --leak-check=full ./test/parser_test_tests
+          
+      - name: test create_new_page lib
+        run: |
+          cd archiver
+          cd build
+          valgrind --leak-check=full ./test/create_new_page_test_tests
 
+      - name: coverage
+        run: |
+          cd archiver
+          cd build
+          make gcov
+          make lcov
+
+      - name: archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report_linear
+          path: build/test/lcoverage
