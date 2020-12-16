@@ -8,6 +8,8 @@
 class HttpsSocket : public Socket {
 public:
     HttpsSocket(const std::string &url);
+    ~HttpsSocket();
+
     void redirect();
     void createNewRequest(const std::string &url);
 

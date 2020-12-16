@@ -22,9 +22,9 @@ target_link_libraries(https_socket http_socket OpenSSL::SSL OpenSSL::Crypto)
 
 #add_definitions(-Wall -Werror -Wpedantic )
 
-add_definitions(-Wreturn-type)
+#add_definitions(-Wreturn-type)
 
 
-add_executable(main main.cpp)
+#add_executable(my_main my_main.cpp)
 
-target_link_libraries(main PUBLIC https_socket)
+#target_link_libraries(my_main PUBLIC https_socket)

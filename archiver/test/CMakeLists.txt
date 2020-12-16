@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS "-std=c++17 -std=gnu++17 -lstdc++fs")
+set(CMAKE_CXX_FLAGS "-std=c++17 -std=gnu++17 -lstdc++fs -g")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test)
@@ -24,7 +24,11 @@ FetchContent_MakeAvailable(googletest)
 include_directories("${PROJECT_SOURCE_DIR}/inc")
 
 file(GLOB sources "${PROJECT_SOURCE_DIR}/src/*.cpp")
+list(REMOVE_ITEM sources "${PORJECT_SOURCE_DIR}/src/my_main.cpp")
+
 file(GLOB tests "${PROJECT_SOURCE_DIR}/test/*.cpp")
+list(REMOVE_ITEM tests "${PORJECT_SOURCE_DIR}/src/main.cpp")
+
 
 #add_definitions(-Wall -Werror -Wpedantic)
 
