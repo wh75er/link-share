@@ -44,7 +44,5 @@ TEST(https_socket, send_recv_image_test) {
     file.read(test_file, new_response.contentLength);
     EXPECT_STREQ(test_file, new_response.body);
 
-    puts("lol");
-
     file.close();
 }
