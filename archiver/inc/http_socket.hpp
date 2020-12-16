@@ -21,7 +21,10 @@ struct HttpRequest {
 
 struct HttpResponse {
     HttpResponse() : body(nullptr){};
-    HttpResponse operator=(const HttpResponse other);
+
+    HttpResponse &operator=(const HttpResponse &other);
+    HttpResponse(const HttpResponse &other);
+
     HttpResponse(const char *buf);
 
     ~HttpResponse();
