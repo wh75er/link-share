@@ -102,7 +102,7 @@ void http_client::socket_setings(const std::string &url) {
     }
 
     struct timeval tv;
-    tv.tv_sec = 2;
+    tv.tv_sec = 4;
     tv.tv_usec = 0;
     if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) != 0) {
         throw std::runtime_error("rcvtimeout: " + std::string(strerror(errno)));
