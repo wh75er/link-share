@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS "-std=c++17 -std=gnu++17 -lstdc++fs -g")
+set(CMAKE_CXX_FLAGS "-std=c++17 -std=gnu++17 -lstdc++fs")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test)
