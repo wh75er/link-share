@@ -63,6 +63,9 @@ jobs:
           cd client/build
           make gcov
           make lcov
+          cd test
+          ls
+
       - name: archive code coverage results
         uses: actions/upload-artifact@v2
         with:
