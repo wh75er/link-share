@@ -62,6 +62,7 @@ jobs:
           cd build
           make lcov
           cd test
+          cd lcoverage
           ls
 
       - name: archive code coverage results
