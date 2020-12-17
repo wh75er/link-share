@@ -4,6 +4,14 @@
 
 #define TIMEOUT 3
 
+HttpRequest &HttpRequest::operator=(const HttpRequest &other) {
+    query = other.query;
+    host = other.host;
+    return *this;
+}
+
+HttpRequest::HttpRequest(const HttpRequest &other) { *this = other; }
+
 void HttpRequest::findHost(const std::string &url) {
     if (url.empty()) {
         throw std::invalid_argument("empty url");

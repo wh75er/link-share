@@ -54,9 +54,15 @@ TEST(https_socket, send_recv_image_test) {
 TEST(https_socket, redirect_test) {
     HttpsSocket my_socket("https://park.mail.ru/feed/");
     my_socket.send();
-    HttpResponse new_response = my_socket.recv();
+    HttpResponse first_response = my_socket.recv();
 
-    EXPECT_EQ(new_response.code, 302);
-    EXPECT_STREQ(new_response.redirectLocation.c_str(),
+    EXPECT_EQ(first_response.code, 302);
+    EXPECT_STREQ(first_response.redirectLocation.c_str(),
                  "/pages/index/?next=/feed/%3f#auth");
+
+    my_socket.createNewRequest(first_response.redirectLocation);
+    my_socket.send();
+    HttpResponse second_response = my_socket.recv();
+
+    EXPECT_EQ(second_response.code, 200);
 }

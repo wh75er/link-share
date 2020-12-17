@@ -12,6 +12,9 @@ enum contentType { text, img, other };
 struct HttpRequest {
     HttpRequest() : query("\0"), host("\0"){};
     HttpRequest(const std::string &url);
+    HttpRequest &operator=(const HttpRequest &other);
+    HttpRequest(const HttpRequest &other);
+    
     std::string query;
     std::string host;
 
