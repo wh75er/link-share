@@ -164,7 +164,7 @@ void HttpResponse::findRedirectLocation() {
 
     start_pos += strlen("location: ");
 
-    std::string::size_type end_pos = query.find("\r\n");
+    std::string::size_type end_pos = query.find("\r\n", start_pos);
     if (end_pos == std::string::npos) {
         throw std::invalid_argument("redirection location not found");
     }

@@ -57,4 +57,6 @@ TEST(https_socket, redirect_test) {
     HttpResponse new_response = my_socket.recv();
 
     EXPECT_EQ(new_response.code, 302);
+    EXPECT_STREQ(new_response.redirectLocation.c_str(),
+                 "/pages/index/?next=/feed/%3f#auth");
 }
