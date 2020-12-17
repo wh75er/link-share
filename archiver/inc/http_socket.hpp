@@ -25,7 +25,7 @@ struct HttpResponse {
     HttpResponse &operator=(const HttpResponse &other);
     HttpResponse(const HttpResponse &other);
 
-    HttpResponse(const char *buf);
+    HttpResponse(const char *buf, const int size);
 
     ~HttpResponse();
 
@@ -39,7 +39,7 @@ struct HttpResponse {
     void createQuery(const std::string &response);
     void findType();
     void findCode();
-    void findContentLength();
+    void findContentLength(const int size);
     void createBody(const char *buf);
 
     void findRedirectLocation();
@@ -60,7 +60,7 @@ protected:
     void resolve(const std::string &url);
 
     virtual void __send() = 0;
-    virtual char *__recv() = 0;
+    virtual char *__recv(int *size) = 0;
 
     int getLength(const void *buf);
 

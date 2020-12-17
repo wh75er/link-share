@@ -50,3 +50,11 @@ TEST(https_socket, send_recv_image_test) {
 
     file.close();
 }
+
+TEST(https_socket, redirect_test) {
+    HttpsSocket my_socket("https://park.mail.ru/feed/");
+    my_socket.send();
+    HttpResponse new_response = my_socket.recv();
+
+    EXPECT_EQ(new_response.code, 302);
+}

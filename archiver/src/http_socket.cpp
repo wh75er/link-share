@@ -76,14 +76,21 @@ void HttpResponse::findType() {
 
     start_pos += strlen("content-type: ");
 
-    std::string::size_type end_pos = query.find(';', start_pos);
+    std::string::size_type end_pos = query.find("\r\n", start_pos);
+    if (end_pos == std::string::npos) {
+        throw std::invalid_argument("brocken query");
+    }
 
-    if (query.find("text", start_pos, end_pos - start_pos)) {
+    std::string content_type = query.substr(start_pos, end_pos - start_pos);
+
+    if (content_type.find("text", start_pos, end_pos - start_pos) !=
+        std::string::npos) {
         type = text;
         return;
     }
 
-    if (query.find("image", start_pos, end_pos - start_pos)) {
+    if (content_type.find("image", start_pos, end_pos - start_pos) !=
+        std::string::npos) {
         type = img;
         return;
     }
@@ -94,15 +101,21 @@ void HttpResponse::findType() {
 
 HttpResponse &HttpResponse::operator=(const HttpResponse &other) {
     query = other.query;
-    type = other.type;
-    contentLength = other.contentLength;
-    body = new char[contentLength];
-    if (body == nullptr) {
-        throw std::bad_alloc();
-    }
-    bzero(body, contentLength);
-    memcpy(body, other.body, contentLength - 1);
     code = other.code;
+    if (code == 200) {
+        type = other.type;
+        contentLength = other.contentLength;
+
+        body = new char[contentLength];
+        if (body == nullptr) {
+            throw std::bad_alloc();
+        }
+        bzero(body, contentLength);
+        memcpy(body, other.body, contentLength - 1);
+    } else {
+        redirectLocation = other.redirectLocation;
+        body = nullptr;
+    }
 
     return *this;
 }
@@ -110,8 +123,6 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other) {
 HttpResponse::HttpResponse(const HttpResponse &other) { *this = other; }
 
 void HttpResponse::createBody(const char *buf) {
-    // std::cout << contentLength;
-
     if (buf == nullptr) {
         throw std::runtime_error("empty response");
     }
@@ -129,17 +140,20 @@ void HttpResponse::createBody(const char *buf) {
     memcpy(body, buf + query.size() + strlen("\r\n\r\n"), contentLength - 1);
 }
 
-void HttpResponse::findContentLength() {
+void HttpResponse::findContentLength(const int size) {
     size_t start_pos = query.find("content-length: ");
     if (start_pos == std::string::npos) {
-        throw std::logic_error("no content length");
+        contentLength = size - query.size() - strlen("\r\n\r\n");
+        return;
+        //если нет "content-length" используем сумму считанных символов
     }
 
     start_pos += strlen("content-length: ");
 
-    std::string size = query.substr(start_pos, query.size() - start_pos);
+    std::string content_length =
+        query.substr(start_pos, query.size() - start_pos);
 
-    contentLength = std::stoi(size);
+    contentLength = std::stoi(content_length);
 }
 
 void HttpResponse::findRedirectLocation() {
@@ -162,19 +176,23 @@ void HttpResponse::findRedirectLocation() {
     }
 }
 
-HttpResponse::HttpResponse(const char *buf) : body(nullptr) {
+HttpResponse::HttpResponse(const char *buf, const int size) : body(nullptr) {
     if (buf == nullptr) {
         throw std::runtime_error("empty response");
     }
 
-    std::string response(buf, 1024);
-
+    std::string response(buf, size - 1);
     createQuery(response);
     findCode();
+
     if (code == 200) {
         findType();
-        findContentLength();
+        findContentLength(size);
         createBody(buf);
+    }
+
+    if (code >= 300 && code < 400) {
+        findRedirectLocation();
     }
 }
 
@@ -193,7 +211,6 @@ void Socket::socketSettings() {
 
     int connected = ::connect(socketFd, (struct sockaddr *)&addr, sizeof(addr));
     if (connected == -1) {
-        ::close(socketFd);
         throw std::runtime_error("connect error: " +
                                  std::string(strerror(errno)));
     }
@@ -237,13 +254,14 @@ void Socket::resolve(const std::string &url) {
 void Socket::send() { __send(); }
 
 HttpResponse Socket::recv() {
-    char *buf = __recv();
-    if (buf == nullptr) {
+    int size = 0;
+    char *buf = __recv(&size);
+    if (buf == nullptr || size == 0) {
         throw std::runtime_error("empty response");
     }
 
     try {
-        response = HttpResponse(buf);
+        response = HttpResponse(buf, size);
     } catch (std::exception &e) {
         std::cerr << e.what() << '\n';
     }

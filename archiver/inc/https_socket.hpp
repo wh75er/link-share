@@ -17,6 +17,6 @@ private:
     SSL *ssl;
     void SSLSettings();
 
-    virtual void __send();
-    virtual char *__recv();
+    virtual void __send() override;
+    virtual char *__recv(int *size) override;
 };
