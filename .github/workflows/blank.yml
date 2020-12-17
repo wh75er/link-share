@@ -60,7 +60,6 @@ jobs:
         run: |
           cd archiver
           cd build
-          make gcov
           make lcov
 
       - name: archive code coverage results
