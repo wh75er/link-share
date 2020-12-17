@@ -88,25 +88,15 @@ char *HttpsSocket::__recv(int *size) {
         }
         buf_ptr = buf + *size;
     }
-    
+
     buf_ptr = nullptr;
 
     return buf;
 }
 
-void HttpsSocket::redirect() {
-    response.findRedirectLocation();
-
-    request = HttpRequest(response.redirectLocation);
-
-    resolve(request.host);
-    socketSettings();
-    SSLSettings();
-}
-
 void HttpsSocket::createNewRequest(const std::string &url) {
     if (url.find("http") != std::string::npos) {
-        request = HttpRequest(response.redirectLocation);
+        request = HttpRequest(url);
 
         resolve(request.host);
         socketSettings();
@@ -115,7 +105,7 @@ void HttpsSocket::createNewRequest(const std::string &url) {
     }
 
     if (url.find("//") != std::string::npos) {
-        request = HttpRequest("https:" + response.redirectLocation);
+        request = HttpRequest("https:" + url);
 
         resolve(request.host);
         socketSettings();
