@@ -12,6 +12,7 @@ CREATE TABLE users
 CREATE TABLE web_links
 (
   id SERIAL PRIMARY KEY,
+  url VARCHAR(500) NOT NULL,
   name VARCHAR(100) NOT NULL,
   description VARCHAR(200),
   link_date TIMESTAMP NOT NULL,
