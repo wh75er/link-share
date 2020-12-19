@@ -32,12 +32,14 @@ CREATE TABLE comments
 (
   id SERIAL PRIMARY KEY,
   content VARCHAR(100) NOT NULL,
+  comment_uuid UUID NOT NULL UNIQUE,
   link_id INT REFERENCES web_links
 );
 
 CREATE TABLE rooms
 (
   id SERIAL PRIMARY KEY,
+  room_uuid UUID NOT NULL UNIQUE,
   room_date TIMESTAMP NOT NULL,
   private BOOLEAN NOT NULL,
   user_id INT REFERENCES users
