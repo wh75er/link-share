@@ -24,7 +24,7 @@ CREATE TABLE snapshots
   id SERIAL PRIMARY KEY,
   snapshot_uuid UUID NOT NULL UNIQUE,
   dir_name VARCHAR(100) NOT NULL,
-  link_id INT REFERENCES web_links,
+  link_id INT NOT NULL REFERENCES web_links,
   snapshot_date TIMESTAMP NOT NULL
 );
 
@@ -33,7 +33,7 @@ CREATE TABLE comments
   id SERIAL PRIMARY KEY,
   content VARCHAR(100) NOT NULL,
   comment_uuid UUID NOT NULL UNIQUE,
-  link_id INT REFERENCES web_links
+  link_id INT NOT NULL REFERENCES web_links
 );
 
 CREATE TABLE rooms
@@ -42,19 +42,19 @@ CREATE TABLE rooms
   room_uuid UUID NOT NULL UNIQUE,
   room_date TIMESTAMP NOT NULL,
   private BOOLEAN NOT NULL,
-  user_id INT REFERENCES users
+  user_id INT NOT NULL REFERENCES users
 );
 
 CREATE TABLE room_links
 (
   id SERIAL PRIMARY KEY,
-  room_id INT REFERENCES rooms,
-  link_id INT REFERENCES web_links
+  room_id INT NOT NULL REFERENCES rooms,
+  link_id INT NOT NULL REFERENCES web_links
 );
 
 CREATE TABLE room_users
 (
   id SERIAL PRIMARY KEY,
-  room_id INT REFERENCES rooms,
-  user_id INT REFERENCES users
+  room_id INT NOT NULL REFERENCES rooms,
+  user_id INT NOT NULL REFERENCES users
 );
