@@ -5,6 +5,7 @@ project(TCPserver VERSION 0.1
   LANGUAGES C CXX)
 
 find_package(Boost REQUIRED COMPONENTS system thread)
+find_package(PostgreSQL REQUIRED)
 message(STATUS "Boost version: ${Boost_VERSION}")
 
 set(CMAKE_CXX_STANDARD 17)
@@ -37,14 +38,14 @@ file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*)
 
 add_library(${CMAKE_PROJECT_NAME}_lib SHARED ${lib_sources})
 
-target_link_libraries(${CMAKE_PROJECT_NAME}_lib PUBLIC ${Boost_LIBRARIES})
+#target_link_libraries(${CMAKE_PROJECT_NAME}_lib PUBLIC ${Boost_LIBRARIES})
 
 target_include_directories(${CMAKE_PROJECT_NAME}_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
 add_executable(main ${PROJECT_SOURCE_DIR}/src/main.cpp)
 target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(main ${Boost_LIBRARIES} ${CMAKE_PROJECT_NAME}_lib)
+target_link_libraries(main ${Boost_LIBRARIES} ${PostgreSQL_LIBRARIES} ${CMAKE_PROJECT_NAME}_lib)
 
 
 enable_testing()
