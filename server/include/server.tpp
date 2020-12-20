@@ -98,7 +98,7 @@ void TCPserver<DbOps, Uuid, JsonParser>::accept() {
 #ifdef DEBUG
       std::cout << "Futures size is " << futures.size() << std::endl;
 #endif
-      futures.push_back(std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(std::make_shared<TcpSocket>(connection_socket))->start();}));
+      futures.push_back(std::async(std::launch::async, [connection_socket, this]() {std::make_shared<Connection<DbOps, Uuid, JsonParser>>(std::make_shared<TcpSocket>(connection_socket))->start(dbops);}));
     } else {
 #ifdef DEBUG
       std::cout << "Futures size is full(" << futures.size() << ")" << std::endl;
@@ -119,7 +119,7 @@ void TCPserver<DbOps, Uuid, JsonParser>::accept() {
             std::cout << "Occupying feature # " << i << std::endl;
 #endif
 
-            futures[i] = std::async(std::launch::async, [connection_socket]() {std::make_shared<Connection>(std::make_shared<TcpSocket>(connection_socket))->start();});
+            futures[i] = std::async(std::launch::async, [connection_socket, this]() {std::make_shared<Connection<DbOps, Uuid, JsonParser>>(std::make_shared<TcpSocket>(connection_socket))->start(dbops);});
 
             slot_found = true;
           }

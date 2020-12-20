@@ -1,11 +1,11 @@
-#include "requestHandler.hpp"
-
-#include "connection.hpp"
+#pragma once
 
 #include <unistd.h>
 
-RequestHandler::RequestHandler(std::shared_ptr<Connection> connection)
-  : sender(std::move(connection))
+template<class DbOps, class Connection, class Uuid, class JsonParser>
+RequestHandler<DbOps, Connection, Uuid, JsonParser>::RequestHandler(std::shared_ptr<Connection> connection, std::shared_ptr<DbOps> dbops_)
+        : sender(std::move(connection)),
+          dbops(dbops_)
 {
 #ifdef DEBUG
   std::cout <<  "RequestHandler constructor" << std::endl;
@@ -14,7 +14,8 @@ RequestHandler::RequestHandler(std::shared_ptr<Connection> connection)
 #endif
 }
 
-void RequestHandler::handle(std::string data) {
+template<class DbOps, class Connection, class Uuid, class JsonParser>
+void RequestHandler<DbOps, Connection, Uuid, JsonParser>::handle(std::string data) {
 #ifdef DEBUG
   std::cout << "Data inside of request handler is: " << data << std::endl;
 #endif
@@ -31,6 +32,4 @@ void RequestHandler::handle(std::string data) {
   // use sender to send data back to client
 
   sender.send(data);
-
-  return;
 }

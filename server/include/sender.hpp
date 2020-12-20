@@ -5,8 +5,9 @@
 #include <string>
 #include <memory>
 
-class Connection;
+#include "connection.hpp"
 
+template<class Connection>
 class Sender {
 public:
   explicit Sender(std::shared_ptr<Connection> connection);
@@ -21,3 +22,5 @@ public:
 private:
   std::shared_ptr<Connection> connection_;
 };
+
+#include "sender.tpp"
