@@ -11,8 +11,7 @@
 #include "connection.hpp"
 #include "socket.hpp"
 
-void exit_handler(int s);
-
+template<class DbOps, class Uuid, class JsonParser>
 class TCPserver {
 public:
   explicit TCPserver(std::string address, std::string port);
@@ -25,6 +24,8 @@ public:
 private:
   void stop_listen(int _);
 
+  std::shared_ptr<DbOps> dbops = nullptr;
+
   std::shared_ptr<BaseTcpSocket> socket_;
   std::string address_ = "";
   std::string port_ = "";
@@ -32,3 +33,5 @@ private:
   size_t workers_count;
   std::vector<std::future<void>> futures;
 };
+
+#include "server.tpp"
