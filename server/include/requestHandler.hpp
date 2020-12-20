@@ -9,11 +9,10 @@
 #include "sender.hpp"
 #include "handlers/baseHandler.hpp"
 
-class Connection;
-
+template<class DbOps, class Connection, class Uuid, class JsonParser>
 class RequestHandler {
 public:
-  explicit RequestHandler(std::shared_ptr<Connection> connection);
+  explicit RequestHandler(std::shared_ptr<Connection> connection, std::shared_ptr<DbOps> dbops_);
   ~RequestHandler() {
 #ifdef DEBUG
     std::cout << "RequestHandler destructor" << std::endl;
@@ -25,5 +24,8 @@ public:
 private:
   std::shared_ptr<AbstractBodyParser> parser = nullptr;
   std::shared_ptr<BaseHandler> handler = nullptr;
-  Sender sender;
+  std::shared_ptr<DbOps> dbops;
+  Sender<Connection> sender;
 };
+
+#include "requestHandler.tpp"

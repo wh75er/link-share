@@ -1,16 +1,18 @@
-#include "connection.hpp"
+#pragma once
 
 #define RECIVE_BYTE_SIZE 1024
 
-Connection::Connection(std::shared_ptr<BaseTcpSocket> socket): 
-  socket_(socket)
+template<class DbOps, class Uuid, class JsonParser>
+Connection<DbOps, Uuid, JsonParser>::Connection(std::shared_ptr<BaseTcpSocket> socket):
+        socket_(std::move(socket))
 {
 #ifdef DEBUG
   std::cout << "Connection constructor" << std::endl;
 #endif
 }
 
-std::string Connection::read() {
+template<class DbOps, class Uuid, class JsonParser>
+std::string Connection<DbOps, Uuid, JsonParser>::read() {
   char buf[256];
   std::string ret;
   while (true) {
@@ -32,7 +34,8 @@ std::string Connection::read() {
   return ret;
 }
 
-void Connection::write(const std::string& str) {
+template<class DbOps, class Uuid, class JsonParser>
+void Connection<DbOps, Uuid, JsonParser>::write(const std::string& str) {
   size_t left = str.size();
 
   ssize_t sent = 0;
@@ -46,7 +49,8 @@ void Connection::write(const std::string& str) {
   }
 }
 
-void Connection::start() {
+template<class DbOps, class Uuid, class JsonParser>
+void Connection<DbOps, Uuid, JsonParser>::start(std::shared_ptr<DbOps> dbops) {
   std::string data = "";
   try {
     data = read();
@@ -62,11 +66,12 @@ void Connection::start() {
   std::cout << "Got data from connection" << std::endl;
 #endif
 
-  rh = std::make_unique<RequestHandler>(shared_from_this());
+  rh = std::make_unique<RequestHandler<DbOps, Connection<DbOps, Uuid, JsonParser>, Uuid, JsonParser>>(this->shared_from_this(), dbops);
 
   rh->handle(data);
 }
 
-void Connection::finish() {
+template<class DbOps, class Uuid, class JsonParser>
+void Connection<DbOps, Uuid, JsonParser>::finish() {
   socket_->close_();
 }
