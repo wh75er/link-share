@@ -1,20 +1,31 @@
-#include "server.hpp"
+#pragma once
 
 #include <iostream>
 
 #define TRY_ACCEPT_AGAIN -1
 #define TIMEOUT_MILLS 100
 
-TCPserver::TCPserver(std::string address, std::string port):
-  address_(address), 
-  port_(port), 
-  running_(false)
+template<class DbOps, class Uuid, class JsonParser>
+TCPserver<DbOps, Uuid, JsonParser>::TCPserver(std::string address, std::string port):
+        address_(address),
+        port_(port),
+        running_(false)
 {
 //  std::cout << "Came Address is : " << address << std::endl;
 //  std::cout << "Came Port is : " << port << std::endl;
 //
 //  std::cout << "Address is : " << address_ << std::endl;
 //  std::cout << "Port is : " << port_ << std::endl;
+
+  try {
+    dbops = std::make_shared<DbOps>();
+  }
+  catch (...) {
+    throw ServerException(
+      std::make_shared<DatabaseError>(DatabaseErrorCode::CONNECTION_FAILED_ERR),
+     "Failed to establish connection with database!"
+    );
+  }
 
   workers_count = std::thread::hardware_concurrency();
 
@@ -23,15 +34,15 @@ TCPserver::TCPserver(std::string address, std::string port):
 #endif
 
   socket_ = std::make_shared<TcpSocket>(TcpSocket::Builder()
-    .address(address)
-    .port(port)
-    .non_blocking()
-    .build()
+                                                .address(address)
+                                                .port(port)
+                                                .non_blocking()
+                                                .build()
   );
 
   try {
     socket_->create();
-  } 
+  }
   catch (const BaseException& except) {
     throw ServerException(except.error, "Failed to create socket!");
   }
@@ -44,7 +55,8 @@ TCPserver::TCPserver(std::string address, std::string port):
   }
 }
 
-TCPserver::~TCPserver() {
+template<class DbOps, class Uuid, class JsonParser>
+TCPserver<DbOps, Uuid, JsonParser>::~TCPserver() {
   socket_->close_();
 
   for (auto i = 0; i < futures.size(); i++) {
@@ -52,7 +64,8 @@ TCPserver::~TCPserver() {
   }
 }
 
-void TCPserver::accept() {
+template<class DbOps, class Uuid, class JsonParser>
+void TCPserver<DbOps, Uuid, JsonParser>::accept() {
   running_ = true;
 
   while (running_) {
@@ -77,8 +90,8 @@ void TCPserver::accept() {
 #endif
 
     TcpSocket connection_socket = TcpSocket::Builder()
-      .socket(connection_sd)
-      .build();
+            .socket(connection_sd)
+            .build();
 
     // Accept connection and create Connection object
     if (futures.size() < workers_count) {
@@ -118,7 +131,8 @@ void TCPserver::accept() {
   }
 }
 
-void TCPserver::listen() {
+template<class DbOps, class Uuid, class JsonParser>
+void TCPserver<DbOps, Uuid, JsonParser>::listen() {
   // listen for connections
   try {
     socket_->listen_();
@@ -131,10 +145,12 @@ void TCPserver::listen() {
 #endif
 }
 
-bool TCPserver::is_running() {
+template<class DbOps, class Uuid, class JsonParser>
+bool TCPserver<DbOps, Uuid, JsonParser>::is_running() {
   return running_;
 }
 
-void TCPserver::stop_listen(int _) {
+template<class DbOps, class Uuid, class JsonParser>
+void TCPserver<DbOps, Uuid, JsonParser>::stop_listen(int _) {
   running_ = false;
 }
