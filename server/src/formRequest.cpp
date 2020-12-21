@@ -5,7 +5,7 @@ bool FormCreateRoomRequest::can_handle(int command) {
 
 }
 
-std::shared_ptr<BaseHandler> FormCreateRoomRequest::spawn_handler(std::vector<std::string> &request_elements) {
+std::unique_ptr<BaseHandler> FormCreateRoomRequest::spawn_handler(std::vector<std::string> &request_elements) {
   if (request_elements.size() < 2) {
     throw std::runtime_error("Invalid amount of requested args!");
   }
@@ -22,7 +22,7 @@ bool FormDeleteRoomRequest::can_handle(int command) {
 
 }
 
-std::shared_ptr<BaseHandler> FormDeleteRoomRequest::spawn_handler(std::vector<std::string> &request_elements) {
+std::unique_ptr<BaseHandler> FormDeleteRoomRequest::spawn_handler(std::vector<std::string> &request_elements) {
   if (request_elements.size() < 2) {
     throw std::runtime_error("Invalid amount of requested args!");
   }
@@ -39,7 +39,7 @@ bool FormAddLinkRequest::can_handle(int command) {
 
 }
 
-std::shared_ptr<BaseHandler> FormAddLinkRequest::spawn_handler(std::vector<std::string> &request_elements) {
+std::unique_ptr<BaseHandler> FormAddLinkRequest::spawn_handler(std::vector<std::string> &request_elements) {
   if (request_elements.size() < 3) {
     throw std::runtime_error("Invalid amount of requested args!");
   }
@@ -55,7 +55,7 @@ bool FormDeleteLinkRequest::can_handle(int command) {
   return command == DELETE_LINK;
 }
 
-std::shared_ptr<BaseHandler> FormDeleteLinkRequest::spawn_handler(std::vector<std::string> &request_elements) {
+std::unique_ptr<BaseHandler> FormDeleteLinkRequest::spawn_handler(std::vector<std::string> &request_elements) {
   if (request_elements.size() < 3) {
     throw std::runtime_error("Invalid amount of requested args!");
   }
@@ -72,7 +72,7 @@ bool FormAddUserToRoomRequest::can_handle(int command) {
 
 }
 
-std::shared_ptr<BaseHandler> FormAddUserToRoomRequest::spawn_handler(std::vector<std::string> &request_elements) {
+std::unique_ptr<BaseHandler> FormAddUserToRoomRequest::spawn_handler(std::vector<std::string> &request_elements) {
   if (request_elements.size() < 3) {
     throw std::runtime_error("Invalid amount of requested args!");
   }
@@ -91,7 +91,7 @@ bool FormDeleteUserFromRoomRequest::can_handle(int command) {
 
 }
 
-std::shared_ptr<BaseHandler> FormDeleteUserFromRoomRequest::spawn_handler(std::vector<std::string> &request_elements) {
+std::unique_ptr<BaseHandler> FormDeleteUserFromRoomRequest::spawn_handler(std::vector<std::string> &request_elements) {
   if (request_elements.size() < 3) {
     throw std::runtime_error("Invalid amount of requested args!");
   }
@@ -109,7 +109,7 @@ bool FormGetSnapshotRequest::can_handle(int command) {
   return command == MAKE_SNAPSHOT;
 }
 
-std::shared_ptr<BaseHandler> FormGetSnapshotRequest::spawn_handler(std::vector<std::string> &request_elements) {
+std::unique_ptr<BaseHandler> FormGetSnapshotRequest::spawn_handler(std::vector<std::string> &request_elements) {
   if (request_elements.size() < 3) {
     throw std::runtime_error("Invalid amount of requested args!");
   }

@@ -10,7 +10,7 @@ TcpStringBodyParser::TcpStringBodyParser() {
   registeredRequestFormers.push_back(std::make_unique<FormGetSnapshotRequest>());
 }
 
-std::shared_ptr<BaseHandler> TcpStringBodyParser::parse(std::string data) {
+std::unique_ptr<BaseHandler> TcpStringBodyParser::parse(std::string data) {
   std::vector<std::string> input_elements = request_split(data);
 
   if (input_elements.empty()) {
@@ -20,7 +20,7 @@ std::shared_ptr<BaseHandler> TcpStringBodyParser::parse(std::string data) {
   int command = std::stoi(input_elements[0]);
   input_elements.erase(input_elements.begin());
 
-  std::shared_ptr<BaseHandler> handler = nullptr;
+  std::unique_ptr<BaseHandler> handler = nullptr;
 
   for (auto &requestFormer : registeredRequestFormers) {
     if (requestFormer->can_handle(command)) {

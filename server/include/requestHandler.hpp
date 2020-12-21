@@ -22,8 +22,8 @@ public:
   void handle(std::string data);
 
 private:
-  std::shared_ptr<AbstractBodyParser> parser = nullptr;
-  std::shared_ptr<BaseHandler> handler = nullptr;
+  std::unique_ptr<AbstractBodyParser> parser = nullptr;
+  std::unique_ptr<BaseHandler> handler = nullptr;
   std::shared_ptr<DbOps> dbops;
   Sender<Connection> sender;
 };
