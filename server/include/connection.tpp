@@ -13,7 +13,7 @@ Connection<DbOps, Uuid, JsonParser>::Connection(std::shared_ptr<BaseTcpSocket> s
 
 template<class DbOps, class Uuid, class JsonParser>
 std::string Connection<DbOps, Uuid, JsonParser>::read() {
-  char buf[256];
+  char buf[RECIVE_BYTE_SIZE];
   std::string ret;
   while (true) {
     int n = socket_->recv_(buf, sizeof(buf));

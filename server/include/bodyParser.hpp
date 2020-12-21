@@ -14,7 +14,7 @@ public:
 //  AbstractBodyParser() {};
   virtual ~AbstractBodyParser() {};
 
-  virtual std::shared_ptr<BaseHandler> parse(std::string data) = 0;
+  virtual std::unique_ptr<BaseHandler> parse(std::string data) = 0;
 };
 
 class TcpStringBodyParser : public AbstractBodyParser {
@@ -22,7 +22,7 @@ class TcpStringBodyParser : public AbstractBodyParser {
     TcpStringBodyParser();
     ~TcpStringBodyParser() {};
     
-    std::shared_ptr<BaseHandler> parse(std::string data) override;
+    std::unique_ptr<BaseHandler> parse(std::string data) override;
 
   private:
     std::vector<std::unique_ptr<AbstractFormRequest>> registeredRequestFormers;
