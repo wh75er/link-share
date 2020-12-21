@@ -40,7 +40,12 @@ std::shared_ptr<BaseHandler> TcpStringBodyParser<JsonParser>::parse(std::string 
 
   for (auto &requestFormer : registeredRequestFormers) {
     if (requestFormer->can_handle(command)) {
-      handler = requestFormer->spawn_handler(json);
+      try {
+        handler = requestFormer->spawn_handler(json);
+      }
+      catch (...) {
+        throw;
+      }
       break;
     }
   }
