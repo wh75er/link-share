@@ -39,6 +39,7 @@ CREATE TABLE comments
 CREATE TABLE rooms
 (
   id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
   room_uuid UUID NOT NULL UNIQUE,
   room_date TIMESTAMP NOT NULL,
   private BOOLEAN NOT NULL,
