@@ -7,6 +7,8 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/foreach.hpp>
 
 #include "pgconnection.hpp"
 
@@ -35,17 +37,37 @@ public:
 
     ss << json_str;
 
-    boost::property_tree::read_json(ss, pt);
+    try {
+      boost::property_tree::read_json(ss, pt);
+    }
+    catch (...) {
+#ifdef DEBUG
+      std::cout << "Failed to parse json!" << std::endl;
+#endif
+      throw std::runtime_error("Failed to parse json!");
+    }
   }
 
   template<typename T>
-  bool get_value(std::string& key, T& value) {
+  bool get_value(const char* key, T& value) {
     if (boost::optional<T> v = pt.get_optional<T>(key)) {
       value = *v;
       return true;
     } else {
       return false;
     }
+  }
+
+  bool get_value(const char* key, std::vector<std::string>& value) {
+    if (pt.get_child_optional(key)) {
+      BOOST_FOREACH (boost::property_tree::ptree::value_type& field, pt.get_child(key))
+      {
+        value.push_back(field.second.data());
+      }
+      return true;
+    }
+
+    return false;
   }
 
 private:

@@ -17,8 +17,8 @@
 template<typename T>
 class Creator {
 public:
-  virtual ~Creator() {};
-  virtual std::unique_ptr<BaseHandler> factory_method(T request) const = 0;
+  virtual ~Creator() = default;
+  virtual std::shared_ptr<BaseHandler> factory_method(T request) const = 0;
 };
 
 template<typename T>
@@ -27,8 +27,8 @@ public:
   CreateRoomHandlerCreator() = default;
   ~CreateRoomHandlerCreator() = default;
 
-  std::unique_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_unique<CreateRoomHandler>(request);
+  std::shared_ptr<BaseHandler> factory_method(T request) const override {
+    return std::make_shared<CreateRoomHandler>(request);
   }
 };
 
@@ -38,8 +38,8 @@ public:
   DeleteRoomHandlerCreator() = default;
   ~DeleteRoomHandlerCreator() = default;
 
-  std::unique_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_unique<DeleteRoomHandler>(request);
+  std::shared_ptr<BaseHandler> factory_method(T request) const override {
+    return std::make_shared<DeleteRoomHandler>(request);
   }
 };
 
@@ -49,8 +49,8 @@ public:
   AddUserToRoomHandlerCreator() = default;
   ~AddUserToRoomHandlerCreator() = default;
 
-  std::unique_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_unique<AddUserToRoomHandler>(request);
+  std::shared_ptr<BaseHandler> factory_method(T request) const override {
+    return std::make_shared<AddUserToRoomHandler>(request);
   }
 };
 
@@ -60,8 +60,8 @@ public:
   DeleteUserFromRoomHandlerCreator() = default;
   ~DeleteUserFromRoomHandlerCreator() = default;
 
-  std::unique_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_unique<DeleteUserFromRoomHandler>(request);
+  std::shared_ptr<BaseHandler> factory_method(T request) const override {
+    return std::make_shared<DeleteUserFromRoomHandler>(request);
   }
 };
 
@@ -71,8 +71,8 @@ public:
   AddLinkHandlerCreator() = default;
   ~AddLinkHandlerCreator() = default;
 
-  std::unique_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_unique<AddLinkHandler>(request);
+  std::shared_ptr<BaseHandler> factory_method(T request) const override {
+    return std::make_shared<AddLinkHandler>(request);
   }
 };
 
@@ -82,8 +82,8 @@ public:
   DeleteLinkHandlerCreator() = default;
   ~DeleteLinkHandlerCreator() = default;
 
-  std::unique_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_unique<DeleteLinkHandler>(request);
+  std::shared_ptr<BaseHandler> factory_method(T request) const override {
+    return std::make_shared<DeleteLinkHandler>(request);
   }
 };
 
@@ -93,7 +93,7 @@ public:
   GetSnapshotHandlerCreator() = default;
   ~GetSnapshotHandlerCreator() = default;
 
-  std::unique_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_unique<GetSnapshotHandler>(request);
+  std::shared_ptr<BaseHandler> factory_method(T request) const override {
+    return std::make_shared<GetSnapshotHandler>(request);
   }
 };
