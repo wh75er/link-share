@@ -21,7 +21,7 @@ public:
   std::vector<std::map<std::string, std::string>> get_link_comments_by_uuid(std::string& uuid);
 
   void add_user(std::string& login, std::string& password);
-  void add_room(std::string& login, bool private_, std::string& uuid);
+  void add_room(std::string& login, sts::string& name, bool private_, std::string& uuid);
   void add_link_to_room(std::string& url, std::string& name, std::string& description, std::string& link_uuid, std::string& room_uuid);
   void add_users_to_room(std::vector<std::string>& users, std::string& room_uuid);
   void add_comment_to_link(std::string& comment_uuid, std::string& content, std::string& link_uuid);
@@ -205,10 +205,10 @@ void DbApi::add_user(std::string &login, std::string &password) {
 }
 
 template<DbOps>
-void DbApi::add_room(std::string& login, bool private_, std::string &uuid) {
+void DbApi::add_room(std::string& login, std::string& name, bool private_, std::string &uuid) {
   std::string boolean = private_ ? "true" : "false";
-  std::string query = "insert into rooms (room_uuid, private, room_date, user_id) values "
-                      "('" + uuid + "', " + boolean + ", NOW(), (select id from users where login='" + login + "'));";
+  std::string query = "insert into rooms (room_uuid, name, private, room_date, user_id) values "
+                      "('" + uuid + "', " + name + ", " + boolean + ", NOW(), (select id from users where login='" + login + "'));";
 
   try {
     exec_query_command(query);

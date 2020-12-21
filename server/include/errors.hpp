@@ -11,6 +11,12 @@ enum DatabaseErrorCode {
   CONNECTION_FAILED_ERR,
 };
 
+enum ParseErrorCode {
+  PARSE_FAILURE,
+  VALUE_NOT_FOUND,
+  UNKNOWN_COMMAND,
+};
+
 class BaseError {
   public:
     explicit BaseError(const int &_code):
@@ -22,6 +28,15 @@ class BaseError {
 
   protected:
     int code;
+};
+
+class ParseError: public BaseError {
+public:
+  explicit ParseError(const int& _code):
+    BaseError(_code)
+  {}
+
+  const char* from() const override;
 };
 
 class DatabaseError : public BaseError {
@@ -101,7 +116,7 @@ class SocketException : public BaseException {
     const char* what() const noexcept override;
 };
 
-class ServerException : public BaseException{
+class ServerException : public BaseException {
   public: 
     explicit ServerException(std::shared_ptr<BaseError> _e):
       BaseException(std::move(_e))
@@ -114,4 +129,19 @@ class ServerException : public BaseException{
     virtual ~ServerException() noexcept {}
 
     const char* what() const noexcept override;
+};
+
+class ParserException : public BaseException {
+public:
+  explicit ParserException(std::shared_ptr<BaseError> _e):
+    BaseException(std::move(_e))
+  {}
+
+  explicit ParserException(std::shared_ptr<BaseError> _e, const std::string& _msg):
+    BaseException(std::move(_e), _msg)
+  {}
+
+  virtual ~ParserException() noexcept {}
+
+  const char* what() const noexcept override;
 };

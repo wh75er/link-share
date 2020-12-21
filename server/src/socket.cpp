@@ -3,7 +3,6 @@
 #include <iostream>
 
 #define TRY_ACCEPT_AGAIN -1
-#define FUTURE_TIMEOUT_MILLS 100
 
 TcpSocket::TcpSocket(
   int _sd, 
