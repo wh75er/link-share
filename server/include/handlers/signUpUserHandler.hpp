@@ -2,14 +2,14 @@
 
 #include <string>
 
-#include "handlers/baseHandler.hpp"
 #include "user.hpp"
 #include "response.hpp"
 
-class SignUpUserHandler: public BaseHandler {
+template<class Model>
+class SignUpUserHandler: public BaseHandler<Model> {
 public:
-  SignUpUserHandler(User &request, Response &response);
-  ~SignUpUserHandler() {};
+  explicit SignUpUserHandler(User &request, Response &response);
+  ~SignUpUserHandler() = default;
 
   void execute() override;
 
@@ -17,3 +17,14 @@ private:
   User& request_;
   Response& response_;
 };
+
+template<class Model>
+SignUpUserHandler<Model>::SignUpUserHandler(User &request, Response &response)
+        : request_(request), response_(response)
+{
+}
+
+template<class Model>
+void SignUpUserHandler<Model>::execute() {
+  return;
+}

@@ -2,26 +2,26 @@
 
 #include <iostream>
 
-template<class JsonParser>
-TcpStringBodyParser<JsonParser>::TcpStringBodyParser() {
-  registeredRequestFormers.push_back(std::make_unique<FormCreateRoomRequest<JsonParser>>());
-  registeredRequestFormers.push_back(std::make_unique<FormDeleteRoomRequest<JsonParser>>());
-  registeredRequestFormers.push_back(std::make_unique<FormAddLinkRequest<JsonParser>>());
-  registeredRequestFormers.push_back(std::make_unique<FormDeleteLinkRequest<JsonParser>>());
-  registeredRequestFormers.push_back(std::make_unique<FormAddUserToRoomRequest<JsonParser>>());
-  registeredRequestFormers.push_back(std::make_unique<FormDeleteUserFromRoomRequest<JsonParser>>());
-  registeredRequestFormers.push_back(std::make_unique<FormGetSnapshotRequest<JsonParser>>());
+template<class Model, class JsonParser>
+TcpStringBodyParser<Model, JsonParser>::TcpStringBodyParser() {
+  registeredRequestFormers.push_back(std::make_unique<FormCreateRoomRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormDeleteRoomRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormAddLinkRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormDeleteLinkRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormAddUserToRoomRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormDeleteUserFromRoomRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormGetSnapshotRequest<JsonParser, Model>>());
 }
 
-template<class JsonParser>
-std::shared_ptr<BaseHandler> TcpStringBodyParser<JsonParser>::parse(std::string data) {
+template<class Model, class JsonParser>
+std::shared_ptr<BaseHandler<Model>> TcpStringBodyParser<Model, JsonParser>::parse(std::string data) {
   if (data.empty()) {
     throw std::runtime_error("Input data is empty!");
   }
 
   std::shared_ptr<JsonParser> json = nullptr;
   try {
-    json = std::make_unique<JsonParser>(data);
+    json = std::make_shared<JsonParser>(data);
   }
   catch (...) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::PARSE_FAILURE), "Failed to parse JSON!");
@@ -36,7 +36,7 @@ std::shared_ptr<BaseHandler> TcpStringBodyParser<JsonParser>::parse(std::string 
   std::cout << "Is command found? : " << true << ", Command number is : " << command << std::endl;
 #endif
 
-  std::shared_ptr<BaseHandler> handler = nullptr;
+  std::shared_ptr<BaseHandler<Model>> handler = nullptr;
 
   for (auto &requestFormer : registeredRequestFormers) {
     if (requestFormer->can_handle(command)) {

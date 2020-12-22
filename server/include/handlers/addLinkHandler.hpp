@@ -3,19 +3,29 @@
 #include <string>
 #include <memory>
 
-#include "handlers/baseHandler.hpp"
 #include "webLink.hpp"
 #include "response.hpp"
 #include "request.hpp"
 
-class AddLinkHandler: public BaseHandler {
+template<class Model>
+class AddLinkHandler: public BaseHandler<Model> {
 public:
-  AddLinkHandler();
-  AddLinkHandler(LinkRequest request);
-  ~AddLinkHandler() {};
+  explicit AddLinkHandler(LinkRequest request);
+  ~AddLinkHandler() = default;
 
   void execute() override;
 
 private:
   LinkRequest request_;
 };
+
+template<class Model>
+AddLinkHandler<Model>::AddLinkHandler(LinkRequest request):
+        request_(request)
+{
+}
+
+template<class Model>
+void AddLinkHandler<Model>::execute() {
+  return;
+}

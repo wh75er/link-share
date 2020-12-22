@@ -3,18 +3,29 @@
 #include <string>
 #include <memory>
 
-#include "handlers/baseHandler.hpp"
 #include "room.hpp"
 #include "response.hpp"
 #include "request.hpp"
 
-class DeleteUserFromRoomHandler: public BaseHandler {
+template<class Model>
+class DeleteUserFromRoomHandler: public BaseHandler<Model> {
 public:
-  DeleteUserFromRoomHandler(UsersRoomRequest request);
-  ~DeleteUserFromRoomHandler() {};
+  explicit DeleteUserFromRoomHandler(UsersRoomRequest request);
+  ~DeleteUserFromRoomHandler() = default;
 
   void execute() override;
 
 private:
   UsersRoomRequest request_;
 };
+
+template<class Model>
+DeleteUserFromRoomHandler<Model>::DeleteUserFromRoomHandler(UsersRoomRequest request):
+        request_(request)
+{
+}
+
+template<class Model>
+void DeleteUserFromRoomHandler<Model>::execute() {
+  return;
+}

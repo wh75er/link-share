@@ -21,13 +21,11 @@ void RequestHandler<DbOps, Connection, Uuid, JsonParser>::handle(std::string dat
 #endif
 
   // Create parser & parse data
-  parser = std::make_unique<TcpStringBodyParser<JsonParser>>();
+  parser = std::make_unique<TcpStringBodyParser<Model<DbOps, Uuid>, JsonParser>>();
 
-  parser->parse(data);
+  handler = parser->parse(data);
 
-//  handler = parser->parse(data);
-
-  // set response on handler
+  // set model and response on handler
 
   // execute handler
 

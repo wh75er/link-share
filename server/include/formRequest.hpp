@@ -12,91 +12,91 @@
 #include "handlers/handlerCreator.hpp"
 #include "errors.hpp"
 
-template<class Json>
+template<class Json, class Model>
 class AbstractFormRequest {
 public:
   virtual ~AbstractFormRequest() = default;
 
   virtual bool can_handle(int command) = 0;
 
-  virtual std::shared_ptr<BaseHandler> spawn_handler(std::shared_ptr<Json> request_elements) = 0;
+  virtual std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) = 0;
 };
 
-template<class Json>
-class FormCreateRoomRequest : public AbstractFormRequest<Json> {
+template<class Json, class Model>
+class FormCreateRoomRequest : public AbstractFormRequest<Json, Model> {
 public:
   FormCreateRoomRequest() = default;
   ~FormCreateRoomRequest() override = default ;
 
   bool can_handle(int command) override;
 
-  std::shared_ptr<BaseHandler> spawn_handler(std::shared_ptr<Json> request_elements) override;
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
 };
 
-template<class Json>
-class FormDeleteRoomRequest : public AbstractFormRequest<Json> {
+template<class Json, class Model>
+class FormDeleteRoomRequest : public AbstractFormRequest<Json, Model> {
 public:
   FormDeleteRoomRequest() = default;
   ~FormDeleteRoomRequest() override = default;
 
   bool can_handle(int command) override;
 
-  std::shared_ptr<BaseHandler> spawn_handler(std::shared_ptr<Json> request_elements) override;
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
 };
 
-template<class Json>
-class FormAddLinkRequest : public AbstractFormRequest<Json> {
+template<class Json, class Model>
+class FormAddLinkRequest : public AbstractFormRequest<Json, Model> {
 public:
   FormAddLinkRequest() = default;
   ~FormAddLinkRequest() override = default;
 
   bool can_handle(int command) override;
 
-  std::shared_ptr<BaseHandler> spawn_handler(std::shared_ptr<Json> request_elements) override;
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
 };
 
-template<class Json>
-class FormDeleteLinkRequest : public AbstractFormRequest<Json> {
+template<class Json, class Model>
+class FormDeleteLinkRequest : public AbstractFormRequest<Json, Model> {
 public:
   FormDeleteLinkRequest() = default;
   ~FormDeleteLinkRequest() override = default;
 
   bool can_handle(int command) override;
 
-  std::shared_ptr<BaseHandler> spawn_handler(std::shared_ptr<Json> request_elements) override;
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
 };
 
-template<class Json>
-class FormAddUserToRoomRequest : public AbstractFormRequest<Json> {
+template<class Json, class Model>
+class FormAddUserToRoomRequest : public AbstractFormRequest<Json, Model> {
 public:
   FormAddUserToRoomRequest() = default;
   ~FormAddUserToRoomRequest() override = default;
 
   bool can_handle(int command) override;
 
-  std::shared_ptr<BaseHandler> spawn_handler(std::shared_ptr<Json> request_elements) override;
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
 };
 
-template<class Json>
-class FormDeleteUserFromRoomRequest : public AbstractFormRequest<Json> {
+template<class Json, class Model>
+class FormDeleteUserFromRoomRequest : public AbstractFormRequest<Json, Model> {
 public:
   FormDeleteUserFromRoomRequest() = default;
   ~FormDeleteUserFromRoomRequest() override = default;
 
   bool can_handle(int command) override;
 
-  std::shared_ptr<BaseHandler> spawn_handler(std::shared_ptr<Json> request_elements) override;
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
 };
 
-template<class Json>
-class FormGetSnapshotRequest : public AbstractFormRequest<Json> {
+template<class Json, class Model>
+class FormGetSnapshotRequest : public AbstractFormRequest<Json, Model> {
 public:
   FormGetSnapshotRequest() = default;
   ~FormGetSnapshotRequest() override = default;
 
   bool can_handle(int command) override;
 
-  std::shared_ptr<BaseHandler> spawn_handler(std::shared_ptr<Json> request_elements) override;
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
 };
 
 #include "formRequest.tpp"

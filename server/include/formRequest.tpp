@@ -1,13 +1,13 @@
 #pragma once
 
-template<class Json>
-bool FormCreateRoomRequest<Json>::can_handle(int command) {
+template<class Json, class Model>
+bool FormCreateRoomRequest<Json, Model>::can_handle(int command) {
   return command == CREATE_ROOM;
 
 }
 
-template<class Json>
-std::shared_ptr<BaseHandler> FormCreateRoomRequest<Json>::spawn_handler(std::shared_ptr<Json> request_elements) {
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormCreateRoomRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
 
   std::string login;
   if (!request_elements->get_value("login", login)) {
@@ -37,19 +37,19 @@ std::shared_ptr<BaseHandler> FormCreateRoomRequest<Json>::spawn_handler(std::sha
           .build();
 
 
-  std::shared_ptr<Creator<RoomRequest>> creator = std::make_unique<CreateRoomHandlerCreator<RoomRequest>>();
+  std::shared_ptr<Creator<RoomRequest, Model>> creator = std::make_unique<CreateRoomHandlerCreator<RoomRequest, Model>>();
 
   return creator->factory_method(request);
 }
 
-template<class Json>
-bool FormDeleteRoomRequest<Json>::can_handle(int command) {
+template<class Json, class Model>
+bool FormDeleteRoomRequest<Json, Model>::can_handle(int command) {
   return command == DELETE_ROOM;
 
 }
 
-template<class Json>
-std::shared_ptr<BaseHandler> FormDeleteRoomRequest<Json>::spawn_handler(std::shared_ptr<Json> request_elements) {
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormDeleteRoomRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
   std::string login;
   if (!request_elements->get_value("login", login)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
@@ -71,18 +71,18 @@ std::shared_ptr<BaseHandler> FormDeleteRoomRequest<Json>::spawn_handler(std::sha
           .uuid(uuid)
           .build();
 
-  std::shared_ptr<Creator<RoomRequest>> creator = std::make_unique<DeleteRoomHandlerCreator<RoomRequest>>();
+  std::shared_ptr<Creator<RoomRequest, Model>> creator = std::make_unique<DeleteRoomHandlerCreator<RoomRequest, Model>>();
 
   return creator->factory_method(request);
 }
 
-template<class Json>
-bool FormAddLinkRequest<Json>::can_handle(int command) {
+template<class Json, class Model>
+bool FormAddLinkRequest<Json, Model>::can_handle(int command) {
   return command == ADD_LINK;
 }
 
-template<class Json>
-std::shared_ptr<BaseHandler> FormAddLinkRequest<Json>::spawn_handler(std::shared_ptr<Json> request_elements) {
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormAddLinkRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
   std::string login;
   if (!request_elements->get_value("login", login)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
@@ -122,18 +122,18 @@ std::shared_ptr<BaseHandler> FormAddLinkRequest<Json>::spawn_handler(std::shared
           .description(description)
           .build();
 
-  std::shared_ptr<Creator<LinkRequest>> creator = std::make_unique<AddLinkHandlerCreator<LinkRequest>>();
+  std::shared_ptr<Creator<LinkRequest, Model>> creator = std::make_unique<AddLinkHandlerCreator<LinkRequest, Model>>();
 
   return creator->factory_method(request);
 }
 
-template<class Json>
-bool FormDeleteLinkRequest<Json>::can_handle(int command) {
+template<class Json, class Model>
+bool FormDeleteLinkRequest<Json, Model>::can_handle(int command) {
   return command == DELETE_LINK;
 }
 
-template<class Json>
-std::shared_ptr<BaseHandler> FormDeleteLinkRequest<Json>::spawn_handler(std::shared_ptr<Json> request_elements) {
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormDeleteLinkRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
   std::string login;
   if (!request_elements->get_value("login", login)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
@@ -155,19 +155,19 @@ std::shared_ptr<BaseHandler> FormDeleteLinkRequest<Json>::spawn_handler(std::sha
           .uuid(uuid)
           .build();
 
-  std::shared_ptr<Creator<LinkRequest>> creator = std::make_unique<DeleteLinkHandlerCreator<LinkRequest>>();
+  std::shared_ptr<Creator<LinkRequest, Model>> creator = std::make_unique<DeleteLinkHandlerCreator<LinkRequest, Model>>();
 
   return creator->factory_method(request);
 }
 
-template<class Json>
-bool FormAddUserToRoomRequest<Json>::can_handle(int command) {
+template<class Json, class Model>
+bool FormAddUserToRoomRequest<Json, Model>::can_handle(int command) {
   return command == ADD_USERS;
 
 }
 
-template<class Json>
-std::shared_ptr<BaseHandler> FormAddUserToRoomRequest<Json>::spawn_handler(std::shared_ptr<Json> request_elements) {
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormAddUserToRoomRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
   std::string login;
   if (!request_elements->get_value("login", login)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
@@ -190,19 +190,19 @@ std::shared_ptr<BaseHandler> FormAddUserToRoomRequest<Json>::spawn_handler(std::
 
   UsersRoomRequest request(login, token, uuid, users);
 
-  std::shared_ptr<Creator<UsersRoomRequest>> creator = std::make_unique<AddUserToRoomHandlerCreator<UsersRoomRequest>>();
+  std::shared_ptr<Creator<UsersRoomRequest, Model>> creator = std::make_unique<AddUserToRoomHandlerCreator<UsersRoomRequest, Model>>();
 
   return creator->factory_method(request);
 }
 
-template<class Json>
-bool FormDeleteUserFromRoomRequest<Json>::can_handle(int command) {
+template<class Json, class Model>
+bool FormDeleteUserFromRoomRequest<Json, Model>::can_handle(int command) {
   return command == DELETE_USERS;
 
 }
 
-template<class Json>
-std::shared_ptr<BaseHandler> FormDeleteUserFromRoomRequest<Json>::spawn_handler(std::shared_ptr<Json> request_elements) {
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormDeleteUserFromRoomRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
   std::string login;
   if (!request_elements->get_value("login", login)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
@@ -225,18 +225,18 @@ std::shared_ptr<BaseHandler> FormDeleteUserFromRoomRequest<Json>::spawn_handler(
 
   UsersRoomRequest request(login, token, uuid, users);
 
-  std::shared_ptr<Creator<UsersRoomRequest>> creator = std::make_unique<DeleteUserFromRoomHandlerCreator<UsersRoomRequest>>();
+  std::shared_ptr<Creator<UsersRoomRequest, Model>> creator = std::make_unique<DeleteUserFromRoomHandlerCreator<UsersRoomRequest, Model>>();
 
   return creator->factory_method(request);
 }
 
-template<class Json>
-bool FormGetSnapshotRequest<Json>::can_handle(int command) {
+template<class Json, class Model>
+bool FormGetSnapshotRequest<Json, Model>::can_handle(int command) {
   return command == MAKE_SNAPSHOT;
 }
 
-template<class Json>
-std::shared_ptr<BaseHandler> FormGetSnapshotRequest<Json>::spawn_handler(std::shared_ptr<Json> request_elements) {
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormGetSnapshotRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
   std::string login;
   if (!request_elements->get_value("login", login)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
@@ -253,7 +253,7 @@ std::shared_ptr<BaseHandler> FormGetSnapshotRequest<Json>::spawn_handler(std::sh
   }
   SnapshotRequest request(login, token, uuid);
 
-  std::shared_ptr<Creator<SnapshotRequest>> creator = std::make_unique<GetSnapshotHandlerCreator<SnapshotRequest>>();
+  std::shared_ptr<Creator<SnapshotRequest, Model>> creator = std::make_unique<GetSnapshotHandlerCreator<SnapshotRequest, Model>>();
 
   return creator->factory_method(request);
 }

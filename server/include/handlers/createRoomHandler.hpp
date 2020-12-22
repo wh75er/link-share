@@ -3,18 +3,29 @@
 #include <string>
 #include <memory>
 
-#include "handlers/baseHandler.hpp"
 #include "room.hpp"
 #include "response.hpp"
 #include "request.hpp"
 
-class CreateRoomHandler: public BaseHandler {
+template<class Model>
+class CreateRoomHandler: public BaseHandler<Model> {
 public:
-  CreateRoomHandler(RoomRequest request);
-  ~CreateRoomHandler() {};
+  explicit CreateRoomHandler(RoomRequest request);
+  ~CreateRoomHandler() = default;
 
   void execute() override;
 
 private:
   RoomRequest request_;
 };
+
+template<class Model>
+CreateRoomHandler<Model>::CreateRoomHandler(RoomRequest request):
+        request_(request)
+{
+}
+
+template<class Model>
+void CreateRoomHandler<Model>::execute() {
+  return;
+}
