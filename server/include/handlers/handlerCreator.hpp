@@ -14,86 +14,86 @@
 #include "handlers/deleteLinkHandler.hpp"
 #include "handlers/getSnapshotHandler.hpp"
 
-template<typename T>
+template<typename T, class Model>
 class Creator {
 public:
   virtual ~Creator() = default;
-  virtual std::shared_ptr<BaseHandler> factory_method(T request) const = 0;
+  virtual std::shared_ptr<BaseHandler<Model>> factory_method(T request) const = 0;
 };
 
-template<typename T>
-class CreateRoomHandlerCreator : public Creator<T> {
+template<typename T, class Model>
+class CreateRoomHandlerCreator : public Creator<T, Model> {
 public:
   CreateRoomHandlerCreator() = default;
   ~CreateRoomHandlerCreator() = default;
 
-  std::shared_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_shared<CreateRoomHandler>(request);
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<CreateRoomHandler<Model>>(request);
   }
 };
 
-template<typename T>
-class DeleteRoomHandlerCreator : public Creator<T> {
+template<typename T, class Model>
+class DeleteRoomHandlerCreator : public Creator<T, Model> {
 public:
   DeleteRoomHandlerCreator() = default;
   ~DeleteRoomHandlerCreator() = default;
 
-  std::shared_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_shared<DeleteRoomHandler>(request);
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<DeleteRoomHandler<Model>>(request);
   }
 };
 
-template<typename T>
-class AddUserToRoomHandlerCreator : public Creator<T> {
+template<typename T, class Model>
+class AddUserToRoomHandlerCreator : public Creator<T, Model> {
 public:
   AddUserToRoomHandlerCreator() = default;
   ~AddUserToRoomHandlerCreator() = default;
 
-  std::shared_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_shared<AddUserToRoomHandler>(request);
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<AddUserToRoomHandler<Model>>(request);
   }
 };
 
-template<typename T>
-class DeleteUserFromRoomHandlerCreator : public Creator<T> {
+template<typename T, class Model>
+class DeleteUserFromRoomHandlerCreator : public Creator<T, Model> {
 public:
   DeleteUserFromRoomHandlerCreator() = default;
   ~DeleteUserFromRoomHandlerCreator() = default;
 
-  std::shared_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_shared<DeleteUserFromRoomHandler>(request);
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<DeleteUserFromRoomHandler<Model>>(request);
   }
 };
 
-template<typename T>
-class AddLinkHandlerCreator : public Creator<T> {
+template<typename T, class Model>
+class AddLinkHandlerCreator : public Creator<T, Model> {
 public:
   AddLinkHandlerCreator() = default;
   ~AddLinkHandlerCreator() = default;
 
-  std::shared_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_shared<AddLinkHandler>(request);
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<AddLinkHandler<Model>>(request);
   }
 };
 
-template<typename T>
-class DeleteLinkHandlerCreator : public Creator<T> {
+template<typename T, class Model>
+class DeleteLinkHandlerCreator : public Creator<T, Model> {
 public:
   DeleteLinkHandlerCreator() = default;
   ~DeleteLinkHandlerCreator() = default;
 
-  std::shared_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_shared<DeleteLinkHandler>(request);
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<DeleteLinkHandler<Model>>(request);
   }
 };
 
-template<typename T>
-class GetSnapshotHandlerCreator : public Creator<T> {
+template<typename T, class Model>
+class GetSnapshotHandlerCreator : public Creator<T, Model> {
 public:
   GetSnapshotHandlerCreator() = default;
   ~GetSnapshotHandlerCreator() = default;
 
-  std::shared_ptr<BaseHandler> factory_method(T request) const override {
-    return std::make_shared<GetSnapshotHandler>(request);
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<GetSnapshotHandler<Model>>(request);
   }
 };

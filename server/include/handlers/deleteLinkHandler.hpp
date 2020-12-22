@@ -3,18 +3,29 @@
 #include <string>
 #include <memory>
 
-#include "handlers/baseHandler.hpp"
 #include "webLink.hpp"
 #include "response.hpp"
 #include "request.hpp"
 
-class DeleteLinkHandler: public BaseHandler {
+template<class Model>
+class DeleteLinkHandler: public BaseHandler<Model> {
 public:
-  DeleteLinkHandler(LinkRequest request);
-  ~DeleteLinkHandler() {};
+  explicit DeleteLinkHandler(LinkRequest request);
+  ~DeleteLinkHandler() = default;
 
   void execute() override;
 
 private:
   LinkRequest request_;
 };
+
+template<class Model>
+DeleteLinkHandler<Model>::DeleteLinkHandler(LinkRequest request):
+        request_(request)
+{
+}
+
+template<class Model>
+void DeleteLinkHandler<Model>::execute() {
+  return;
+}

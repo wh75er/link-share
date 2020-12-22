@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 
+#include "model.hpp"
 #include "bodyParser.hpp"
 #include "sender.hpp"
 #include "handlers/baseHandler.hpp"
@@ -22,8 +23,8 @@ public:
   void handle(std::string data);
 
 private:
-  std::unique_ptr<AbstractBodyParser> parser = nullptr;
-  std::unique_ptr<BaseHandler> handler = nullptr;
+  std::unique_ptr<AbstractBodyParser<Model<DbOps, Uuid>>> parser = nullptr;
+  std::shared_ptr<BaseHandler<Model<DbOps, Uuid>>> handler = nullptr;
   std::shared_ptr<DbOps> dbops;
   Sender<Connection> sender;
 };
