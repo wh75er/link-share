@@ -79,7 +79,7 @@ int main() {
   std::string port = "13201";
 
   try {
-    TCPserver server = TCPserver<PGBackend, Uuid, JsonParser>(address, port);
+    TCPserver server = TCPserver<DbOps, Uuid, JsonParser>(address, port);
 
     std::cout << "Set to listen" << std::endl;
 

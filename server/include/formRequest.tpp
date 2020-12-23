@@ -257,3 +257,51 @@ std::shared_ptr<BaseHandler<Model>> FormGetSnapshotRequest<Json, Model>::spawn_h
 
   return creator->factory_method(request);
 }
+
+template<class Json, class Model>
+bool FormLogInUserRequest<Json, Model>::can_handle(int command) {
+  return command == LOG_IN_USER;
+}
+
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormLogInUserRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
+  std::string login;
+  if (!request_elements->get_value("login", login)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
+  }
+
+  std::string password;
+  if (!request_elements->get_value("password", password)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "token value is not presented in JSON!");
+  }
+
+  UserRequest request(login, password);
+
+  std::shared_ptr<Creator<UserRequest, Model>> creator = std::make_unique<GetLogInUserHandlerCreator<UserRequest, Model>>();
+
+  return creator->factory_method(request);
+}
+
+template<class Json, class Model>
+bool FormSignUpUserRequest<Json, Model>::can_handle(int command) {
+  return command == SIGN_UP_USER;
+}
+
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormSignUpUserRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
+  std::string login;
+  if (!request_elements->get_value("login", login)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
+  }
+
+  std::string password;
+  if (!request_elements->get_value("password", password)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "token value is not presented in JSON!");
+  }
+
+  UserRequest request(login, password);
+
+  std::shared_ptr<Creator<UserRequest, Model>> creator = std::make_unique<GetSignUpUserHandlerCreator<UserRequest, Model>>();
+
+  return creator->factory_method(request);
+}

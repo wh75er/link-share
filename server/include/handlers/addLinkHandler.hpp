@@ -3,7 +3,6 @@
 #include <string>
 #include <memory>
 
-#include "webLink.hpp"
 #include "response.hpp"
 #include "request.hpp"
 
@@ -27,7 +26,7 @@ AddLinkHandler<Model>::AddLinkHandler(LinkRequest& request):
 
 template<class Model>
 void AddLinkHandler<Model>::execute() {
-  std::string error = "";
+  std::string error;
 
   std::shared_ptr<Model> model = this->get_model();
   std::shared_ptr<Response> response = this->get_response();

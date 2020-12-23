@@ -3,7 +3,6 @@
 #include <string>
 #include <memory>
 
-#include "room.hpp"
 #include "response.hpp"
 #include "request.hpp"
 
@@ -27,5 +26,47 @@ CreateRoomHandler<Model>::CreateRoomHandler(RoomRequest request):
 
 template<class Model>
 void CreateRoomHandler<Model>::execute() {
-  return;
+  std::string error;
+
+  std::shared_ptr<Model> model = this->get_model();
+  std::shared_ptr<Response> response = this->get_response();
+
+  if (!model) {
+    error = "Model is not set!";
+    response->error = error;
+    return;
+  }
+
+  if(!response) {
+    this->set_response(std::make_shared<Response>());
+  }
+
+  bool verified = false;
+  try {
+    verified = model->identify(request_.login, request_.token);
+  }
+  catch (const std::exception& e) {
+    error = e.what();
+    response->error = error;
+    return;
+  }
+
+  if (!verified) {
+    error = "Authorization error!";
+    response->error = error;
+    return;
+  }
+
+  std::string room_uuid;
+  try {
+    room_uuid = model->create_room(request_.login, request_.name, request_.private_);
+  }
+  catch (const std::exception& e) {
+    error = e.what();
+    response->error = error;
+    return;
+  }
+
+  response->error = error;
+  response->uuid = room_uuid;
 }

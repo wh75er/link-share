@@ -13,6 +13,8 @@
 #include "handlers/addLinkHandler.hpp"
 #include "handlers/deleteLinkHandler.hpp"
 #include "handlers/getSnapshotHandler.hpp"
+#include "handlers/logInUserHandler.hpp"
+#include "handlers/signUpUserHandler.hpp"
 
 template<typename T, class Model>
 class Creator {
@@ -95,5 +97,27 @@ public:
 
   std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
     return std::make_shared<GetSnapshotHandler<Model>>(request);
+  }
+};
+
+template<typename T, class Model>
+class GetLogInUserHandlerCreator : public Creator<T, Model> {
+public:
+  GetLogInUserHandlerCreator() = default;
+  ~GetLogInUserHandlerCreator() = default;
+
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<LogInUserHandler<Model>>(request);
+  }
+};
+
+template<typename T, class Model>
+class GetSignUpUserHandlerCreator : public Creator<T, Model> {
+public:
+  GetSignUpUserHandlerCreator() = default;
+  ~GetSignUpUserHandlerCreator() = default;
+
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<SignUpUserHandler<Model>>(request);
   }
 };

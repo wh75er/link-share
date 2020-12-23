@@ -25,13 +25,16 @@ void RequestHandler<DbOps, Connection, Uuid, JsonParser>::handle(std::string dat
 
   handler = parser->parse(data);
 
-  handler->set_model(std::make_shared<Model<DbOps, Uuid>>(dbops));
-
   // set model and response on handler
 
+  handler->set_model(std::make_shared<Model<DbOps, Uuid>>(dbops));
+
   // execute handler
+  handler->execute();
+
+  std::shared_ptr<Response> response = handler->get_response();
 
   // use sender to send data back to client
 
-  sender.send(data);
+  sender.send(response->serialize());
 }

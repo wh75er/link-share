@@ -13,6 +13,7 @@ public:
 
   std::map<std::string, std::string> get_user_by_login(std::string& login);
   std::map<std::string, std::string> get_room_by_uuid(std::string& uuid);
+  std::map<std::string, std::string> get_room_by_link_uuid(std::string& uuid);
   std::map<std::string, std::string> get_link_by_uuid(std::string& uuid);
   std::map<std::string, std::string> get_snapshot_by_uuid(std::string& uuid);
   std::map<std::string, std::string> get_comment_by_uuid(std::string& uuid);
@@ -65,6 +66,22 @@ std::map<std::string, std::string> DbApi<DbOps>::get_user_by_login(std::string &
 template<class DbOps>
 std::map<std::string, std::string> DbApi<DbOps>::get_room_by_uuid(std::string& uuid) {
   std::string query = "SELECT * FROM rooms where room_uuid='" + uuid + "';";
+
+  std::map<std::string, std::string> row;
+
+  try {
+    row = dbops->get_row_by_query(query);
+  }
+  catch (...) {
+    throw;
+  }
+
+  return row;
+}
+
+template<class DbOps>
+std::map<std::string, std::string> DbApi<DbOps>::get_room_by_link_uuid(std::string& uuid) {
+  std::string query = "select * from rooms where id=(select room_id from room_links where link_id=(select * from web_links where link_uuid='" + uuid + "'));";
 
   std::map<std::string, std::string> row;
 
