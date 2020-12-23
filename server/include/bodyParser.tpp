@@ -45,7 +45,8 @@ std::shared_ptr<BaseHandler<Model>> TcpStringBodyParser<Model, JsonParser>::pars
       try {
         handler = requestFormer->spawn_handler(json);
       }
-      catch (...) {
+      catch (std::exception& e) {
+        std::cout << "Problem is : " << e.what() << std::endl;
         throw;
       }
       break;

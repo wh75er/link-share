@@ -38,6 +38,7 @@ void LogInUserHandler<Model>::execute() {
 
   if(!response) {
     this->set_response(std::make_shared<Response>());
+    response = this->get_response();
   }
 
   std::string token;

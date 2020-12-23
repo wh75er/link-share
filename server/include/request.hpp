@@ -5,9 +5,13 @@
 
 class BaseRequest {
 public:
-  explicit BaseRequest(std::string& _login, std::string& _token):
-    login(_login),
-    token(_token) {
+  explicit BaseRequest(std::string &_login, std::string &_token) :
+          login(_login),
+          token(_token) {
+  }
+
+  explicit BaseRequest(std::string &_login) :
+          login(_login) {
   }
 
   virtual ~BaseRequest() = default;
@@ -121,7 +125,7 @@ class SnapshotRequest : public BaseRequest {
 class UserRequest : public BaseRequest {
 public:
   explicit UserRequest(std::string& _login, std::string& _password):
-    BaseRequest(_login, (std::string &) ""),
+    BaseRequest(_login),
     password(_password)
   {}
 
