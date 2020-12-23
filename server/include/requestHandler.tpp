@@ -25,6 +25,8 @@ void RequestHandler<DbOps, Connection, Uuid, JsonParser>::handle(std::string dat
 
   handler = parser->parse(data);
 
+  handler->set_model(std::make_shared<Model<DbOps, Uuid>>(dbops));
+
   // set model and response on handler
 
   // execute handler
