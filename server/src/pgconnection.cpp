@@ -69,7 +69,8 @@ std::map<std::string, std::string> DbOps::get_row_by_query(std::string& query) {
       int n_tuples = PQntuples(res);
 
       if (!n_tuples) {
-        throw std::runtime_error("empty");
+        //throw std::runtime_error("empty");
+        return row;
       }
 
       int n = PQnfields(res);
@@ -107,7 +108,8 @@ std::vector<std::map<std::string, std::string>> DbOps::get_rows_by_query(std::st
       int n_tuples = PQntuples(res);
 
       if (!n_tuples) {
-        throw std::runtime_error("empty");
+        //throw std::runtime_error("empty");
+        return rows;
       }
 
       int n_fields = PQnfields(res);

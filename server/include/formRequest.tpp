@@ -289,17 +289,27 @@ bool FormSignUpUserRequest<Json, Model>::can_handle(int command) {
 
 template<class Json, class Model>
 std::shared_ptr<BaseHandler<Model>> FormSignUpUserRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
+  std::cout << "Getting inside the handler!" << std::endl;
+
   std::string login;
   if (!request_elements->get_value("login", login)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
   }
+
+  std::cout << "Login is : " << login << std::endl;
 
   std::string password;
   if (!request_elements->get_value("password", password)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "token value is not presented in JSON!");
   }
 
+  std::cout << "Password is : " << password << std::endl;
+
+  std::cout << "Forming request" << std::endl;
+
   UserRequest request(login, password);
+
+  std::cout << "Request is formed!" << std::endl;
 
   std::shared_ptr<Creator<UserRequest, Model>> creator = std::make_unique<GetSignUpUserHandlerCreator<UserRequest, Model>>();
 

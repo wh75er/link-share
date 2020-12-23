@@ -229,7 +229,7 @@ template<class DbOps>
 void DbApi<DbOps>::add_room(std::string& login, std::string& name, bool private_, std::string &uuid) {
   std::string boolean = private_ ? "true" : "false";
   std::string query = "insert into rooms (room_uuid, name, private, room_date, user_id) values "
-                      "('" + uuid + "', " + name + ", " + boolean + ", NOW(), (select id from users where login='" + login + "'));";
+                      "('" + uuid + "', '" + name + "', " + boolean + ", NOW(), (select id from users where login='" + login + "'));";
 
   try {
     dbops->exec_query_command(query);
@@ -304,7 +304,7 @@ void DbApi<DbOps>::add_snapshot_to_link(std::string& snapshot_uuid, std::string&
 
 template<class DbOps>
 void DbApi<DbOps>::set_user_token(std::string &login, std::string &token) {
-  std::string query = "update users set token = '" + token + "', date = NOW() where login = '" + login + "';";
+  std::string query = "update users set token = '" + token + "', token_date = NOW() where login = '" + login + "';";
 
   try {
     dbops->exec_query_command(query);
