@@ -2,34 +2,35 @@
 
 #include <string>
 #include <vector>
-
-enum ResponseError {
-  SUCCESS=0,
-  ERROR,
-};
+#include <map>
 
 class Response {
 public:
-  Response();
-  Response(enum ResponseError error, std::string token, bool hasFiles, std::string snapshotId, std::vector<std::string> fileNames);
-  ~Response() {};
+  class Builder;
 
-  void setError(enum ResponseError error);
-  void setToken(std::string token);
-  void setHasFiles(bool hasFiles);
-  void setSnapshotId(std::string snapshotId);
-  void setFileNames(std::vector<std::string> fileNames);
+  Response() = default;
+  explicit Response(std::string _error, std::string _uuid, std::vector<std::map<std::string, std::string>> _objects, std::string files_dir);
+  ~Response() = default;
 
-  enum ResponseError getError();
-  std::string getToken();
-  bool getHasFiles();
-  std::string getSnapshotId();
-  std::vector<std::string> getFileNames();
+  std::string serialize();
+
+  std::string error;
+  std::string uuid;
+  std::vector<std::map<std::string, std::string>> objects;
+  std::string files_dir;
+};
+
+class Response::Builder {
+public:
+  Builder& error(std::string& error);
+  Builder& uuid(std::string& uuid);
+  Builder& objects(std::vector<std::map<std::string, std::string>>& objects);
+  Builder& files_dir(std::string& files_dir);
+  Response build() const;
 
 private:
-  enum ResponseError error_;
-  std::string token_;
-  bool hasFiles_;
-  std::string snapshotId_;
-  std::vector<std::string> fileNames_;
+  std::string _error;
+  std::string _uuid;
+  std::vector<std::map<std::string, std::string>> _objects;
+  std::string _files_dir;
 };
