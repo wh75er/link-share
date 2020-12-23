@@ -2,25 +2,24 @@
 
 #include <string>
 
-#include "user.hpp"
 #include "response.hpp"
+#include "request.hpp"
 
 template<class Model>
 class LogInUserHandler: public BaseHandler<Model> {
 public:
-  explicit LogInUserHandler(User &request, Response &response);
+  explicit LogInUserHandler(UserRequest request);
   ~LogInUserHandler() = default;
 
   void execute() override;
 
 private:
-  User& request_;
-  Response& response_;
+  UserRequest request_;
 };
 
 template<class Model>
-LogInUserHandler<Model>::LogInUserHandler(User &request, Response &response)
-        : request_(request), response_(response)
+LogInUserHandler<Model>::LogInUserHandler(UserRequest request):
+  request_(request)
 {
 }
 

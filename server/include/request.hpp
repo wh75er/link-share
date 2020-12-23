@@ -12,7 +12,6 @@ public:
 
   virtual ~BaseRequest() = default;
 
-protected:
   std::string login;
   std::string token;
 };
@@ -117,4 +116,14 @@ class SnapshotRequest : public BaseRequest {
     ~SnapshotRequest() override = default;
 
     std::string uuid;
+};
+
+class UserRequest : public BaseRequest {
+public:
+  explicit UserRequest(std::string& _login, std::string& _password):
+    BaseRequest(_login, (std::string &) ""),
+    password(_password)
+  {}
+
+  std::string password;
 };

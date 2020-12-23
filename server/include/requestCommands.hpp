@@ -8,5 +8,7 @@ enum RequestCommand {
   ADD_LINK,
   DELETE_LINK,
   MAKE_SNAPSHOT,
+  LOG_IN_USER,
+  SIGN_UP_USER,
 };
 
