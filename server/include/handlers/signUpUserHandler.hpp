@@ -25,5 +25,29 @@ SignUpUserHandler<Model>::SignUpUserHandler(UserRequest request):
 
 template<class Model>
 void SignUpUserHandler<Model>::execute() {
-  return;
+  std::string error;
+
+  std::shared_ptr<Model> model = this->get_model();
+  std::shared_ptr<Response> response = this->get_response();
+
+  if (!model) {
+    error = "Model is not set!";
+    response->error = error;
+    return;
+  }
+
+  if(!response) {
+    this->set_response(std::make_shared<Response>());
+  }
+
+  try {
+    model->sign_up_user(request_.login, request_.password);
+  }
+  catch (const std::exception& e) {
+    error = e.what();
+    response->error = error;
+    return;
+  }
+
+  response->error = error;
 }

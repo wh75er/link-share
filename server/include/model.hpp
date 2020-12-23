@@ -36,6 +36,8 @@ public:
 
   void delete_users(std::string& login, std::vector<std::string>& users, std::string& room_uuid);
 
+  void sign_up_user(std::string& login, std::string& password);
+
 private:
   Uuid uuid;
   DbApi<DbOps> api{};
@@ -133,7 +135,12 @@ std::string Model<DbOps, Uuid>::generate_token(std::string &login, std::string &
 
   std::string user_token = uuid.to_string();
 
-  api.set_user_token(login, user_token);
+  try {
+    api.set_user_token(login, user_token);
+  }
+  catch (...) {
+    throw;
+  }
 
   return user_token;
 };
@@ -355,6 +362,16 @@ void Model<DbOps, Uuid>::delete_users(std::string& login, std::vector<std::strin
     }
 
     api.delete_users_from_room(users, room_uuid);
+  }
+  catch (...) {
+    throw;
+  }
+}
+
+template<class DbOps, class Uuid>
+void Model<DbOps, Uuid>::sign_up_user(std::string& login, std::string& password) {
+  try {
+    api.add_user(login, password);
   }
   catch (...) {
     throw;
