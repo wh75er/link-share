@@ -51,8 +51,8 @@ public:
     //ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model& app);
 private:
-    std::string linkName;
-    std::string url;
+    std::string linkName = "";
+    std::string url = "";
 };
 
 class RemoveLinkReqHandler : public RequestHandler {

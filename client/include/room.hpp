@@ -7,7 +7,7 @@ class RoomImpl;
 
 class Room {
 public:
-    Room(std::string roomName/* , std::string roomId */);
+    Room(std::string roomName, std::string roomId);
     std::string GetRoomHost();
     std::string GetRoomName();
     void addLink(std::string& name, std::string& url);

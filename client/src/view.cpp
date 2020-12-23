@@ -9,8 +9,6 @@ std::string ConsoleView::GetRequest() {
     PrintCommands();
 
     std::string inputStr(""), appendStr(" ");
-    //int key = std::atoi(inputStr.c_str());
-    //std::cout << key << std::endl;
     int key = 0;
     std::cin >> key;
     switch (key) {
@@ -36,33 +34,31 @@ std::string ConsoleView::GetRequest() {
         break;
     case 3: {
         inputStr += "3,";
-        /* std::cout << "Write name of room" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Name*" + appendStr + ",";
-        std::cout << "Write host of room" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Host*" + appendStr + "*Users*"; */
-        inputStr += "*Users*";
+        std::cout << "Write amount of users" << std::endl;
+        size_t amount = 0;
+        std::cin >> amount;
+        inputStr += "*Users*,";
         std::cout << "Write users" << std::endl;
-        while(!appendStr.empty()) {
+        while(amount > 0) {
+            //std::getline(std::cin, appendStr);
             std::cin >> appendStr;
             inputStr += appendStr + ",";
+            --amount;
+           /* std::cout << amount<< std::endl; */
         }
     }
         break;
     case 4: {
         inputStr += "4,";
-        /* std::cout << "Write name of room" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Name*" + appendStr + ",";
-        std::cout << "Write host of room" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Host*" + appendStr + "*Users*"; */
-        inputStr += "*Users*";
+        std::cout << "Write amount of users" << std::endl;
+        size_t amount = 0;
+        std::cin >> amount;
+        inputStr += "*Users*,";
         std::cout << "Write users" << std::endl;
-        while(!appendStr.empty()) {
+        while(amount > 0) {
             std::cin >> appendStr;
             inputStr += appendStr + ",";
+            --amount;
         }
     }
         break;
@@ -70,18 +66,19 @@ std::string ConsoleView::GetRequest() {
         inputStr += "5,";
         std::cout << "Write name of link" << std::endl;
         std::cin >> appendStr;
-        inputStr += "*Name*" + appendStr + ",";
+        inputStr += "*Name*," + appendStr + ",";
         std::cout << "Write url of link" << std::endl;
         std::cin >> appendStr;
-        inputStr += "*Url*" + appendStr;
+        inputStr += "*Url*," + appendStr + ",";
         break;
     }
     case 6: {
         inputStr += "6,";
         std::cout << "Write name of link" << std::endl;
-        inputStr += "*Name*";
-        std::cin >> inputStr;
+        std::cin >> appendStr;
+        inputStr += "*Name*" + appendStr;
     }
+        break;
     case 7: {
         inputStr += "7,";
         std::cout << "Write name of link" << std::endl;
@@ -95,8 +92,6 @@ std::string ConsoleView::GetRequest() {
         std::cout << "Wrong command. Try again" << std::endl;
         break;
     }
-
-    //std::cout << inputStr << std::endl;
     return inputStr;
 }
 

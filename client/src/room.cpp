@@ -7,7 +7,7 @@
 
 class RoomImpl {
 public:
-    RoomImpl(std::string roomName/* , std::string roomId */);
+    RoomImpl(std::string name, std::string host);
     std::string getRoomHost();
     std::string getRoomName();
     void addLink(std::string& name, std::string url);
@@ -25,7 +25,7 @@ private:
 };
 
 
-Room::Room(std::string roomName/* , std::string roomId */) {}
+Room::Room(std::string name, std::string host) : roomImpl(new RoomImpl(name, host)) {}
 std::string Room::GetRoomHost() {
     std::string ret = roomImpl->getRoomHost();
     return ret;
@@ -51,7 +51,7 @@ std::string Room::archiveLink(std::string& linkName) {
 }
 
 
-RoomImpl::RoomImpl(std::string roomName/* , std::string roomId */) {}
+RoomImpl::RoomImpl(std::string name, std::string host) : roomName(name), roomHost(host) {}
 
 std::string RoomImpl::getRoomHost() {
     return roomHost;

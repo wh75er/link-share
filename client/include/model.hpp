@@ -3,8 +3,6 @@
 #include <memory>
 
 #include "client.hpp"
-#include "requestForm.hpp"
-
 
 class ModelImpl;
 
@@ -15,7 +13,6 @@ public:
     ~Model();
     std::string GetMainRoomInfo();
     void PassAction(std::string& action);
-
 private:
     std::shared_ptr<ModelImpl> modelImpl;
 };

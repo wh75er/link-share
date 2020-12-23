@@ -41,7 +41,7 @@ private:
     std::vector<std::shared_ptr<Room>> rooms;
 };
 
-ModelImpl::ModelImpl() : client(host, port) {
+ModelImpl::ModelImpl() : client(host, port), mainRoom(std::make_shared<Room>("default", "me")) {
     client.Connect();
 }
 
@@ -84,18 +84,17 @@ std::shared_ptr<RequestHandler> ModelImpl::CreateRequestHandler(std::string& act
     return handler;
 }
 
+
 void ModelImpl::passAction(std::string& action, Model& model) {
-    
     std::shared_ptr<RequestHandler> handler = CreateRequestHandler(action, model);
 
     std::string req = handler->GetRequestToSend();
     
     //std::cout << "req: " << req;
-
     client.writeToServer(req);
     //std::cout << "*********" << std::endl;
     std::string response = client.readFromServer();
-    std::cout << response;
+    std::cout << std::endl << response << std::endl;
     if (handler->HandleResponse(response) == SUCCESS) {
         handler->DoLogic(model);
     }
