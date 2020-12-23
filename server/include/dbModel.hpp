@@ -29,6 +29,8 @@ public:
   void add_comment_to_link(std::string& comment_uuid, std::string& content, std::string& link_uuid);
   void add_snapshot_to_link(std::string& snapshot_uuid, std::string& dir_name, std::string& link_uuid);
 
+  void set_user_token(std::string& login, std::string& token);
+
   void delete_room(std::string& room_uuid);
   void delete_link(std::string& link_uuid);
   void delete_link_from_room(std::string& link_uuid, std::string& room_uuid);
@@ -274,6 +276,18 @@ void DbApi<DbOps>::add_snapshot_to_link(std::string& snapshot_uuid, std::string&
                       "('" + snapshot_uuid + "', '" + dir_name + "', "
                                                                  "(select id from web_links where link_uuid='" + link_uuid + "'), "
                                                                                                                              "NOW());";
+
+  try {
+    dbops->exec_query_command(query);
+  }
+  catch (...) {
+    throw;
+  }
+}
+
+template<class DbOps>
+void DbApi<DbOps>::set_user_token(std::string &login, std::string &token) {
+  std::string query = "update users set token = '" + token + "', date = NOW() where login = '" + login + "';";
 
   try {
     dbops->exec_query_command(query);
