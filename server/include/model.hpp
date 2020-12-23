@@ -18,7 +18,7 @@ public:
 
   std::string create_room(std::string& login, std::string& name, bool private_);
 
-  std::string create_link(std::string& url, std::string& name, std::string& description, std::string& room_uuid);
+  std::string create_link(std::string& login, std::string& url, std::string& name, std::string& description, std::string& room_uuid);
 
   std::string create_snapshot(std::string& link_uuid);
 
@@ -97,8 +97,53 @@ std::string Model<DbOps, Uuid>::create_room(std::string &login, std::string &nam
 }
 
 template<class DbOps, class Uuid>
-std::string Model<DbOps, Uuid>::create_link(std::string &url, std::string &name, std::string &description,
+std::string Model<DbOps, Uuid>::create_link(std::string& login, std::string &url, std::string &name, std::string &description,
                                             std::string &room_uuid) {
+  std::map<std::string, std::string> user;
+  try {
+    user = api.get_user_by_login(login);
+  }
+  catch (...) {
+    throw;
+  }
+
+  std::map<std::string, std::string> room;
+  try {
+    room = api.get_room_by_uuid(room_uuid);
+  }
+  catch (...) {
+    throw;
+  }
+
+  if (user["id"].empty() || room["user_id"].empty()) {
+    throw std::runtime_error("Failed to get entities fields!");
+  }
+
+  std::vector<std::map<std::string, std::string>> room_users;
+  try {
+    room_users = api.get_room_users_by_uuid(room_uuid);
+  }
+  catch (...) {
+    throw;
+  }
+
+  bool is_owner = user["id"] == room["user_id"];
+  bool is_participant = false;
+  for (auto& room_user : room_users) {
+    if (room_user["id"].empty()) {
+      throw std::runtime_error("Failed to get entity field!");
+    }
+
+    if (room_user["id"] == user["id"]) {
+      is_participant = true;
+      break;
+    }
+  }
+
+  if (!is_owner && !is_participant) {
+    throw std::runtime_error("User is not allowed to create links in the room!");
+  }
+
   uuid.generate();
 
   std::string link_uuid = uuid.to_string();

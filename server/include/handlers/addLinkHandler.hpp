@@ -10,7 +10,7 @@
 template<class Model>
 class AddLinkHandler: public BaseHandler<Model> {
 public:
-  explicit AddLinkHandler(LinkRequest request);
+  explicit AddLinkHandler(LinkRequest& request);
   ~AddLinkHandler() = default;
 
   void execute() override;
@@ -20,7 +20,7 @@ private:
 };
 
 template<class Model>
-AddLinkHandler<Model>::AddLinkHandler(LinkRequest request):
+AddLinkHandler<Model>::AddLinkHandler(LinkRequest& request):
         request_(request)
 {
 }
@@ -60,7 +60,7 @@ void AddLinkHandler<Model>::execute() {
 
   std::string link_uuid;
   try {
-    link_uuid = model->create_link(request_.url, request_.name, request_.description, request_.uuid);
+    link_uuid = model->create_link(request_.login, request_.url, request_.name, request_.description, request_.uuid);
   }
   catch (const std::exception& e) {
     error = e.what();
