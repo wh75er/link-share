@@ -14,6 +14,10 @@ public:
     model = _model;
   }
 
+  std::shared_ptr<Model> get_model() {
+    return model;
+  }
+
   void set_response(std::shared_ptr<Response> response) {
     response_ = response;
   };

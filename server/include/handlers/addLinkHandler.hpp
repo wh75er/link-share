@@ -27,5 +27,47 @@ AddLinkHandler<Model>::AddLinkHandler(LinkRequest request):
 
 template<class Model>
 void AddLinkHandler<Model>::execute() {
-  return;
+  std::string error = "";
+
+  std::shared_ptr<Model> model = this->get_model();
+  std::shared_ptr<Response> response = this->get_response();
+
+  if (!model) {
+    error = "Model is not set!";
+    response->error = error;
+    return;
+  }
+
+  if(!response) {
+    this->set_response(std::make_shared<Response>());
+  }
+
+  bool verified = false;
+  try {
+    verified = model->identify(request_.login, request_.token);
+  }
+  catch (const std::exception& e) {
+    error = e.what();
+    response->error = error;
+    return;
+  }
+
+  if (!verified) {
+    error = "Authorization error!";
+    response->error = error;
+    return;
+  }
+
+  std::string link_uuid;
+  try {
+    link_uuid = model->create_link(request_.url, request_.name, request_.description, request_.uuid);
+  }
+  catch (const std::exception& e) {
+    error = e.what();
+    response->error = error;
+    return;
+  }
+
+  response->error = error;
+  response->uuid = link_uuid;
 }

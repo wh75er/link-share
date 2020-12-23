@@ -4,7 +4,7 @@
 
 #include "dbModel.hpp"
 
-#define SNAPSHOT_DIR "snapshots"
+#define SNAPSHOTS_DIR "snapshots"
 
 template<class DbOps, class Uuid>
 class Model {
@@ -119,8 +119,9 @@ std::string Model<DbOps, Uuid>::create_snapshot(std::string &link_uuid) {
 
   std::string snapshot_uuid = uuid.to_string();
 
+  std::string directory = std::string(SNAPSHOTS_DIR) + "/" + uuid;
   try {
-    api.add_snapshot_to_link(snapshot_uuid, SNAPSHOT_DIR, link_uuid);
+    api.add_snapshot_to_link(snapshot_uuid, directory, link_uuid);
   }
   catch (...) {
     throw;
