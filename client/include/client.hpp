@@ -12,6 +12,7 @@ public:
     Client(const std::string& _host, int _port);
     ~Client() {}
     void Connect();
+    void Close();
     void writeToServer(std::string& req);
     std::string readFromServer();
 private:

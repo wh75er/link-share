@@ -11,6 +11,8 @@ class Presenter {
 public:
     Presenter(const std::string& host, const size_t port);
     Presenter(Presenter& pr) = delete;
+    void connect();
+    void disconnect();
     Presenter& operator=(Presenter& pr) = delete;
     ~Presenter();
     void run();

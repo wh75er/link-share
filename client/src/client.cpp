@@ -6,6 +6,10 @@ void Client::Connect() {
     sock.Connect(host, port);
 }
 
+void Client::Close() {
+    sock.Close();
+}
+
 std::string Client::readFromServer() { 
     return sock.Recv();
 }

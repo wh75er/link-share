@@ -61,7 +61,7 @@ void Socket::Connect(const std::string& host, int port) {
     sd = _sd;
 }
 
-void Socket::Send(const std::string& str) {
+/* void Socket::Send(const std::string& str) {
     size_t left = str.size();
     ssize_t sent = 0;
 
@@ -73,7 +73,28 @@ void Socket::Send(const std::string& str) {
         }
         left -= sent;
   }
+} */
+
+void Socket::Send(const std::string& str) {
+    std::string temp = "f" + str;
+    while(temp.size() != 400) {
+        temp.push_back('\x1A');
+    }
+
+    size_t left = temp.size();
+    ssize_t sent = 0;
+
+    int flags = 0;
+    while (left > 0) {
+        sent = ::send(sd, temp.data() + sent, temp.size() - sent, flags);
+        if (-1 == sent) {
+            throw std::runtime_error("write failed: " + std::string(strerror(errno)));
+        }
+        left -= sent;
+  }
 }
+
+
 
 std::string Socket::Recv() {
     char buf[256];
