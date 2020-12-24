@@ -81,7 +81,7 @@ std::map<std::string, std::string> DbApi<DbOps>::get_room_by_uuid(std::string& u
 
 template<class DbOps>
 std::map<std::string, std::string> DbApi<DbOps>::get_room_by_link_uuid(std::string& uuid) {
-  std::string query = "select * from rooms where id=(select room_id from room_links where link_id=(select * from web_links where link_uuid='" + uuid + "'));";
+  std::string query = "select * from rooms where id=(select room_id from room_links where link_id=(select id from web_links where link_uuid='" + uuid + "'));";
 
   std::map<std::string, std::string> row;
 
@@ -246,7 +246,7 @@ void DbApi<DbOps>::add_link_to_room(std::string& url, std::string& name, std::st
 
   std::string query2 = "insert into room_links (room_id, link_id) values "
                        "((select id from rooms where room_uuid='" + room_uuid + "'), "
-                                                                                "(select id from links where link_uuid='" + link_uuid + "'));";
+                                                                                "(select id from web_links where link_uuid='" + link_uuid + "'));";
 
   try {
     dbops->exec_query_command(query1);
@@ -328,10 +328,14 @@ void DbApi<DbOps>::delete_room(std::string &room_uuid) {
 
 template<class DbOps>
 void DbApi<DbOps>::delete_link(std::string &link_uuid) {
-  std::string query = "delete from web_links where link_uuid='" + link_uuid + "';";
+  std::string query1 = "delete from room_links where link_id in (select id from web_links where link_uuid='" + link_uuid + "');";
+
+  std::string query2 = "delete from web_links where link_uuid='" + link_uuid + "';";
 
   try {
-    dbops->exec_query_command(query);
+    dbops->exec_query_command(query1);
+
+    dbops->exec_query_command(query2);
   }
   catch (...) {
     throw;
