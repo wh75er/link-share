@@ -29,6 +29,10 @@ std::string Connection<DbOps, Uuid, JsonParser>::read() {
 
     pkg.append(buf, n);
 
+#ifdef DEBUG
+    std::cout << "pkg : " << pkg << std::endl;
+#endif
+
     if (pkg.size() == PACKAGE_SIZE) {
       char status = pkg[0];
       pkg.erase(0, 1);
