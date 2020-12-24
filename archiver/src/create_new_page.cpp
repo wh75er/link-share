@@ -1,160 +1,162 @@
-/*#include "create_new_page.hpp"
-#include "http_client.hpp"
-#include "parser.hpp"
+#include "https_socket.hpp"
+#include "parser.cpp"
 #include <filesystem>
+#include <fstream>
 
-int create_new_page(const std::string &url, const std::string &path_to_dir) {
-    http_client my_client(url);
+void save_file(const size_t size, const char *body,
+               const std::string &file_name, const std::string &path_to_dir) {
+    std::string path_to_new_static_file(path_to_dir);
+    path_to_new_static_file += file_name;
 
-    my_client.send();
-    try {
-        while (my_client.recieve() == REDIRECT) {
-            my_client.redirect();
-            my_client.send();
-        }
-    } catch (std::exception) {
+    std::ofstream file(path_to_new_static_file, std::ios::binary);
+    file.write(body, size);
+}
+
+int create_new_page(const std::string &new_page_url,
+                    const std::string &path_to_dir) {
+    std::string main_host = findUrlHost(new_page_url);
+
+    HttpsSocket my_socket(new_page_url);
+
+    my_socket.send();
+    HttpResponse new_response = my_socket.recv();
+
+    if (new_response.code >= 300 && new_response.code < 400) {
+        new_response = my_socket.handleRedirect();
     }
 
-    std::string path_to_static(path_to_dir);
-    path_to_static += "/static";
-    std::filesystem::create_directories(path_to_static);
+    std::string main_dir(path_to_dir);
 
-    std::string path_to_html_file(path_to_dir);
-    path_to_html_file += "/index.html";
-    std::ofstream file(path_to_html_file);
-    file << my_client.get_response();
+    std::filesystem::create_directories(main_dir);
 
-    html_parser my_html_parser;
-    my_html_parser.parse(path_to_html_file);
+    std::string static_dir = main_dir + "/static";
+    std::filesystem::create_directories(static_dir);
 
-    int k = 0;
-    std::string edit_html = my_client.get_response();
-    for (std::string url : my_html_parser.sources) {
-        try {
-            my_client.new_request(url);
-        } catch (std::exception) {
+    std::string::size_type file_type_pos = new_response.contentType.find('/');
+
+    std::string filename =
+        main_dir + "/index." +
+        new_response.contentType.substr(
+            file_type_pos + 1, new_response.contentType.size() - file_type_pos);
+
+    std::ofstream file(filename, std::ios::binary);
+    file.write(new_response.body, new_response.contentLength);
+    file.close();
+    std::string index_file_str(new_response.body);
+
+    if (filename.find("html") == std::string::npos) {
+        return 0;
+    }
+
+    HtmlParser my_parser;
+    my_parser.parse(filename);
+
+    for (auto url : my_parser.sources) {
+        my_socket.createNewRequest(url, main_host);
+        my_socket.send();
+        new_response = my_socket.recv();
+
+        if (new_response.code == 404) {
             continue;
         }
 
-        my_client.send();
-
-        enum client_exit_status recv = my_client.recieve();
-
-        while (recv == REDIRECT) {
-            try {
-                my_client.redirect();
-            } catch (std::exception) {
-                break;
-            }
-            my_client.send();
-            try {
-                recv = my_client.recieve();
-            } catch (std::exception) {
-                break;
-            }
+        if (new_response.code >= 300 && new_response.code < 400) {
+            new_response = my_socket.handleRedirect();
         }
 
-        if (recv == REDIRECT && recv == FAILURE) {
-            continue;
+        std::string::size_type src_name_start = url.find_last_of('/');
+        if (src_name_start == std::string::npos) {
+            src_name_start = 0;
         }
 
-        std::string path_to_new_static_file(path_to_dir);
-        path_to_new_static_file += "/static/";
-        path_to_new_static_file += std::to_string(k++);
-        std::string file_type = my_html_parser.file_type(url);
-        path_to_new_static_file += file_type;
+        std::string src_name =
+            url.substr(src_name_start, url.size() - src_name_start);
 
-        std::ofstream static_file(path_to_new_static_file);
-        static_file << my_client.get_response();
-        static_file.close();
-
-        if (my_html_parser.is_css(file_type)) {
-            std::string edit_css(my_client.get_response());
-            css_parser my_css_parser;
-            my_css_parser.parse(path_to_new_static_file);
-
-            for (std::string css_url : my_css_parser.sources) {
-                std::string::size_type new_url_pos = url.find_last_of('/');
-                std::string new_url = url.substr(0, new_url_pos);
-                new_url += "/" + css_url;
-                if (url.find("hhtp") != std::string::npos) {
-                    new_url = url;
-                }
-                if (url.find("//") != std::string::npos) {
-                    new_url = "https:" + url;
-                }
-
-                try {
-                    my_client.new_request(new_url);
-                } catch (std::exception) {
-                    continue;
-                }
-
-                my_client.send();
-
-                enum client_exit_status css_recv = my_client.recieve();
-
-                while (css_recv == REDIRECT) {
-                    try {
-                        my_client.redirect();
-                    } catch (std::exception) {
-                        break;
-                    }
-                    my_client.send();
-                    try {
-                        css_recv = my_client.recieve();
-                    } catch (std::exception) {
-                        break;
-                    }
-                }
-
-                if (recv == REDIRECT) {
-                    continue;
-                }
-
-                std::string path_to_new_css_static_file(path_to_dir);
-                path_to_new_css_static_file += "/static/";
-                path_to_new_css_static_file += std::to_string(k++);
-
-                std::string css_file_type = my_css_parser.file_type(css_url);
-                path_to_new_css_static_file += css_file_type;
-
-                std::ofstream css_static_file(path_to_new_css_static_file);
-                css_static_file << my_client.get_response();
-                css_static_file.close();
-
-                std::string::size_type css_src_start_pos =
-                    edit_css.find(css_url);
-
-                edit_css.erase(css_src_start_pos, css_url.size());
-                path_to_new_css_static_file.erase(0, path_to_dir.size());
-                path_to_new_css_static_file.erase(0, strlen("/static/"));
-
-                edit_css.insert(css_src_start_pos, path_to_new_css_static_file);
-            }
-
-            static_file.open(path_to_new_static_file,
-                             std::ios::out | std::ios::trunc);
-            static_file << edit_css;
-            static_file.close();
+        std::string::size_type src_name_end = src_name.find_first_of("+?");
+        if (src_name_end != std::string::npos) {
+            src_name = src_name.substr(0, src_name_end);
         }
+
+        std::string::size_type start_pos = 0;
 
         while (true) {
-            std::string::size_type start_pos = edit_html.find(url);
+            start_pos = index_file_str.find(url, start_pos);
             if (start_pos == std::string::npos) {
                 break;
             }
-            edit_html.erase(start_pos, url.size());
-            path_to_new_static_file.erase(0, path_to_dir.size());
-            path_to_new_static_file.insert(0, ".");
-            edit_html.insert(start_pos, path_to_new_static_file);
+            index_file_str.erase(start_pos, url.size());
+            std::string input_name = "static" + src_name;
+
+            index_file_str.insert(start_pos, input_name);
+            start_pos += input_name.size();
+        }
+
+        save_file(new_response.contentLength, new_response.body, src_name,
+                  static_dir);
+
+        if (new_response.contentType.find("css") != std::string::npos) {
+            std::string css_file_str(new_response.body);
+            CssParser my_css_parser;
+            my_css_parser.parse(main_dir + "/static" + src_name);
+            for (auto css_url : my_css_parser.sources) {
+                std::string buf_url;
+                if (url.compare(0, 5, css_url, 0, 5) != 0) {
+                    if (css_url.find("//") == std::string::npos &&
+                        css_url.find("http") == std::string::npos) {
+                        std::string::size_type cur_src_dir =
+                            url.find_last_of('/');
+                        if (cur_src_dir != std::string::npos) {
+                            buf_url = url.substr(0, cur_src_dir + 1);
+                        }
+                    }
+                }
+
+                my_socket.createNewRequest(buf_url + css_url, main_host);
+                my_socket.send();
+                new_response = my_socket.recv();
+
+                if (new_response.code == 404) {
+                    continue;
+                }
+
+                if (new_response.code >= 300 && new_response.code < 400) {
+                    new_response = my_socket.handleRedirect();
+                }
+
+                src_name_start = css_url.find_last_of('/');
+                if (src_name_start == std::string::npos) {
+                    src_name_start = 0;
+                }
+
+                std::string css_src_name = css_url.substr(
+                    src_name_start, css_url.size() - src_name_start);
+
+                start_pos = 0;
+
+                while (true) {
+                    start_pos = css_file_str.find(css_url, start_pos);
+                    if (start_pos == std::string::npos) {
+                        break;
+                    }
+                    css_file_str.erase(start_pos, css_url.size());
+                    std::string input_name_css = css_src_name;
+                    if (input_name_css[0] == '/') {
+                        input_name_css.erase(0, 1);
+                    }
+
+                    css_file_str.insert(start_pos, input_name_css);
+                    start_pos += input_name_css.size();
+                }
+                save_file(new_response.contentLength, new_response.body,
+                          css_src_name, static_dir);
+            }
+            save_file(css_file_str.size(), css_file_str.c_str(), src_name,
+                      static_dir);
+
+            std::ofstream edited(main_dir + "/index2.html");
+            edited << index_file_str;
         }
     }
 
-    file.close();
-
-    file.open(path_to_html_file, std::ios::out | std::ios::trunc);
-    file << edit_html;
-
     return 0;
-}*/
+}

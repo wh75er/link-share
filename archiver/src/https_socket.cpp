@@ -3,6 +3,7 @@
 #include <sstream>
 
 #define BUFFSIZE 1024
+#define ATTEMPTS 3
 #define TIMEOUT 3
 
 HttpsSocket::HttpsSocket(const std::string &url) : Socket(url) {
@@ -49,7 +50,7 @@ void HttpsSocket::SSLSettings() {
 
     size_t i = 0;
     int err = SSL_connect(ssl);
-    while (i < 3 && err != 1) {
+    while (i < ATTEMPTS && err != 1) {
         err = SSL_connect(ssl);
         ++i;
         sleep(TIMEOUT);
@@ -64,7 +65,7 @@ void HttpsSocket::SSLSettings() {
     SSL_CTX_free(ctx);
 }
 
-void HttpsSocket::__send() {
+void HttpsSocket::sendPacket() {
     int len =
         SSL_write(ssl, request.query.c_str(), strlen(request.query.c_str()));
     if (len != strlen(request.query.c_str())) {
@@ -74,7 +75,7 @@ void HttpsSocket::__send() {
     }
 }
 
-char *HttpsSocket::__recv(int *size) {
+char *HttpsSocket::recvPacket(int *size) {
     int len = 1;
     char *buf = (char *)malloc(BUFFSIZE * sizeof(char));
     bzero(buf, BUFFSIZE);
@@ -94,7 +95,8 @@ char *HttpsSocket::__recv(int *size) {
     return buf;
 }
 
-void HttpsSocket::createNewRequest(const std::string &url) {
+void HttpsSocket::createNewRequest(const std::string &url,
+                                   const std::string &main_host) {
     if (url.find("http") != std::string::npos) {
         request = HttpRequest(url);
 
@@ -113,15 +115,35 @@ void HttpsSocket::createNewRequest(const std::string &url) {
         return;
     }
 
-    if (url[0] == '/') {
-        request.query = "GET " + url + " HTTP/1.1\r\n";
+    if (main_host == request.host) {
+        if (url[0] == '/') {
+            request.query = "GET " + url + " HTTP/1.1\r\n";
+            request.query += "Host: " + request.host + "\r\n";
+            request.query += "\r\n";
+            return;
+        }
+
+        request.query = "GET /" + url + " HTTP/1.1\r\n";
         request.query += "Host: " + request.host + "\r\n";
         request.query += "\r\n";
         return;
     }
 
-    request.query = "GET /" + url + " HTTP/1.1\r\n";
-    request.query += "Host: " + request.host + "\r\n";
-    request.query += "\r\n";
+    request = HttpRequest(main_host + url);
+
+    resolve(request.host);
+    socketSettings();
+    SSLSettings();
     return;
+}
+
+HttpResponse HttpsSocket::handleRedirect() {
+    while (response.code != 200 && response.code != 404) {
+        response.findRedirectLocation();
+        createNewRequest(response.redirectLocation, request.host);
+        send();
+        response = recv();
+    }
+
+    return response;
 }

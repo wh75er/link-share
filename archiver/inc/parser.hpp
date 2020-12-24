@@ -1,9 +1,8 @@
+#include <cstring>
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <cstring>
 #include <vector>
-
 
 class parser {
 public:
@@ -14,9 +13,9 @@ public:
     virtual void get_src_url_from_string(const std::string &str) = 0;
 };
 
-class html_parser : public parser {
+class HtmlParser : public parser {
 public:
-    html_parser(){};
+    HtmlParser(){};
     bool is_source(const std::string &str);
     void parse(const std::string &path_to_file);
     void get_src_url_from_string(const std::string &str);
@@ -24,11 +23,10 @@ public:
     bool is_css(const std::string &str);
 };
 
-class css_parser : public parser {
+class CssParser : public parser {
 public:
-    css_parser(){};
+    CssParser(){};
     bool is_source(const std::string &str);
-    explicit css_parser(const std::string &_url);
     std::string file_type(const std::string &url);
     void parse(const std::string &path_to_file);
     void get_src_url_from_string(const std::string &str);
