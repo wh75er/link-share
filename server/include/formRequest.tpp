@@ -231,12 +231,12 @@ std::shared_ptr<BaseHandler<Model>> FormDeleteUserFromRoomRequest<Json, Model>::
 }
 
 template<class Json, class Model>
-bool FormGetSnapshotRequest<Json, Model>::can_handle(int command) {
+bool FormCreateSnapshotRequest<Json, Model>::can_handle(int command) {
   return command == MAKE_SNAPSHOT;
 }
 
 template<class Json, class Model>
-std::shared_ptr<BaseHandler<Model>> FormGetSnapshotRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
+std::shared_ptr<BaseHandler<Model>> FormCreateSnapshotRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
   std::string login;
   if (!request_elements->get_value("login", login)) {
     throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
@@ -253,7 +253,7 @@ std::shared_ptr<BaseHandler<Model>> FormGetSnapshotRequest<Json, Model>::spawn_h
   }
   SnapshotRequest request(login, token, uuid);
 
-  std::shared_ptr<Creator<SnapshotRequest, Model>> creator = std::make_unique<GetSnapshotHandlerCreator<SnapshotRequest, Model>>();
+  std::shared_ptr<Creator<SnapshotRequest, Model>> creator = std::make_unique<CreateSnapshotHandlerCreator<SnapshotRequest, Model>>();
 
   return creator->factory_method(request);
 }
@@ -312,6 +312,34 @@ std::shared_ptr<BaseHandler<Model>> FormSignUpUserRequest<Json, Model>::spawn_ha
   std::cout << "Request is formed!" << std::endl;
 
   std::shared_ptr<Creator<UserRequest, Model>> creator = std::make_unique<GetSignUpUserHandlerCreator<UserRequest, Model>>();
+
+  return creator->factory_method(request);
+}
+
+template<class Json, class Model>
+bool FormGetSnapshotRequest<Json, Model>::can_handle(int command) {
+  return command == GET_SNAPSHOT;
+}
+
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormGetSnapshotRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
+  std::string login;
+  if (!request_elements->get_value("login", login)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
+  }
+
+  std::string token;
+  if (!request_elements->get_value("token", token)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "token value is not presented in JSON!");
+  }
+
+  std::string uuid;
+  if (!request_elements->get_value("uuid", uuid)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "uuid value is not presented in JSON!");
+  }
+  SnapshotRequest request(login, token, uuid);
+
+  std::shared_ptr<Creator<SnapshotRequest, Model>> creator = std::make_unique<GetSnapshotHandlerCreator<SnapshotRequest, Model>>();
 
   return creator->factory_method(request);
 }

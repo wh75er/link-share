@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "connection.hpp"
+#include "response.hpp"
 
 template<class Connection>
 class Sender {
@@ -17,9 +18,11 @@ public:
 #endif
   };
 
-  void send(std::string data);
+  void send(std::shared_ptr<Response> response);
 
 private:
+  std::vector<std::string> form_packages(std::string data, char status);
+
   std::shared_ptr<Connection> connection_;
 };
 

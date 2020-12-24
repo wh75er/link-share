@@ -41,6 +41,6 @@ private:
 #include "deleteLinkHandler.hpp"
 #include "deleteRoomHandler.hpp"
 #include "deleteUserFromRoomHandler.hpp"
-#include "getSnapshotHandler.hpp"
+#include "createSnapshotHandler.hpp"
 #include "logInUserHandler.hpp"
 #include "signUpUserHandler.hpp"

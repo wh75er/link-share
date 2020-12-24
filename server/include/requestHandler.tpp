@@ -36,5 +36,5 @@ void RequestHandler<DbOps, Connection, Uuid, JsonParser>::handle(std::string dat
 
   // use sender to send data back to client
 
-  sender.send(response->serialize());
+  sender.send(response);
 }

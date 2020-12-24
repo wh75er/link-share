@@ -2,6 +2,8 @@
 
 #define RECIVE_BYTE_SIZE 1024
 
+#define PACKAGE_SIZE 400
+
 template<class DbOps, class Uuid, class JsonParser>
 Connection<DbOps, Uuid, JsonParser>::Connection(std::shared_ptr<BaseTcpSocket> socket):
         socket_(std::move(socket))
@@ -14,7 +16,10 @@ Connection<DbOps, Uuid, JsonParser>::Connection(std::shared_ptr<BaseTcpSocket> s
 template<class DbOps, class Uuid, class JsonParser>
 std::string Connection<DbOps, Uuid, JsonParser>::read() {
   char buf[RECIVE_BYTE_SIZE];
+
   std::string ret;
+  std::string pkg;
+
   while (true) {
     int n = socket_->recv_(buf, sizeof(buf));
 
@@ -22,13 +27,22 @@ std::string Connection<DbOps, Uuid, JsonParser>::read() {
       break;
     }
 
-    ret.append(buf, n);
+    pkg.append(buf, n);
 
-    while (ret.back() == '\r' || ret.back() == '\n')
-      ret.pop_back();
+    if (pkg.size() == PACKAGE_SIZE) {
+      char status = pkg[0];
+      pkg.erase(0, 1);
 
-    if (ret.back() == '|') {
-      break;
+      ret.append(pkg);
+
+      while (ret.back() == '\r' || ret.back() == '\n' || ret.back() == '\x1A')
+        ret.pop_back();
+
+      if (status == 'e' || status == 'f') {
+        break;
+      }
+
+      pkg.clear();
     }
   }
   return ret;

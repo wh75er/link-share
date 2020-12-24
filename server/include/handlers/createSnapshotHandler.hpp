@@ -7,10 +7,10 @@
 #include "request.hpp"
 
 template<class Model>
-class GetSnapshotHandler: public BaseHandler<Model> {
+class CreateSnapshotHandler: public BaseHandler<Model> {
 public:
-  explicit GetSnapshotHandler(SnapshotRequest request);
-  ~GetSnapshotHandler() = default;
+  explicit CreateSnapshotHandler(SnapshotRequest request);
+  ~CreateSnapshotHandler() = default;
 
   void execute() override;
 
@@ -19,13 +19,13 @@ private:
 };
 
 template<class Model>
-GetSnapshotHandler<Model>::GetSnapshotHandler(SnapshotRequest request):
+CreateSnapshotHandler<Model>::CreateSnapshotHandler(SnapshotRequest request):
         request_(request)
 {
 }
 
 template<class Model>
-void GetSnapshotHandler<Model>::execute() {
+void CreateSnapshotHandler<Model>::execute() {
   std::string error;
 
   std::shared_ptr<Model> model = this->get_model();
@@ -58,9 +58,9 @@ void GetSnapshotHandler<Model>::execute() {
     return;
   }
 
-  std::string files_dir;
+  std::string snapshot_uuid;
   try {
-    files_dir = model->get_snapshot(request_.login, request_.uuid);
+    snapshot_uuid = model->create_snapshot(request_.login, request_.uuid);
   }
   catch (const std::exception& e) {
     error = e.what();
@@ -69,5 +69,5 @@ void GetSnapshotHandler<Model>::execute() {
   }
 
   response->error = error;
-  response->files_dir = files_dir;
+  response->uuid = snapshot_uuid;
 }

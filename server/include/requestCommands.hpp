@@ -10,5 +10,6 @@ enum RequestCommand {
   MAKE_SNAPSHOT,
   LOG_IN_USER,
   SIGN_UP_USER,
+  GET_SNAPSHOT,
 };
 

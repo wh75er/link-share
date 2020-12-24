@@ -24,6 +24,8 @@ public:
 
   std::string create_snapshot(std::string& login, std::string& link_uuid);
 
+  std::string get_snapshot(std::string& login, std::string& snapshot_uuid);
+
   void delete_snapshot(std::string& snapshot_uuid);
 
   void delete_room(std::string& login, std::string& room_uuid);
@@ -228,6 +230,23 @@ std::string Model<DbOps, Uuid>::create_snapshot(std::string& login, std::string 
   }
 
   return snapshot_uuid;
+}
+
+template<class DbOpos, class Uuid>
+std::string Model<DbOpos, Uuid>::get_snapshot(std::string& login, std::string& snapshot_uuid) {
+  std::map<std::string, std::string> snapshot;
+  try {
+    snapshot = api.get_snapshot_by_uuid(snapshot_uuid);
+  }
+  catch (...) {
+    throw;
+  }
+
+  if (snapshot.empty()) {
+    throw std::runtime_error("Snapshot not found!");
+  }
+
+  return snapshot["dir_name"];
 }
 
 template<class DbOps, class Uuid>
