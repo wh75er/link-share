@@ -172,7 +172,7 @@ std::string Model<DbOps, Uuid>::create_link(std::string& login, std::string &url
     throw;
   }
 
-  if (!ownership["is_owner"] || !ownership["is_participant"]) {
+  if (!ownership["is_owner"] && !ownership["is_participant"]) {
     throw std::runtime_error("User is not allowed to create links in the room!");
   }
 
@@ -208,7 +208,7 @@ std::string Model<DbOps, Uuid>::create_snapshot(std::string& login, std::string 
     throw;
   }
 
-  if (!ownership["is_owner"] || !ownership["is_participant"]) {
+  if (!ownership["is_owner"] && !ownership["is_participant"]) {
     throw std::runtime_error("User is not allowed to create snapshots for links in that room!");
   }
 
@@ -308,7 +308,7 @@ void Model<DbOps, Uuid>::delete_link(std::string& login, std::string& link_uuid)
     throw;
   }
 
-  if (!ownership["is_owner"] || !ownership["is_participant"]) {
+  if (!ownership["is_owner"] && !ownership["is_participant"]) {
     throw std::runtime_error("User is not allowed to delete links in the room!");
   }
 
