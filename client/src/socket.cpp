@@ -130,7 +130,7 @@ std::string Socket::RecvFile(bool endFlag) {
             break;
         }
         ret.append(buf, 1, n - 1);
-        while (ret.back() == 26) {
+        while (ret.back() == '\x1A') {
             ret.pop_back();
         }
         if (buf[0] == 'e') {

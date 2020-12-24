@@ -10,8 +10,9 @@ void Client::Close() {
     sock.Close();
 }
 
-std::string Client::readFromServer() { 
-    return sock.Recv();
+std::string Client::readFromServer() {
+    bool endFlag = false;
+    return sock.RecvFile(endFlag);
 }
 
 void Client::writeToServer(std::string& req) {
