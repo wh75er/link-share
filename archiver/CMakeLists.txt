@@ -6,5 +6,5 @@ find_package(OpenSSL REQUIRED)
 
 add_subdirectory(src)
 
-enable_testing()
-add_subdirectory(test)
+#enable_testing()
+#add_subdirectory(test)

@@ -10,12 +10,14 @@ public:
     HttpsSocket(const std::string &url);
     ~HttpsSocket();
 
-    void createNewRequest(const std::string &url);
+    void createNewRequest(const std::string &url, const std::string &main_host);
+
+    HttpResponse handleRedirect();
 
 private:
     SSL *ssl;
     void SSLSettings();
 
-    virtual void __send() override;
-    virtual char *__recv(int *size) override;
+    virtual void sendPacket() override;
+    virtual char *recvPacket(int *size) override;
 };

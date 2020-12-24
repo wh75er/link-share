@@ -4,8 +4,9 @@
 bool is_file(const std::string &str) {
     std::string::size_type src_url_start_pos = str.find('"');
     if (src_url_start_pos == std::string::npos) {
-        src_url_start_pos = str.find_last_of("'");
+        src_url_start_pos = str.find("'");
     }
+
     if (src_url_start_pos != std::string::npos) {
         std::string::size_type src_url_end_pos =
             str.find('"', src_url_start_pos + 1);
@@ -31,7 +32,7 @@ bool is_file(const std::string &str) {
     return false;
 }
 
-bool html_parser::is_css(const std::string &str) {
+bool HtmlParser::is_css(const std::string &str) {
     if (str.find(".css") != std::string::npos) {
         return true;
     }
@@ -39,7 +40,7 @@ bool html_parser::is_css(const std::string &str) {
     return false;
 }
 
-std::string html_parser::file_type(const std::string &url) {
+std::string HtmlParser::file_type(const std::string &url) {
     std::string::size_type last_pos = url.find_last_of('/');
     if (last_pos == std::string::npos) {
         last_pos = 0;
@@ -52,11 +53,8 @@ std::string html_parser::file_type(const std::string &url) {
     return format;
 }
 
-bool html_parser::is_source(const std::string &str) {
-    std::string::size_type src_start_pos = str.find("<LINK");
-    if (src_start_pos == std::string::npos) {
-        src_start_pos = str.find("<link");
-    }
+bool HtmlParser::is_source(const std::string &str) {
+    std::string::size_type src_start_pos = str.find("<link");
     if (src_start_pos != std::string::npos) {
         src_start_pos = str.find("href=");
         if (src_start_pos != std::string::npos) {
@@ -69,6 +67,9 @@ bool html_parser::is_source(const std::string &str) {
     }
 
     src_start_pos = str.find("src=");
+    if (src_start_pos == std::string::npos) {
+        src_start_pos = str.find("src =");
+    }
     if (src_start_pos != std::string::npos) {
         if (is_file(str.substr(src_start_pos, str.size() - src_start_pos))) {
             return true;
@@ -78,7 +79,7 @@ bool html_parser::is_source(const std::string &str) {
     return false;
 }
 
-void html_parser::parse(const std::string &path_to_file) {
+void HtmlParser::parse(const std::string &path_to_file) {
     std::ifstream html_file(path_to_file);
     if (!html_file) {
         html_file.close();
@@ -92,11 +93,9 @@ void html_parser::parse(const std::string &path_to_file) {
             get_src_url_from_string(src_string);
         }
     }
-
-    html_file.close();
 }
 
-void html_parser::get_src_url_from_string(const std::string &str) {
+void HtmlParser::get_src_url_from_string(const std::string &str) {
     std::string::size_type url_start_pos = str.find("href=");
     if (url_start_pos != std::string::npos) {
         url_start_pos += strlen("href=\"");
@@ -110,13 +109,24 @@ void html_parser::get_src_url_from_string(const std::string &str) {
         std::string url =
             str.substr(url_start_pos, url_end_pos - url_start_pos);
 
-        sources.push_back(url);
+        if (url.size() > 1) {
+            sources.push_back(url);
+        }
         return;
     }
 
     url_start_pos = str.find("src=");
+    if (url_start_pos == std::string::npos) {
+        url_start_pos = str.find("src =");
+    }
     if (url_start_pos != std::string::npos) {
-        url_start_pos += strlen("src=\"");
+        std::string::size_type buf_pos = str.find('"', url_start_pos);
+        if (buf_pos == std::string::npos) {
+            buf_pos = str.find("'", url_start_pos);
+        }
+        url_start_pos = buf_pos;
+
+        ++url_start_pos;
         std::string::size_type url_end_pos = str.find('"', url_start_pos);
         if (url_end_pos == std::string::npos) {
             url_end_pos = str.find("'", url_start_pos);
@@ -127,7 +137,9 @@ void html_parser::get_src_url_from_string(const std::string &str) {
         std::string url =
             str.substr(url_start_pos, url_end_pos - url_start_pos);
 
-        sources.push_back(url);
+        if (url.size() > 1) {
+            sources.push_back(url);
+        }
         return;
     }
 
@@ -138,22 +150,18 @@ void html_parser::get_src_url_from_string(const std::string &str) {
     return;
 }
 
-void css_parser::parse(const std::string &path_to_file) {
+void CssParser::parse(const std::string &path_to_file) {
     std::ifstream css_file(path_to_file);
-    if (!css_file) {
-        throw std::invalid_argument("file error");
-    }
-
-    std::string src_string;
     while (!css_file.eof()) {
-        std::getline(css_file, src_string, ';');
+        std::string src_string;
+        std::getline(css_file, src_string, '}');
         if (is_source(src_string)) {
             get_src_url_from_string(src_string);
         }
     }
 }
 
-bool css_parser::is_source(const std::string &str) {
+bool CssParser::is_source(const std::string &str) {
     std::string::size_type url_start_pos = str.find("src:");
     if (url_start_pos != std::string::npos) {
         url_start_pos = str.find("url(", url_start_pos);
@@ -161,10 +169,19 @@ bool css_parser::is_source(const std::string &str) {
             return true;
         }
     }
+
+    url_start_pos = str.find("background");
+    if (url_start_pos != std::string::npos) {
+        url_start_pos = str.find("url(", url_start_pos);
+        if (url_start_pos != std::string::npos) {
+            return true;
+        }
+    }
+
     return false;
 }
 
-void css_parser::get_src_url_from_string(const std::string &str) {
+void CssParser::get_src_url_from_string(const std::string &str) {
     std::string::size_type src_start_pos = str.find("url(");
     if (src_start_pos != std::string::npos) {
         src_start_pos += strlen("url(");
@@ -172,29 +189,33 @@ void css_parser::get_src_url_from_string(const std::string &str) {
             ++src_start_pos;
             std::string::size_type src_end_pos = str.find('"', src_start_pos);
             if (src_end_pos == std::string::npos) {
-                std::string::size_type src_end_pos =
-                    str.find('\'', src_start_pos);
+                src_end_pos = str.find('\'', src_start_pos);
             }
             std::string url =
                 str.substr(src_start_pos, src_end_pos - src_start_pos);
-            sources.push_back(url);
+            if (str.find("data:") == std::string::npos) {
+                sources.push_back(url);
+            }
 
         } else {
             std::string::size_type src_end_pos = str.find(')', src_start_pos);
             if (src_end_pos != std::string::npos) {
                 std::string url =
                     str.substr(src_start_pos, src_end_pos - src_start_pos);
-                sources.push_back(url);
+                if (str.find("data:") == std::string::npos) {
+                    sources.push_back(url);
+                }
             }
         }
     }
     return;
 }
 
-std::string css_parser::file_type(const std::string &url) {
-    std::string::size_type type_start_pos = url.find_last_of('.');
+std::string CssParser::file_type(const std::string &url) {
+    std::string::size_type type_start_pos = url.find('.');
     if (type_start_pos == std::string::npos) {
         return "/0";
     }
+
     return url.substr(type_start_pos, url.size() - type_start_pos);
 }
