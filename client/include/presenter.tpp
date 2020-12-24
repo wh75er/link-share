@@ -1,6 +1,7 @@
 /* #include "presenter.hpp" */
 #pragma once
 
+#include <string>
 #include <iostream>
 
 template <class ResponseParser>

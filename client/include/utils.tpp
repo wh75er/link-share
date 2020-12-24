@@ -18,6 +18,7 @@ std::string packToJsonString(T key, K value, Args... args) {
     std::string jsonStr("");
     jsonStr = "{";
     jsonStr += serializeData(key, value, args...);
+    jsonStr.pop_back();
     jsonStr += "}"; 
     return jsonStr;
 }

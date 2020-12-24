@@ -1,9 +1,22 @@
 #include "view.hpp"
 #include "utils.h"
-
+#include "inputUtils.hpp"
 #include <iostream>
 
 IView::~IView() {}
+
+
+enum RequestCommand {
+  CREATE_ROOM,
+  DELETE_ROOM,
+  ADD_USERS,
+  DELETE_USERS,
+  ADD_LINK,
+  DELETE_LINK,
+  MAKE_SNAPSHOT,
+  LOG_IN_USER,
+  SIGN_UP_USER,
+};
 
 
 std::string ConsoleView::GetRequest() {
@@ -13,81 +26,52 @@ std::string ConsoleView::GetRequest() {
     int key = 0;
     std::cin >> key;
     switch (key) {
-    case 1: {
-        inputStr += "1,";
-        std::cout << "Write name of room" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Name*," + appendStr + ",";
-        std::cout << "Write host of room" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Host*," + appendStr + ",";
+    case CREATE_ROOM: {
+        std::cout << "Write name and host of room" << std::endl;
+        inputStr = createRoomInput();
     }
         break;
-    case 2: {
-        inputStr += "2,";
-        std::cout << "Write name of room" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Name," + appendStr + ",";
-        std::cout << "Write host of room" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Host*," + appendStr + ",";
+    case DELETE_ROOM: {
+        std::cout << "Write name and host of room" << std::endl;
+        inputStr = deleteRoomInput();
     }
         break;
-    case 3: {
-        inputStr += "3,";
-        std::cout << "Write amount of users" << std::endl;
-        size_t amount = 0;
-        std::cin >> amount;
-        inputStr += "*Users*,";
-        std::cout << "Write users" << std::endl;
-        while(amount > 0) {
-            //std::getline(std::cin, appendStr);
-            std::cin >> appendStr;
-            inputStr += appendStr + ",";
-            --amount;
-           /* std::cout << amount<< std::endl; */
-        }
+    case ADD_USERS: {
+        std::cout << "Write amount of users and list of users" << std::endl;
+        inputStr = addUsersInput();
     }
         break;
-    case 4: {
-        inputStr += "4,";
-        std::cout << "Write amount of users" << std::endl;
-        size_t amount = 0;
-        std::cin >> amount;
-        inputStr += "*Users*,";
-        std::cout << "Write users" << std::endl;
-        while(amount > 0) {
-            std::cin >> appendStr;
-            inputStr += appendStr + ",";
-            --amount;
-        }
+    case DELETE_USERS: {
+        std::cout << "Write amount of users and list of users" << std::endl;
+        inputStr = deleteUsersInput();
     }
         break;
-    case 5: {
-        inputStr += "5,";
+    case ADD_LINK: {
+        std::cout << "Write name and url of link" << std::endl;
+        inputStr = addLinkInput();
+        break;
+    }
+    case DELETE_LINK: {
         std::cout << "Write name of link" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Name*," + appendStr + ",";
-        std::cout << "Write url of link" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Url*," + appendStr + ",";
+        inputStr = deleteLinkInput();
         break;
     }
-    case 6: {
-        inputStr += "6,";
+    case MAKE_SNAPSHOT: {
         std::cout << "Write name of link" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Name*," + appendStr + ",";
-    }
+        inputStr = makeSnapshotInput();
         break;
-    case 7: {
-        inputStr += "7,";
-        std::cout << "Write name of link" << std::endl;
-        std::cin >> appendStr;
-        inputStr += "*Name*," + appendStr + ",";
     }
+    case LOG_IN_USER: {
+        std::cout << "Write login and password" << std::endl;
+        inputStr = logInInput();
         break;
-    case 0:
+    }
+    case SIGN_UP_USER: {
+        std::cout << "Write login and password" << std::endl;
+        inputStr = signUpInput();
+        break;
+    }
+    case -1:
         break;
     default:
         std::cout << "Wrong command. Try again" << std::endl;
@@ -99,12 +83,14 @@ std::string ConsoleView::GetRequest() {
 void ConsoleView::PrintCommands() {
     std::cout << std::endl;
     std::cout << "Please choose command type:" << std::endl;
-    std::cout << "- 1.Create Room" << std::endl
-              << "- 2.Remove Room" << std::endl
-              << "- 3.Add users" << std::endl
-              << "- 4.Remove users" << std::endl
-              << "- 5.Add link" << std::endl
-              << "- 6.Remove link" << std::endl
-              << "- 7.Archive link" << std::endl
-              << "- 0.Exit" << std::endl;
+    std::cout << "- 0.Create Room" << std::endl
+              << "- 1.Remove Room" << std::endl
+              << "- 2.Add users" << std::endl
+              << "- 3.Remove users" << std::endl
+              << "- 4.Add link" << std::endl
+              << "- 5.Remove link" << std::endl
+              << "- 6.Make snapshot" << std::endl
+              << "- 7.Log in" << std::endl
+              << "- 8.Sign up" << std::endl
+              << "- (-1).Exit" << std::endl;
 }

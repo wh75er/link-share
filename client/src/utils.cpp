@@ -28,7 +28,7 @@ std::vector<std::string> request_split(const std::string& data) {
 }
 
 
-std::vector<std::string> splitString(std::string& data) {
+std::vector<std::string> splitString(const std::string& data) {
     if (data.empty()) {
         throw std::runtime_error("Empty values in serialization");
     }
@@ -97,20 +97,20 @@ std::string serialize(const std::string &key, int value) {
     return serialized;
 }
 
-std::string serialize(const std::string &key, bool value) {
+/* std::string serialize(const std::string &key, bool value) {
     if (key.empty()) {
         throw std::runtime_error("Empty values in serialization");
     }
     std::string serialized = "\"" + key + "\": " + boolToString(value) + ",";
     return serialized;
 }
-
+ */
 
 
 
 void fillData(const std::string& jsonStr, const std::string& key,  std::vector<std::string>* inputVec) {
-    auto vec = request_split(jsonStr);
-    for (auto it = std::find(vec.begin(), vec.end(), "*Users*") + 1; it !=  vec.end(); it++) {
+    auto vec = splitString(jsonStr);
+    for (auto it = std::find(vec.begin(), vec.end(), key) + 1; it !=  vec.end(); it++) {
         inputVec->push_back(*it);
     }
 }
@@ -118,16 +118,32 @@ void fillData(const std::string& jsonStr, const std::string& key,  std::vector<s
 
 
 void fillData(const std::string& jsonStr, const std::string& key,  std::string* inputStr) {
-    auto vec = request_split(jsonStr);
+    auto vec = splitString(jsonStr);
 
     std::cout << key << std::endl;
     for (auto &i : vec) {
         std::cout << i << std::endl;
     }
-     std::cout << std::endl;
+    std::cout << std::endl;
 
     auto it = std::find(vec.begin(), vec.end(), key) + 1;
     if (it != vec.end()) {
         *inputStr = *it;
     }
 }
+
+/* void fillData(const std::string& jsonStr, const std::string& key,  int* val) {
+    auto vec = request_split(jsonStr);
+    for (auto &i : vec) {
+        std::cout << i << std::endl;
+    }
+
+    auto it = std::find(vec.begin(), vec.end(), key) + 1;
+    if (it != vec.end()) {
+    std::cout << "AAAAAAAAAA" << std::endl;
+
+        *val = atoi((*it).c_str());
+    }
+    
+
+} */

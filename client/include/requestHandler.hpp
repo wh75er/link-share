@@ -106,4 +106,28 @@ private:
     std::string roomHost;
 };
 
+template <class ResponseParser>
+class LogInReqHandler : public RequestHandler<ResponseParser> {
+public:
+    LogInReqHandler() = default;
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
+    ExitStatus HandleResponse(std::string& responseBody);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
+private:
+    std::string login;
+    std::string password;
+};
+
+template <class ResponseParser>
+class SignUpReqHandler : public RequestHandler<ResponseParser> {
+public:
+    SignUpReqHandler() = default;
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
+    //ExitStatus HandleResponse(std::string& responseBody);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
+private:
+    std::string login;
+    std::string password;
+};
+
 #include "requestHandler.tpp"

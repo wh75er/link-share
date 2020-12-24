@@ -7,7 +7,7 @@
 #include "requestHandler.hpp"
 #include "room.hpp"
 #include "userinfo.hpp"
-//#include "utils.h"
+#include "utils.h"
 
 
 /* const std::string host = "localhost";
@@ -54,34 +54,43 @@ ModelImpl<ResponseParser>::ModelImpl() : mainRoom(std::make_shared<Room>("defaul
 
 template <class ResponseParser>
 std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::CreateRequestHandler(std::string& action, Model<ResponseParser>& model) {
-    std::string::size_type typeEndPos = action.find_first_of(",");
-    std::string type = action.substr(0, typeEndPos);
+    /* std::string::size_type typeEndPos = action.find_first_of(",");
+    std::string type = action.substr(0, typeEndPos); */
+    std::cout << action << std::endl;
+    std::string type;
+    fillDataFromJson(action, "command", &type);
 
     std::shared_ptr<RequestHandler<ResponseParser>> handler;
     //std::cout << typeEndPos << std::endl;
 
-    switch (atoi(type.c_str()))
+    switch (atoi(type.c_str()) )
     {
-    case 1:
+    case 0:
         handler = std::make_shared<CreateRoomReqHandler<ResponseParser>>();
         break;
-    case 2:
+    case 1:
         handler = std::make_shared<RemoveRoomReqHandler<ResponseParser>>();
         break;
-    case 3:
+    case 2:
         handler = std::make_shared<AddUsersReqHandler<ResponseParser>>();
         break;
-    case 4:
+    case 3:
         handler = std::make_shared<RemoveUsersReqHandler<ResponseParser>>();
         break;
-    case 5:
+    case 4:
         handler = std::make_shared<AddLinkReqHandler<ResponseParser>>();
         break;
-    case 6:
+    case 5:
         handler = std::make_shared<RemoveLinkReqHandler<ResponseParser>>();
         break;
-    case 7:
+    case 6:
         handler = std::make_shared<ArchiveLinkReqHandler<ResponseParser>>();
+        break;
+    case 7:
+        handler = std::make_shared<LogInReqHandler<ResponseParser>>();
+        break;
+    case 8:
+        handler = std::make_shared<SignUpReqHandler<ResponseParser>>();
         break;
     default:
         break;
@@ -115,7 +124,9 @@ std::string ModelImpl<ResponseParser>::formRequest(std::string& action, Model<Re
 
 template <class ResponseParser>
 void ModelImpl<ResponseParser>::handleResponse(std::string& response, Model<ResponseParser>& model) {
-    currentHandler->DoLogic(model);
+    if (currentHandler->HandleResponse(response)) {
+        currentHandler->DoLogic(model);
+    }
 }
 
 template <class ResponseParser>
