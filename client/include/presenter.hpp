@@ -2,17 +2,22 @@
 
 #include <memory>
 
+#include "client.hpp"
 #include "model.hpp"
 #include "view.hpp"
 
+template <class ResponseParser>
 class Presenter {
 public:
-    Presenter();
+    Presenter(const std::string& host, const size_t port);
     Presenter(Presenter& pr) = delete;
     Presenter& operator=(Presenter& pr) = delete;
     ~Presenter();
     void run();
 private:
-    Model model;
+    Client client;
+    Model<ResponseParser> model;
     ConsoleView view;
 };
+
+#include "presenter.tpp"

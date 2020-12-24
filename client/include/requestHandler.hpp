@@ -12,88 +12,98 @@ typedef enum ExitStatus {
     FAILURE
 } ExitStatus;
 
-
+template <class ResponseParser>
 class RequestHandler { 
 public:
-    virtual ExitStatus FillRequest(std::string action, Model& model) = 0;
+    virtual ExitStatus FillRequest(std::string action, Model<ResponseParser>& model) = 0;
     virtual ExitStatus HandleResponse(std::string& responseBody);
-    virtual ExitStatus DoLogic(Model& app) = 0;
+    virtual ExitStatus DoLogic(Model<ResponseParser>& app) = 0;
     std::string&  GetRequestToSend();
 protected:
     std::string requestToSend;
+    std::shared_ptr<ResponseParser> parser;
 };
 
-class AddUsersReqHandler : public RequestHandler {
+template <class ResponseParser>
+class AddUsersReqHandler : public RequestHandler<ResponseParser> {
 public:
     AddUsersReqHandler() = default;
-    ExitStatus FillRequest(std::string action, Model& model);
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     //ExitStatus HandleResponse(std::string& responseBody);
-    ExitStatus DoLogic(Model& app);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::vector<std::string> users;
 };
 
-class RemoveUsersReqHandler : public RequestHandler {
+template <class ResponseParser>
+class RemoveUsersReqHandler : public RequestHandler<ResponseParser> {
 public:
     RemoveUsersReqHandler() = default;
-    ExitStatus FillRequest(std::string action, Model& model);
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     //ExitStatus HandleResponse(std::string& responseBody);
-    ExitStatus DoLogic(Model& app);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
 std::vector<std::string> users;
     
 };
 
-class AddLinkReqHandler : public RequestHandler {
+template <class ResponseParser>
+class AddLinkReqHandler : public RequestHandler<ResponseParser> {
 public:
     AddLinkReqHandler() = default;
-    ExitStatus FillRequest(std::string action, Model& model);
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     //ExitStatus HandleResponse(std::string& responseBody);
-    ExitStatus DoLogic(Model& app);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string linkName = "";
     std::string url = "";
 };
 
-class RemoveLinkReqHandler : public RequestHandler {
+template <class ResponseParser>
+class RemoveLinkReqHandler : public RequestHandler<ResponseParser> {
 public:
     RemoveLinkReqHandler() = default;
-    ExitStatus FillRequest(std::string action, Model& model);
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     //ExitStatus HandleResponse(std::string& responseBody);
-    ExitStatus DoLogic(Model& app);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string linkName;
 };
 
-class ArchiveLinkReqHandler : public RequestHandler {
+template <class ResponseParser>
+class ArchiveLinkReqHandler : public RequestHandler<ResponseParser> {
 public:
     ArchiveLinkReqHandler() = default;
-    ExitStatus FillRequest(std::string action, Model& model);
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus HandleResponse(std::string& responseBody);
-    ExitStatus DoLogic(Model& app);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string linkName;
     std::string body;
 };
 
-class CreateRoomReqHandler : public RequestHandler {
+template <class ResponseParser>
+class CreateRoomReqHandler : public RequestHandler<ResponseParser> {
 public:
     CreateRoomReqHandler() = default;
-    ExitStatus FillRequest(std::string action, Model& model);
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     //ExitStatus HandleResponse(std::string& responseBody);
-    ExitStatus DoLogic(Model& app);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string roomName;
     std::string roomHost;
 };
 
-class RemoveRoomReqHandler : public RequestHandler {
+template <class ResponseParser>
+class RemoveRoomReqHandler : public RequestHandler<ResponseParser> {
 public:
     RemoveRoomReqHandler() = default;
-    ExitStatus FillRequest(std::string action, Model& model);
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     //ExitStatus HandleResponse(std::string& responseBody);
-    ExitStatus DoLogic(Model& app);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string roomName;
     std::string roomHost;
 };
+
+#include "requestHandler.tpp"

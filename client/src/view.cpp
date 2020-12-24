@@ -1,4 +1,5 @@
 #include "view.hpp"
+#include "utils.h"
 
 #include <iostream>
 
@@ -16,20 +17,20 @@ std::string ConsoleView::GetRequest() {
         inputStr += "1,";
         std::cout << "Write name of room" << std::endl;
         std::cin >> appendStr;
-        inputStr += "*Name*" + appendStr;
+        inputStr += "*Name*," + appendStr + ",";
         std::cout << "Write host of room" << std::endl;
         std::cin >> appendStr;
-        inputStr += "*Host*" + appendStr;
+        inputStr += "*Host*," + appendStr + ",";
     }
         break;
     case 2: {
         inputStr += "2,";
         std::cout << "Write name of room" << std::endl;
         std::cin >> appendStr;
-        inputStr += "*Name*" + appendStr;
+        inputStr += "*Name," + appendStr + ",";
         std::cout << "Write host of room" << std::endl;
         std::cin >> appendStr;
-        inputStr += "*Host*" + appendStr;
+        inputStr += "*Host*," + appendStr + ",";
     }
         break;
     case 3: {
@@ -76,14 +77,14 @@ std::string ConsoleView::GetRequest() {
         inputStr += "6,";
         std::cout << "Write name of link" << std::endl;
         std::cin >> appendStr;
-        inputStr += "*Name*" + appendStr;
+        inputStr += "*Name*," + appendStr + ",";
     }
         break;
     case 7: {
         inputStr += "7,";
         std::cout << "Write name of link" << std::endl;
         std::cin >> appendStr;
-        inputStr += "*Name*" + appendStr;
+        inputStr += "*Name*," + appendStr + ",";
     }
         break;
     case 0:
