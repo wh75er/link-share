@@ -23,7 +23,15 @@ void RequestHandler<DbOps, Connection, Uuid, JsonParser>::handle(std::string dat
   // Create parser & parse data
   parser = std::make_unique<TcpStringBodyParser<Model<DbOps, Uuid>, JsonParser>>();
 
-  handler = parser->parse(data);
+  try {
+    handler = parser->parse(data);
+  }
+  catch (const std::exception& e) {
+    std::shared_ptr<Response>response = std::make_shared<Response>();
+    response->error = e.what();
+    sender.send(response);
+    return;
+  }
 
   // set model and response on handler
 

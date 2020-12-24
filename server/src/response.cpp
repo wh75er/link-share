@@ -11,23 +11,27 @@ Response::Response(std::string _error, std::string _uuid, std::vector<std::map<s
 
 std::string Response::serialize() {
   std::string json = "{";
-  std::string json_error = "'error': " + std::string("'") + error + std::string("'");
+
+  error.erase(std::remove(error.begin(), error.end(), '\''), error.end());
+  error.erase(std::remove(error.begin(), error.end(), '\"'), error.end());
+
+  std::string json_error = "\"error\": " + std::string("\"") + error + std::string("\"");
 
   json += json_error;
 
   if (!uuid.empty()) {
-    std::string json_uuid = "'uuid': " + std::string("'") + uuid + std::string("'");
+    std::string json_uuid = "\"uuid\": " + std::string("\"") + uuid + std::string("\"");
     json += ", " + json_uuid;
   }
 
   if (!objects.empty()) {
-    std::string json_objects = "'objects': ";
+    std::string json_objects = "\"objects\": ";
     std::string json_objects_array = "[";
     for (auto& object : objects) {
       std::string json_object = "{";
       for (auto& field : object) {
-        json_object += std::string("'") + field.first + std::string("'");
-        json_object += std::string(": ") + std::string("'") + field.second + std::string("'");
+        json_object += std::string("\"") + field.first + std::string("\"");
+        json_object += std::string(": ") + std::string("\"") + field.second + std::string("\"");
         json_object += std::string(",");
       }
       json_object.pop_back();
@@ -43,7 +47,7 @@ std::string Response::serialize() {
   }
 
   if (!files_dir.empty()) {
-    std::string json_uuid = "'files_dir': " + std::string("'") + files_dir + std::string("'");
+    std::string json_uuid = "'files_dir': " + std::string("\"") + files_dir + std::string("\"");
     json += ", " + json_uuid;
   }
 
