@@ -197,8 +197,7 @@ ExitStatus LogInReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model
 template <class ResponseParser>
 ExitStatus SignUpReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
     fillDataFromJson(action, "login", &login, "password", &password);
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("login", login, "password", password);
-
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 8, "login", login, "password", password);
     return SUCCESS;
 }
 //ExitStatus SignUpReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }
