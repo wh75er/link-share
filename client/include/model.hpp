@@ -13,6 +13,7 @@ public:
     ~Model();
     std::string GetMainRoomInfo();
     //void PassAction(std::string& action);
+    void SetUserInfo(const std::string& str);
     std::string FormRequest(std::string& action);
     void HandleResponse(std::string& response);
 private:

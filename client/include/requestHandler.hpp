@@ -114,6 +114,7 @@ public:
     ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
+    std::string uuid;
     std::string login;
     std::string password;
 };

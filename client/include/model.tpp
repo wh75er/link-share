@@ -26,13 +26,18 @@ public:
     std::string formRequest(std::string& action, Model<ResponseParser>& model);
     void handleResponse(std::string& response, Model<ResponseParser>& model);
 
-    UserInfo& GetUserInfo() {
-        return info;
+    void SetUserInfoFromStr(const std::string&  str) {
+        return info.setUserInfo(str);
+    }
+
+    std::string GetUserInfo() {
+        return info.getInfoStr();
     }
 
     std::shared_ptr<Room> GetMainRoom() {
         return mainRoom;
     }
+    
 
     std::vector<std::shared_ptr<Room>> GetRooms() {
         return rooms;
@@ -124,7 +129,7 @@ std::string ModelImpl<ResponseParser>::formRequest(std::string& action, Model<Re
 
 template <class ResponseParser>
 void ModelImpl<ResponseParser>::handleResponse(std::string& response, Model<ResponseParser>& model) {
-    if (currentHandler->HandleResponse(response)) {
+    if (!currentHandler->HandleResponse(response)) {
         currentHandler->DoLogic(model);
     }
 }
@@ -139,6 +144,11 @@ std::string Model<ResponseParser>::GetMainRoomInfo() {
     std::string ret = modelImpl->GetMainRoom()->GetRoomName() + modelImpl->GetMainRoom()->GetRoomHost();
     return ret;
 }
+
+template <class ResponseParser>
+void Model<ResponseParser>::SetUserInfo(const std::string& str) {
+        modelImpl->SetUserInfoFromStr(str);
+    }
 
 /* void Model::PassAction(std::string& action) {
     modelImpl->passAction(action, *this);

@@ -10,35 +10,29 @@ std::string& RequestHandler<ResponseParser>::GetRequestToSend() {
 
 template <class ResponseParser>
 ExitStatus RequestHandler<ResponseParser>::HandleResponse(std::string& responseBody) {
-    if (responseBody.find("success") != std::string::npos) {
-        return SUCCESS;
-    }
-    return FAILURE;
-}
-
-template <class ResponseParser>
-ExitStatus AddUsersReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
-    fillDataFromJson(action, "users", &users);
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("users", users);
-    return SUCCESS;
-}
-
-
-template <class ResponseParser>
-ExitStatus LogInReqHandler<ResponseParser>::HandleResponse(std::string& responseBody) { 
     try {
         RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
     }
     catch (...) {
         throw std::runtime_error("Failed to parse JSON!");
     }
-    std::string password;
-    if (!RequestHandler<ResponseParser>::parser->get_value("password", password)) {
-        throw std::runtime_error("Failed to read JSON values!");
-    };
-    std::cout << "---->>> " <<  password << std::endl;
+    std::string error;
+    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+    if (error.empty()) {
+        std::cout << "success!" << std::endl;
+    } else {
+        return FAILURE;
+    }
 
+    return SUCCESS;
+}
 
+template <class ResponseParser>
+ExitStatus AddUsersReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
+    fillDataFromJson(action, "users", &users);
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("users", users);
     return SUCCESS;
 }
 
@@ -140,10 +134,35 @@ ExitStatus LogInReqHandler<ResponseParser>::FillRequest(std::string action, Mode
     RequestHandler<ResponseParser>::requestToSend = packToJsonString("login", login, "password", password);
     return SUCCESS;
 }
-//ExitStatus LogInReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }
+template <class ResponseParser>
+ExitStatus LogInReqHandler<ResponseParser>::HandleResponse(std::string& responseBody) { 
+    try {
+        RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
+    }
+    catch (...) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+
+    std::string error;
+    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+    if (error.empty()) {
+        (RequestHandler<ResponseParser>::parser->get_value("uuid", uuid));
+        std::cout << "success!" << std::endl;
+    } else {
+        return FAILURE;
+    }
+    
+    return SUCCESS;
+}
 
 template <class ResponseParser>
-ExitStatus LogInReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { return SUCCESS; }
+ExitStatus LogInReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { 
+    std::string info = packToJsonString("login", login, "password", password, "uuid", uuid);
+    model.SetUserInfo(info);
+    return SUCCESS;
+}
 
 
 
@@ -153,7 +172,7 @@ ExitStatus SignUpReqHandler<ResponseParser>::FillRequest(std::string action, Mod
     RequestHandler<ResponseParser>::requestToSend = packToJsonString("login", login, "password", password);
     return SUCCESS;
 }
-//ExitStatus LogInReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }
+//ExitStatus SignUpReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }
 
 template <class ResponseParser>
 ExitStatus SignUpReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { return SUCCESS; }
