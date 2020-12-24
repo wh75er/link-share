@@ -106,7 +106,7 @@ void HttpsSocket::createNewRequest(const std::string &url,
         return;
     }
 
-    if (url.find("//") != std::string::npos) {
+    if (url.find("//") == 0) {
         request = HttpRequest("https:" + url);
 
         resolve(request.host);

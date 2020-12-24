@@ -5,8 +5,17 @@
 
 void save_file(const size_t size, const char *body,
                const std::string &file_name, const std::string &path_to_dir) {
+    if (body == nullptr) {
+        return;
+    }
+
     std::string path_to_new_static_file(path_to_dir);
     path_to_new_static_file += file_name;
+
+    std::string::size_type end_pos = path_to_new_static_file.find_last_of("?");
+    if (end_pos != std::string::npos) {
+        path_to_new_static_file = path_to_new_static_file.substr(0, end_pos);
+    }
 
     std::ofstream file(path_to_new_static_file, std::ios::binary);
     file.write(body, size);
@@ -106,9 +115,14 @@ int create_new_page(const std::string &new_page_url,
                         std::string::size_type cur_src_dir =
                             url.find_last_of('/');
                         if (cur_src_dir != std::string::npos) {
-                            buf_url = url.substr(0, cur_src_dir + 1);
+                            buf_url = url.substr(0, cur_src_dir);
                         }
                     }
+                }
+
+                if (buf_url.back() != '/' && css_url.front() != '/' &&
+                    buf_url.empty()) {
+                    buf_url += '/';
                 }
 
                 my_socket.createNewRequest(buf_url + css_url, main_host);
