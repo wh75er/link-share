@@ -10,7 +10,7 @@ public:
     Room(std::string roomName, std::string roomId);
     std::string GetRoomHost();
     std::string GetRoomName();
-    void addLink(std::string& name, std::string& url);
+    void addLink(std::string& linkInfo);
     void removeLink(std::string& linkName);
     void addParticipant(std::string& newPart);
     void removeParticipant(std::string& partName);

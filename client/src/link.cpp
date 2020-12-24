@@ -6,30 +6,37 @@
 
 class LinkImpl {
 public:
-    LinkImpl(std::string name, std::string url);
-    const std::string getLinkName();
+    LinkImpl(std::string name, std::string url, std::string uuid);
+    std::string getLinkInfo();
+    void setLinkInfo();
     void addSnaphotPath(std::string path);
 private:
     std::string linkname;
     std::string url;
+    std::string uuid;
     std::vector<std::string> snapshotPaths;
 };
 
-LinkImpl::LinkImpl(std::string name, std::string url) : linkname(std::move(name)), url(std::move(url)) {}
+LinkImpl::LinkImpl(std::string name, std::string url, std::string uuid) : linkname(std::move(name)), url(std::move(url)), uuid(std::move(uuid)) {}
 
-const std::string LinkImpl::getLinkName() {
+std::string LinkImpl::getLinkInfo() {
     return linkname;
+}
+
+void LinkImpl::setLinkInfo() {
+
 }
 
 void LinkImpl::addSnaphotPath(std::string path) {
     snapshotPaths.push_back(std::move(path));
 }
 
-Link::Link(std::string& name, std::string& url) : linkImpl(new LinkImpl(name, url)){}
+Link::Link(std::string& name, std::string& url, std::string& uuid) : linkImpl(new LinkImpl(name, url, uuid)){}
 Link::~Link() {}
 
-const std::string Link::GetLinkName() {
-    return linkImpl->getLinkName();
+std::string Link::GetLinkInfo() {
+    std::string ret = linkImpl->getLinkInfo();
+    return ret;
 }
 
 void Link::addSnapshot(std::string& path) {

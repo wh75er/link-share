@@ -2,6 +2,7 @@
 
 #include "link.hpp"
 #include "room.hpp"
+#include "utils.h"
 
 
 
@@ -10,7 +11,7 @@ public:
     RoomImpl(std::string name, std::string host);
     std::string getRoomHost();
     std::string getRoomName();
-    void addLink(std::string& name, std::string url);
+    void addLink(std::string& linkInfo);
     void removeLink(std::string& linkName);
     void addParticipant(std::string& newPart);
     void removeParticipant(std::string& partName);
@@ -35,8 +36,8 @@ std::string Room::GetRoomName() {
     return ret;
 }
 
-void Room::addLink(std::string& name, std::string& url) {
-    roomImpl->addLink(name, url);
+void Room::addLink(std::string& linkInfo) {
+    roomImpl->addLink(linkInfo);
 }
 
 void Room::removeLink(std::string& linkName) {
@@ -61,18 +62,22 @@ std::string RoomImpl::getRoomName() {
     return roomName;
 }
 
-void RoomImpl::addLink(std::string& name, std::string url) {
-    Link newLink(name, url);
+void RoomImpl::addLink(std::string& linkInfo) {
+    std::string name, url, uuid;
+    fillDataFromJson(linkInfo, "name", &name, "url", &url, "uuid", &uuid);
+    Link newLink(name, url, uuid);
     links.push_back(std::move(newLink));
 }
 
 void RoomImpl::removeLink(std::string& linkName) {
-    for(std::vector<Link>::iterator it = links.begin(); it != links.end(); ++it) {
+
+    /* for(std::vector<Link>::iterator it = links.begin(); it != links.end(); ++it) {
         if ((*it).GetLinkName() == linkName) {
             links.erase(it);
         }
-    }
+    } */
 }
+
 
 void RoomImpl::addParticipant(std::string& newPart) {}
 void RoomImpl::removeParticipant(std::string& partName) {}

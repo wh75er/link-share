@@ -13,5 +13,3 @@ std::string Client::readFromServer() {
 void Client::writeToServer(std::string& req) {
     sock.Send(req);
 }
-
-

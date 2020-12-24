@@ -10,9 +10,6 @@
 #include "utils.h"
 
 
-/* const std::string host = "localhost";
-const size_t port = 5555; */
-
 template <class ResponseParser>
 class ModelImpl {
 public:
@@ -32,6 +29,10 @@ public:
 
     std::string GetUserInfo() {
         return info.getInfoStr();
+    }
+
+    void addLink(std::string& linkInfo) {
+        mainRoom->addLink(linkInfo);
     }
 
     std::shared_ptr<Room> GetMainRoom() {
@@ -59,14 +60,11 @@ ModelImpl<ResponseParser>::ModelImpl() : mainRoom(std::make_shared<Room>("defaul
 
 template <class ResponseParser>
 std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::CreateRequestHandler(std::string& action, Model<ResponseParser>& model) {
-    /* std::string::size_type typeEndPos = action.find_first_of(",");
-    std::string type = action.substr(0, typeEndPos); */
     std::cout << action << std::endl;
     std::string type;
     fillDataFromJson(action, "command", &type);
 
     std::shared_ptr<RequestHandler<ResponseParser>> handler;
-    //std::cout << typeEndPos << std::endl;
 
     switch (atoi(type.c_str()) )
     {
@@ -163,4 +161,15 @@ std::string Model<ResponseParser>::FormRequest(std::string& action) {
 template <class ResponseParser>
 void Model<ResponseParser>::HandleResponse(std::string& response) {
     modelImpl->handleResponse(response, *this);
+}
+
+template <class ResponseParser>
+std::string Model<ResponseParser>::GetUserInfo() {
+    std::string ret = modelImpl->GetUserInfo();
+    return ret;
+}
+
+template <class ResponseParser>
+void Model<ResponseParser>::AddLink(std::string& linkInfo) {
+    modelImpl->addLink(linkInfo);
 }

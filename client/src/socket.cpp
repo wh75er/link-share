@@ -9,6 +9,8 @@
 
 #include "socket.hpp"
 
+#define BUFSIZE 400
+
 struct sockaddr_in resolve(const char* host, int port) {
     struct hostent* hp = gethostbyname(host);
     if (hp == NULL)
@@ -78,19 +80,45 @@ std::string Socket::Recv() {
     std::string ret;
 
     while (true) {
-    int n = ::recv(sd, buf, sizeof(buf), MSG_NOSIGNAL);
-    if (-1 == n && errno != EAGAIN) {
-        throw std::runtime_error("read failed: " + std::string(strerror(errno)));
-    }
-    if (0 == n || -1 == n) {
-        break;
-    }
-    ret.append(buf, n);
-    while (ret.back() == '\r' || ret.back() == '\n') {
-      ret.pop_back();
-    }
+        int n = ::recv(sd, buf, sizeof(buf), MSG_NOSIGNAL);
+        if (-1 == n && errno != EAGAIN) {
+            throw std::runtime_error("read failed: " + std::string(strerror(errno)));
+        }
+        if (0 == n || -1 == n) {
+            break;
+        }
+        ret.append(buf, n);
+        while (ret.back() == '\r' || ret.back() == '\n') {
+            ret.pop_back();
+        }
     }
 
+    return ret;
+}
+
+std::string Socket::RecvFile(bool endFlag) {
+    char buf[BUFSIZE];
+    std::string ret;
+
+    while (true) {
+        int n = ::recv(sd, buf, sizeof(buf), MSG_NOSIGNAL);
+        if (-1 == n && errno != EAGAIN) {
+            throw std::runtime_error("read failed: " + std::string(strerror(errno)));
+        }
+        if (0 == n || -1 == n) {
+            break;
+        }
+        ret.append(buf, 1, n - 1);
+        while (ret.back() == 26) {
+            ret.pop_back();
+        }
+        if (buf[0] == 'e') {
+            break;
+        } else if (buf[0] == 'f') {
+            endFlag = true;
+            break;
+        }
+    }
     return ret;
 }
 

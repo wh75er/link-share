@@ -2,7 +2,7 @@
 #include "utils.h"
 #include <stdexcept>
 
-UserInfo::UserInfo() : name(""), password(""), uuid("") {}
+UserInfo::UserInfo() : name("default"), password("default"), uuid("default") {}
 UserInfo::UserInfo(std::string name, std::string password, std::string uuid) 
 : name(std::move(name)),
   password(std::move(password)),
@@ -10,9 +10,9 @@ UserInfo::UserInfo(std::string name, std::string password, std::string uuid)
 }
 
 std::string UserInfo::getInfoStr() {
-    if (name.empty() || name.empty() || name.empty()) {
+    /* if (name.empty() || name.empty() || name.empty()) {
         throw std::runtime_error("User info is empty!");
-    }
+    } */
 
     std::string ret = packToJsonString("name", name, "password", password, "uuid", uuid);
     return ret;

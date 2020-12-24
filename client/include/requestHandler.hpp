@@ -52,11 +52,12 @@ class AddLinkReqHandler : public RequestHandler<ResponseParser> {
 public:
     AddLinkReqHandler() = default;
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
-    //ExitStatus HandleResponse(std::string& responseBody);
+    ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
-    std::string linkName = "";
-    std::string url = "";
+    std::string uuid;
+    std::string linkName;
+    std::string url;
 };
 
 template <class ResponseParser>

@@ -21,6 +21,7 @@ public:
     void Connect(const std::string& host, int port);
     void Send(const std::string& str);
     std::string Recv();
+    std::string RecvFile(bool endFlag);
     void Close();
 private:
     int sd;
