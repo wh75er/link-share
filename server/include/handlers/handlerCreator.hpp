@@ -12,9 +12,10 @@
 #include "handlers/deleteUserFromRoomHandler.hpp"
 #include "handlers/addLinkHandler.hpp"
 #include "handlers/deleteLinkHandler.hpp"
-#include "handlers/getSnapshotHandler.hpp"
+#include "handlers/createSnapshotHandler.hpp"
 #include "handlers/logInUserHandler.hpp"
 #include "handlers/signUpUserHandler.hpp"
+#include "handlers/getSnapshotHandler.hpp"
 
 template<typename T, class Model>
 class Creator {
@@ -90,13 +91,13 @@ public:
 };
 
 template<typename T, class Model>
-class GetSnapshotHandlerCreator : public Creator<T, Model> {
+class CreateSnapshotHandlerCreator : public Creator<T, Model> {
 public:
-  GetSnapshotHandlerCreator() = default;
-  ~GetSnapshotHandlerCreator() = default;
+  CreateSnapshotHandlerCreator() = default;
+  ~CreateSnapshotHandlerCreator() = default;
 
   std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
-    return std::make_shared<GetSnapshotHandler<Model>>(request);
+    return std::make_shared<CreateSnapshotHandler<Model>>(request);
   }
 };
 
@@ -119,5 +120,16 @@ public:
 
   std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
     return std::make_shared<SignUpUserHandler<Model>>(request);
+  }
+};
+
+template<typename T, class Model>
+class GetSnapshotHandlerCreator : public Creator<T, Model> {
+public:
+  GetSnapshotHandlerCreator() = default;
+  ~GetSnapshotHandlerCreator() = default;
+
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<GetSnapshotHandler<Model>>(request);
   }
 };

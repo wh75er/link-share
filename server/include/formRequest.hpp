@@ -89,10 +89,10 @@ public:
 };
 
 template<class Json, class Model>
-class FormGetSnapshotRequest : public AbstractFormRequest<Json, Model> {
+class FormCreateSnapshotRequest : public AbstractFormRequest<Json, Model> {
 public:
-  FormGetSnapshotRequest() = default;
-  ~FormGetSnapshotRequest() override = default;
+  FormCreateSnapshotRequest() = default;
+  ~FormCreateSnapshotRequest() override = default;
 
   bool can_handle(int command) override;
 
@@ -115,6 +115,17 @@ class FormSignUpUserRequest : public AbstractFormRequest<Json, Model> {
 public:
   FormSignUpUserRequest() = default;
   ~FormSignUpUserRequest() override = default;
+
+  bool can_handle(int command) override;
+
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
+};
+
+template<class Json, class Model>
+class FormGetSnapshotRequest : public AbstractFormRequest<Json, Model> {
+public:
+  FormGetSnapshotRequest() = default;
+  ~FormGetSnapshotRequest() override = default;
 
   bool can_handle(int command) override;
 

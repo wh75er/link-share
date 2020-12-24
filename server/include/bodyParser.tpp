@@ -10,9 +10,10 @@ TcpStringBodyParser<Model, JsonParser>::TcpStringBodyParser() {
   registeredRequestFormers.push_back(std::make_unique<FormDeleteLinkRequest<JsonParser, Model>>());
   registeredRequestFormers.push_back(std::make_unique<FormAddUserToRoomRequest<JsonParser, Model>>());
   registeredRequestFormers.push_back(std::make_unique<FormDeleteUserFromRoomRequest<JsonParser, Model>>());
-  registeredRequestFormers.push_back(std::make_unique<FormGetSnapshotRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormCreateSnapshotRequest<JsonParser, Model>>());
   registeredRequestFormers.push_back(std::make_unique<FormLogInUserRequest<JsonParser, Model>>());
   registeredRequestFormers.push_back(std::make_unique<FormSignUpUserRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormGetSnapshotRequest<JsonParser, Model>>());
 }
 
 template<class Model, class JsonParser>

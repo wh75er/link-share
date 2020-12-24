@@ -5,7 +5,7 @@
 
 #include "room.hpp"
 #include "response.hpp"
-#include "handlers/getSnapshotHandler.hpp"
+#include "handlers/createSnapshotHandler.hpp"
 
 TEST(HandlersSuit, GetSnapshotSuccessCase) {
   WebLink webLink("www.ifconfig.me",
@@ -14,7 +14,7 @@ TEST(HandlersSuit, GetSnapshotSuccessCase) {
       {});
   Response response;
 
-  BaseHandler h = GetSnapshotHandler(webLink, response);
+  BaseHandler h = CreateSnapshotHandler(webLink, response);
 
   h.execute();
 
@@ -29,7 +29,7 @@ TEST(HandlersSuit, GetSnapshotHandlerAuthorizationError) {
       {});
   Response response;
 
-  BaseHandler h = GetSnapshotHandler(webLink, response);
+  BaseHandler h = CreateSnapshotHandler(webLink, response);
 
   h.execute();
 
@@ -43,7 +43,7 @@ TEST(HandlersSuit, GetSnapshotHandlerUserNotExists) {
       {});
   Response response;
 
-  BaseHandler h = GetSnapshotHandler(webLink, response);
+  BaseHandler h = CreateSnapshotHandler(webLink, response);
 
   h.execute();
 
