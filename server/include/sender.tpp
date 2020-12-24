@@ -50,7 +50,16 @@ void Sender<Connection>::send(std::shared_ptr<Response> response) {
 #ifdef DEBUG
   std::cout << "Sender data: " << response->serialize() << std::endl;
 #endif
-  connection_->write(response->serialize());
+  std::vector<std::string> pkgs = form_packages(response->serialize(), 'f');
+
+
+  for (auto& pkg : pkgs) {
+#ifdef DEBUG
+    std::cout << "Pkg : " << pkg << std::endl;
+#endif
+    connection_->write(pkg);
+  }
+
   connection_->finish();
   connection_.reset();
 }
