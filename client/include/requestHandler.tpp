@@ -60,7 +60,7 @@ ExitStatus AddLinkReqHandler<ResponseParser>::FillRequest(std::string action, Mo
     std::string info = model.GetUserInfo();
     std::string login, token;
     fillDataFromJson(info, "name", &login, "uuid", &token);
-    
+
     RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 4, "login", login, "token", token, "name", linkName, "url", url, "description", " ");
 
     return SUCCESS;
@@ -71,7 +71,7 @@ ExitStatus AddLinkReqHandler<ResponseParser>::HandleResponse(std::string &respon
     try {
         RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
     }
-    
+
     catch (...) {
         throw std::runtime_error("Failed to parse JSON!");
     }
@@ -91,11 +91,11 @@ ExitStatus AddLinkReqHandler<ResponseParser>::HandleResponse(std::string &respon
 }
 template <class ResponseParser>
 ExitStatus AddLinkReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+
     std::string linkInfo = packToJsonString("name", linkName, "url", url, "uuid", uuid);
     model.AddLink(linkInfo);
     return SUCCESS;
 }
-
 
 template <class ResponseParser>
 ExitStatus RemoveLinkReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
@@ -182,7 +182,7 @@ ExitStatus LogInReqHandler<ResponseParser>::HandleResponse(std::string& response
     } else {
         return FAILURE;
     }
-    
+
     return SUCCESS;
 }
 

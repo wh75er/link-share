@@ -29,9 +29,9 @@ std::vector<std::string> request_split(const std::string& data) {
 
 
 std::vector<std::string> splitString(const std::string& data) {
-    if (data.empty()) {
+    /* if (data.empty()) {
         throw std::runtime_error("Empty values in serialization");
-    }
+    } */
     /* std::cout << data << std::endl;
      */
     std::vector<std::string> elements;
@@ -66,9 +66,9 @@ std::string boolToString(bool value) {
 }
 
 std::string serialize(const std::string &key, const std::vector<std::string> vec) {
-    if (key.empty() || vec.empty()) {
+    /* if (key.empty() || vec.empty()) {
         throw std::runtime_error("Empty values in serialization");
-    }
+    } */
     
     std::string serialized = "\"" + key + "\": [ ";
     for (auto &v: vec) {
@@ -81,9 +81,9 @@ std::string serialize(const std::string &key, const std::vector<std::string> vec
 }
 
 std::string serialize(const std::string &key, const std::string &value) {
-    if (key.empty() || value.empty()) {
+    /* if (key.empty() || value.empty()) {
         throw std::runtime_error("Empty values in serialization");
-    }
+    } */
 
     std::string serialized = "\"" + key + "\": \"" + value + "\",";
     return serialized;
