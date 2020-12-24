@@ -32,8 +32,8 @@ std::vector<std::string> splitString(const std::string& data) {
     if (data.empty()) {
         throw std::runtime_error("Empty values in serialization");
     }
-    std::cout << data << std::endl;
-    
+    /* std::cout << data << std::endl;
+     */
     std::vector<std::string> elements;
 
     std::string element = "";
@@ -53,9 +53,9 @@ std::vector<std::string> splitString(const std::string& data) {
     }
     elements.push_back(element);
 
-    for (auto &i : elements) {
+    /* for (auto &i : elements) {
         std::cout << i << std::endl;
-    }
+    } */
 
     return elements;
 }
@@ -120,11 +120,11 @@ void fillData(const std::string& jsonStr, const std::string& key,  std::vector<s
 void fillData(const std::string& jsonStr, const std::string& key,  std::string* inputStr) {
     auto vec = splitString(jsonStr);
 
-    std::cout << key << std::endl;
+    /* std::cout << key << std::endl;
     for (auto &i : vec) {
         std::cout << i << std::endl;
     }
-    std::cout << std::endl;
+    std::cout << std::endl; */
 
     auto it = std::find(vec.begin(), vec.end(), key) + 1;
     if (it != vec.end()) {
