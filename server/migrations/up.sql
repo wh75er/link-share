@@ -50,12 +50,14 @@ CREATE TABLE room_links
 (
   id SERIAL PRIMARY KEY,
   room_id INT NOT NULL REFERENCES rooms,
-  link_id INT NOT NULL REFERENCES web_links
+  link_id INT NOT NULL REFERENCES web_links,
+  unique (room_id, link_id)
 );
 
 CREATE TABLE room_users
 (
   id SERIAL PRIMARY KEY,
   room_id INT NOT NULL REFERENCES rooms,
-  user_id INT NOT NULL REFERENCES users
+  user_id INT NOT NULL REFERENCES users,
+  unique (room_id, user_id)
 );
