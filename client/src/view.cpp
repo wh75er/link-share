@@ -27,7 +27,7 @@ std::string ConsoleView::GetRequest() {
     std::cin >> key;
     switch (key) {
     case CREATE_ROOM: {
-        std::cout << "Write name and host of room" << std::endl;
+        std::cout << "Write name, host of room and is it private(true/false)" << std::endl;
         inputStr = createRoomInput();
     }
         break;

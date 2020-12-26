@@ -7,7 +7,8 @@ class RoomImpl;
 
 class Room {
 public:
-    Room(std::string roomName, std::string roomId);
+    Room();
+    Room(std::string& roomName, std::string& roomId, std::string& uuid, bool isPrivate);
     std::string GetRoomHost();
     std::string GetRoomName();
     void addLink(std::string& linkInfo);
@@ -19,11 +20,11 @@ private:
     std::shared_ptr<RoomImpl> roomImpl;
 };
 
-class PublicRoom : public Room {
+/* class PublicRoom : public Room {
 
 };
 
 class PrivateRoom : public Room {
 
-};
+}; */
 

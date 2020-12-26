@@ -19,10 +19,11 @@ void fillObject(std::vector<std::string>* vec) {
 std::string createRoomInput() {
     std::string name;
     std::string host;
+    std::string isPrivate;
 
-    writeData(&name, &host);
+    writeData(&name, &host, &isPrivate);
 
-    std::string ret = packToJsonString("command", "0", "name", name, "host", host);
+    std::string ret = packToJsonString("command", "0", "name", name, "host", host, "private", isPrivate);
     return ret;
 }
 

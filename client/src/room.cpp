@@ -8,7 +8,7 @@
 
 class RoomImpl {
 public:
-    RoomImpl(std::string name, std::string host);
+    RoomImpl(std::string name, std::string host, std::string uuid, bool isPrivate);
     std::string getRoomHost();
     std::string getRoomName();
     void addLink(std::string& linkInfo);
@@ -18,15 +18,19 @@ public:
     std::string archiveLink(std::string& linkName);
 
 private:
-    std::string roomName;
-    /* std::string roomId; */
-    std::string roomHost;
+    std::string roomName = "";
+    std::string roomHost = "";
+    std::string uuid = "";
+    bool isPrivate  = true;
     std::vector<std::string> participants;
     std::vector<Link> links;
 };
 
 
-Room::Room(std::string name, std::string host) : roomImpl(new RoomImpl(name, host)) {}
+Room::Room() {}
+
+Room::Room(std::string& name, std::string& host, std::string& uuid, bool isPrivate)
+: roomImpl(new RoomImpl(name, host, uuid, isPrivate)) {}
 std::string Room::GetRoomHost() {
     std::string ret = roomImpl->getRoomHost();
     return ret;
@@ -52,7 +56,11 @@ std::string Room::archiveLink(std::string& linkName) {
 }
 
 
-RoomImpl::RoomImpl(std::string name, std::string host) : roomName(name), roomHost(host) {}
+RoomImpl::RoomImpl(std::string name, std::string host, std::string uuid, bool isPrivate)
+: roomName(name),
+roomHost(host),
+uuid(uuid),
+isPrivate(isPrivate) {}
 
 std::string RoomImpl::getRoomHost() {
     return roomHost;

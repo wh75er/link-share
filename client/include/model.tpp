@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include <iostream>
 
 #include "model.hpp"
@@ -23,22 +24,32 @@ public:
     std::string formRequest(std::string& action, Model<ResponseParser>& model);
     void handleResponse(std::string& response, Model<ResponseParser>& model);
 
-    void SetUserInfoFromStr(const std::string&  str) {
-        return info.setUserInfo(str);
+    void SetUserInfoFromStr(std::shared_ptr<UserInfo> uinfo) {
+        info.swap(uinfo);
+        //std::swap(uinfo, info);
     }
 
     std::string GetUserInfo() {
-        return info.getInfoStr();
+        return info->getInfoStr();
     }
 
     void addLink(std::string& linkInfo) {
         mainRoom->addLink(linkInfo);
     }
 
+    void addRoom(std::shared_ptr<Room> newRoom) {
+        rooms.push_back(newRoom);
+    }
+
+    void removeRoom(const std::string& roomName) {
+        auto it = std::find_if(rooms.begin(), rooms.end(),
+        [roomName](std::shared_ptr<Room> room) { return room->GetRoomName() == roomName; });
+        rooms.erase(it);
+    }
+
     std::shared_ptr<Room> GetMainRoom() {
         return mainRoom;
     }
-    
 
     std::vector<std::shared_ptr<Room>> GetRooms() {
         return rooms;
@@ -47,16 +58,15 @@ private:
     std::shared_ptr<RequestHandler<ResponseParser>> CreateRequestHandler(std::string& action, Model<ResponseParser>& model);
     std::shared_ptr<RequestHandler<ResponseParser>> currentHandler;
 
-
-    UserInfo info;
-    
+    std::shared_ptr<UserInfo> info;
     std::shared_ptr<Room> mainRoom;
     std::vector<std::shared_ptr<Room>> rooms;
 };
 
 template <class ResponseParser>
-ModelImpl<ResponseParser>::ModelImpl() : mainRoom(std::make_shared<Room>("default", "me")) {
-}
+ModelImpl<ResponseParser>::ModelImpl()
+: info(std::make_shared<UserInfo>()),
+ mainRoom(std::make_shared<Room>()) {}
 
 template <class ResponseParser>
 std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::CreateRequestHandler(std::string& action, Model<ResponseParser>& model) {
@@ -144,8 +154,8 @@ std::string Model<ResponseParser>::GetMainRoomInfo() {
 }
 
 template <class ResponseParser>
-void Model<ResponseParser>::SetUserInfo(const std::string& str) {
-        modelImpl->SetUserInfoFromStr(str);
+void Model<ResponseParser>::SetUserInfo(std::shared_ptr<UserInfo> info) {
+        modelImpl->SetUserInfoFromStr(info);
     }
 
 /* void Model::PassAction(std::string& action) {
@@ -172,4 +182,15 @@ std::string Model<ResponseParser>::GetUserInfo() {
 template <class ResponseParser>
 void Model<ResponseParser>::AddLink(std::string& linkInfo) {
     modelImpl->addLink(linkInfo);
+}
+
+
+template <class ResponseParser>
+void Model<ResponseParser>::AddRoom(std::shared_ptr<Room> newRoom) {
+    modelImpl->addRoom(newRoom);
+}
+
+template <class ResponseParser>
+void Model<ResponseParser>::RemoveRoom(const std::string& roomName) {
+    modelImpl->removeRoom(roomName);
 }

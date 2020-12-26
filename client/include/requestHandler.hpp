@@ -88,11 +88,13 @@ class CreateRoomReqHandler : public RequestHandler<ResponseParser> {
 public:
     CreateRoomReqHandler() = default;
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
-    //ExitStatus HandleResponse(std::string& responseBody);
+    ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string roomName;
     std::string roomHost;
+    std::string uuid;
+    bool isPrivate;
 };
 
 template <class ResponseParser>
@@ -100,7 +102,6 @@ class RemoveRoomReqHandler : public RequestHandler<ResponseParser> {
 public:
     RemoveRoomReqHandler() = default;
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
-    //ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string roomName;

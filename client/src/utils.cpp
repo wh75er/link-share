@@ -1,6 +1,6 @@
 #include "utils.h"
 
-std::vector<std::string> request_split(const std::string& data) {
+/* std::vector<std::string> request_split(const std::string& data) {
   std::vector<std::string> elements;
 
   std::string element = "";
@@ -25,7 +25,7 @@ std::vector<std::string> request_split(const std::string& data) {
   }
 
   return elements;
-}
+} */
 
 
 std::vector<std::string> splitString(const std::string& data) {
@@ -65,6 +65,10 @@ std::string boolToString(bool value) {
     return value ? "true" : "false";
 }
 
+bool stringToBool(const std::string value) {
+    return (value == "true") ? true : false;
+}
+
 std::string serialize(const std::string &key, const std::vector<std::string> vec) {
     /* if (key.empty() || vec.empty()) {
         throw std::runtime_error("Empty values in serialization");
@@ -89,6 +93,14 @@ std::string serialize(const std::string &key, const std::string &value) {
     return serialized;
 }
 
+std::string serialize(const std::string &key, const char* value) {
+    if (key.empty()) {
+        throw std::runtime_error("Empty values in serialization");
+    }
+    std::string serialized = "\"" + key + "\": \"" + std::string(value) + "\",";
+    return serialized;
+}
+
 std::string serialize(const std::string &key, int value) {
     if (key.empty()) {
         throw std::runtime_error("Empty values in serialization");
@@ -97,14 +109,14 @@ std::string serialize(const std::string &key, int value) {
     return serialized;
 }
 
-/* std::string serialize(const std::string &key, bool value) {
+std::string serialize(const std::string &key, bool value) {
     if (key.empty()) {
         throw std::runtime_error("Empty values in serialization");
     }
     std::string serialized = "\"" + key + "\": " + boolToString(value) + ",";
     return serialized;
 }
- */
+
 
 
 
@@ -120,17 +132,21 @@ void fillData(const std::string& jsonStr, const std::string& key,  std::vector<s
 void fillData(const std::string& jsonStr, const std::string& key,  std::string* inputStr) {
     auto vec = splitString(jsonStr);
 
-    /* std::cout << key << std::endl;
-    for (auto &i : vec) {
-        std::cout << i << std::endl;
-    }
-    std::cout << std::endl; */
-
     auto it = std::find(vec.begin(), vec.end(), key) + 1;
     if (it != vec.end()) {
         *inputStr = *it;
     }
 }
+
+void fillData(const std::string& jsonStr, const std::string& key,  bool* val) {
+    auto vec = splitString(jsonStr);
+
+    auto it = std::find(vec.begin(), vec.end(), key) + 1;
+    if (it != vec.end()) {
+        *val = stringToBool((*it));
+    }
+}
+
 
 /* void fillData(const std::string& jsonStr, const std::string& key,  int* val) {
     auto vec = request_split(jsonStr);

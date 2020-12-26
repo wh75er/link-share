@@ -1,6 +1,8 @@
 #pragma once
 /* #include "requestHandler.hpp" */
 #include "utils.h"
+#include "room.hpp"
+#include "userinfo.hpp"
 
 
 template <class ResponseParser>
@@ -132,27 +134,65 @@ ExitStatus ArchiveLinkReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> 
 
 template <class ResponseParser>
 ExitStatus CreateRoomReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) { 
-    //std::cout << action << std::endl;
-    fillDataFromJson(action, "name", &roomName, "host", &roomHost);
+    fillDataFromJson(action, "name", &roomName, "host", &roomHost, "private", &isPrivate);
 
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("name", roomName, "host", roomHost);
+    std::string info = model.GetUserInfo();
+    std::string login, token;
+    fillDataFromJson(info, "name", &login, "uuid", &token);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 0, "login", login, "token", token, "name",
+                                                                     roomName, "host", roomHost, "private", isPrivate);
 
     return SUCCESS;
 }
-//ExitStatus CreateRoomReqHandler::HandleResponse(std::string &responseBody) {   return SUCCESS;}
+
 template <class ResponseParser>
-ExitStatus CreateRoomReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { return SUCCESS; }
+ExitStatus CreateRoomReqHandler<ResponseParser>::HandleResponse(std::string &responseBody) {
+    try {
+        RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
+    }
+    catch (...) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+
+    std::string error;
+    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+    if (error.empty()) {
+        (RequestHandler<ResponseParser>::parser->get_value("uuid", uuid));
+    } else {
+        return FAILURE;
+    }
+    std::cout << "success!" << std::endl;
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus CreateRoomReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    std::shared_ptr<Room> newRoom = std::make_shared<Room>(roomHost, roomName, uuid, isPrivate);
+    model.AddRoom(newRoom);
+    return SUCCESS;
+}
 
 template <class ResponseParser>
 ExitStatus RemoveRoomReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
     fillDataFromJson(action, "name", &roomName, "host", &roomHost);
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("name", roomName, "host", roomHost);
+
+    std::string info = model.GetUserInfo();
+    std::string login, token;
+    fillDataFromJson(info, "name", &login, "uuid", &token);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 1, "login", login, "token", token,"name", roomName, "host", roomHost);
     return SUCCESS;
 }
 //ExitStatus RemoveRoomReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }
 
 template <class ResponseParser>
-ExitStatus RemoveRoomReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { return SUCCESS; }
+ExitStatus RemoveRoomReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { 
+    model.RemoveRoom(roomName);
+    return SUCCESS;
+}
 
 
 template <class ResponseParser>
@@ -167,7 +207,6 @@ ExitStatus LogInReqHandler<ResponseParser>::HandleResponse(std::string& response
     try {
         RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
     }
-    
     catch (...) {
         throw std::runtime_error("Failed to parse JSON!");
     }
@@ -178,18 +217,20 @@ ExitStatus LogInReqHandler<ResponseParser>::HandleResponse(std::string& response
     }
     if (error.empty()) {
         (RequestHandler<ResponseParser>::parser->get_value("uuid", uuid));
-        std::cout << "success!" << std::endl;
     } else {
         return FAILURE;
     }
-
+    std::cout << "success!" << std::endl;
     return SUCCESS;
 }
 
 template <class ResponseParser>
 ExitStatus LogInReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { 
-    std::string info = packToJsonString("login", login, "password", password, "uuid", uuid);
-    model.SetUserInfo(info);
+    //std::string info = packToJsonString("login", login, "password", password, "uuid", uuid);
+
+    std::shared_ptr<UserInfo> newUserinfo = std::make_shared<UserInfo>(login, password, uuid);
+
+    model.SetUserInfo(newUserinfo);
     return SUCCESS;
 }
 
@@ -200,6 +241,7 @@ ExitStatus SignUpReqHandler<ResponseParser>::FillRequest(std::string action, Mod
     RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 8, "login", login, "password", password);
     return SUCCESS;
 }
+
 //ExitStatus SignUpReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }
 
 template <class ResponseParser>

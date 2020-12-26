@@ -18,9 +18,11 @@ std::string serialize(const std::string &key, const std::vector<std::string> vec
 
 std::string serialize(const std::string &key, const std::string &value);
 
+std::string serialize(const std::string &key, const char* value);
+
 std::string serialize(const std::string &key, int value);
 
-/* std::string serialize(const std::string &key, bool value); */
+std::string serialize(const std::string &key, bool value);
 
 template<typename T, typename K, typename... Args>
 std::string serializeData(T key, K value);
@@ -45,6 +47,8 @@ void fillData(const std::string& jsonStr, const std::string& key,  std::vector<s
 void fillData(const std::string& jsonStr, const std::string& key,  std::string* inputStr);
 
 void fillData(const std::string& jsonStr, const std::string& key,  int* val);
+
+void fillData(const std::string& jsonStr, const std::string& key,  bool* val);
 
 template<typename T, typename K, typename... Args>
 void fillDataFromJson(const std::string& jsonStr, const T& key, K* inputVal);
