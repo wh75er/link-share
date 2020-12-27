@@ -1,6 +1,6 @@
 #pragma once
 
-#define RECIVE_BYTE_SIZE 1024
+#define RECIVE_BYTE_SIZE 400
 
 #define PACKAGE_SIZE 400
 
