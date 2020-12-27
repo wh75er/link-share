@@ -27,8 +27,10 @@ std::vector<std::string> Sender<Connection>::form_packages(std::string data, cha
       pkg += '\x1A';
     }
     pkgs.push_back(pkg);
+    pkg.clear();
   } else {
     while(!data.empty()) {
+      std::cout << "DATA SIZE IS: " << data.size() << std::endl;
       if (data.size() <= PACKAGE_SIZE-1) {
         pkg += status;
       } else {
@@ -43,6 +45,7 @@ std::vector<std::string> Sender<Connection>::form_packages(std::string data, cha
       }
 
       pkgs.push_back(pkg);
+      pkg.clear();
     }
   }
 
@@ -58,7 +61,7 @@ void Sender<Connection>::send_with_packages(std::string data, char status) {
 
   for (auto& pkg : pkgs) {
 #ifdef DEBUG
-    std::cout << "Pkg : " << pkg << std::endl;
+    std::cout << "Pkg[:80] : " << pkg.substr(0, 80) << std::endl;
 #endif
     connection_->write(pkg);
   }
