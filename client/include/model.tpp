@@ -5,10 +5,10 @@
 #include <iostream>
 
 #include "model.hpp"
-#include "requestHandler.hpp"
 #include "room.hpp"
 #include "link.hpp"
 #include "userinfo.hpp"
+#include "requestHandler.hpp"
 #include "utils.h"
 
 
@@ -19,6 +19,7 @@ public:
 
     std::string formRequest(std::string& action, Model<ResponseParser>& model);
     void handleResponse(std::string& response, Model<ResponseParser>& model);
+    void handleFile(recFile& newFile);
 
     void SetUserInfoFromStr(std::shared_ptr<UserInfo> uinfo) {
         info = uinfo;
@@ -39,18 +40,13 @@ public:
         return ret;
     }
 
+    std::string getLinkSnapshotInfoStr(const std::string& linkName) {
+        std::string ret = currentRoom->GetLinkSnapshotInfoStr(linkName);
+        return ret;
+    }
+
     std::string getRoomInfoStr(const std::string& roomName) {
         std::string ret;
-        /* if (mainRoom->GetRoomName() == roomName) {
-            ret = mainRoom->GetRoomInfoStr();
-        } else {
-            for (auto i : rooms) {
-                if (i->GetRoomName() == roomName) {
-                    ret = i->GetRoomInfoStr();
-                    break;
-                }
-            }
-        } */
         for (auto i : rooms) {
             if (i->GetRoomName() == roomName) {
                 ret = i->GetRoomInfoStr();
@@ -66,6 +62,10 @@ public:
 
     void addUsers(std::vector<std::string> users) {
         currentRoom->AddUsers(users);
+    }
+
+    void addSnapshotUuid(const std::string& linkname, const std::string& uuid) {
+        currentRoom->AddSnapshot(linkname, uuid);
     }
 
     void removeUsers(std::vector<std::string> users) {
@@ -101,6 +101,14 @@ public:
     std::vector<std::shared_ptr<Room>> GetRooms() {
         return rooms;
     }
+
+    bool isHandlerRecievingFiles() {
+        return currentHandler->RecievingFiles();
+    }
+
+    bool isServRequired() {
+        return currentHandler->ServRequired();
+    }
 private:
     std::shared_ptr<RequestHandler<ResponseParser>> CreateRequestHandler(std::string& action, Model<ResponseParser>& model);
     std::shared_ptr<RequestHandler<ResponseParser>> currentHandler;
@@ -128,31 +136,34 @@ std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::Creat
     switch (atoi(type.c_str()) )
     {
     case 0:
-        handler = std::make_shared<CreateRoomReqHandler<ResponseParser>>();
+        handler = std::make_shared<CreateRoomReqHandler<ResponseParser>>(false, true);
         break;
     case 1:
-        handler = std::make_shared<RemoveRoomReqHandler<ResponseParser>>();
+        handler = std::make_shared<RemoveRoomReqHandler<ResponseParser>>(false, true);
         break;
     case 2:
-        handler = std::make_shared<AddUsersReqHandler<ResponseParser>>();
+        handler = std::make_shared<AddUsersReqHandler<ResponseParser>>(false, true);
         break;
     case 3:
-        handler = std::make_shared<RemoveUsersReqHandler<ResponseParser>>();
+        handler = std::make_shared<RemoveUsersReqHandler<ResponseParser>>(false, true);
         break;
     case 4:
-        handler = std::make_shared<AddLinkReqHandler<ResponseParser>>();
+        handler = std::make_shared<AddLinkReqHandler<ResponseParser>>(false, true);
         break;
     case 5:
-        handler = std::make_shared<RemoveLinkReqHandler<ResponseParser>>();
+        handler = std::make_shared<RemoveLinkReqHandler<ResponseParser>>(true, true);
         break;
     case 6:
-        handler = std::make_shared<ArchiveLinkReqHandler<ResponseParser>>();
+        handler = std::make_shared<MakeSnapshotReqHandler<ResponseParser>>(true, true);
         break;
     case 7:
-        handler = std::make_shared<LogInReqHandler<ResponseParser>>();
+        handler = std::make_shared<LogInReqHandler<ResponseParser>>(false, true);
         break;
     case 8:
-        handler = std::make_shared<SignUpReqHandler<ResponseParser>>();
+        handler = std::make_shared<SignUpReqHandler<ResponseParser>>(false, true);
+        break;
+    case 9:
+        handler = std::make_shared<DownloadSnapshotReqHandler<ResponseParser>>(true, true);
         break;
     default:
         break;
@@ -191,6 +202,11 @@ void ModelImpl<ResponseParser>::handleResponse(std::string& response, Model<Resp
 }
 
 template <class ResponseParser>
+void ModelImpl<ResponseParser>::handleFile(recFile& newFile) {
+    currentHandler->RecieveFile(newFile);
+}
+
+template <class ResponseParser>
 Model<ResponseParser>::Model() : modelImpl(new ModelImpl<ResponseParser>) {}
 template <class ResponseParser>
 Model<ResponseParser>::~Model() {}
@@ -204,6 +220,12 @@ std::string Model<ResponseParser>::GetCurrentRoomInfoStr() {
 template <class ResponseParser>
 std::string Model<ResponseParser>::GetLinkInfoStr(const std::string& linkName) {
     std::string ret = modelImpl->getLinkInfoStr(linkName);
+    return ret;
+}
+
+template <class ResponseParser>
+std::string Model<ResponseParser>::GetLinkSnapshotInfoStr(const std::string& linkName) {
+    std::string ret = modelImpl->getLinkSnapshotInfoStr(linkName);
     return ret;
 }
 
@@ -234,6 +256,11 @@ void Model<ResponseParser>::HandleResponse(std::string& response) {
 }
 
 template <class ResponseParser>
+void Model<ResponseParser>::HandleFile(recFile& newFile) {
+    modelImpl->handleFile(newFile);
+}
+
+template <class ResponseParser>
 std::string Model<ResponseParser>::GetUserInfoStr() {
     std::string ret = modelImpl->getUserInfoStr();
     return ret;
@@ -242,6 +269,11 @@ std::string Model<ResponseParser>::GetUserInfoStr() {
 template <class ResponseParser>
 void Model<ResponseParser>::AddUsers(std::vector<std::string> users) {
     modelImpl->addUsers(users);
+}
+
+template <class ResponseParser>
+void Model<ResponseParser>::AddSnapshotUuid(const std::string& linkname, const std::string& uuid) {
+    modelImpl->addSnapshotUuid(linkname, uuid);
 }
 
 template <class ResponseParser>
@@ -268,4 +300,14 @@ void Model<ResponseParser>::AddRoom(std::shared_ptr<Room> newRoom) {
 template <class ResponseParser>
 void Model<ResponseParser>::RemoveRoom(const std::string& roomName) {
     modelImpl->removeRoom(roomName);
+}
+
+template <class ResponseParser>
+bool Model<ResponseParser>::IsHandlerRecievingFiles() {
+    return modelImpl->isHandlerRecievingFiles();
+}
+
+template <class ResponseParser>
+bool Model<ResponseParser>::IsServRequired() {
+    return modelImpl->isServRequired();
 }

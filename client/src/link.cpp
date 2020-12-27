@@ -10,14 +10,15 @@ public:
     LinkImpl(std::string name, std::string url, std::string uuid, std::string description);
     std::string getLinkName();
     std::string getLinkInfo();
+    std::string getSnapshotUuid();
     void setLinkInfo();
-    void addSnaphotPath(std::string path);
+    void addSnaphot(const std::string& uuid);
 private:
     std::string linkname;
     std::string url;
     std::string uuid;
     std::string description;
-    std::vector<std::string> snapshotPaths;
+    std::string snapshotPath;
 };
 
 LinkImpl::LinkImpl(std::string name, std::string url, std::string uuid, std::string description)
@@ -35,12 +36,17 @@ std::string LinkImpl::getLinkInfo() {
     return ret;
 }
 
+std::string LinkImpl::getSnapshotUuid() {
+    std::string ret = snapshotPath;
+    return ret;
+}
+
 void LinkImpl::setLinkInfo() {
 
 }
 
-void LinkImpl::addSnaphotPath(std::string path) {
-    snapshotPaths.push_back(std::move(path));
+void LinkImpl::addSnaphot(const std::string& uuid) {
+    snapshotPath = uuid;
 }
 
 Link::Link(std::string& name, std::string& url, std::string& uuid, std::string& description)
@@ -58,6 +64,12 @@ std::string Link::GetLinkInfo() {
     return ret;
 }
 
-void Link::addSnapshot(std::string& path) {
-    linkImpl->addSnaphotPath(path);
+std::string Link::GetSnapshotUuid() {
+    std::string ret = linkImpl->getSnapshotUuid();
+    return ret;
 }
+
+void Link::AddSnapshot(const std::string& uuid) {
+    linkImpl->addSnaphot(uuid);
+}
+

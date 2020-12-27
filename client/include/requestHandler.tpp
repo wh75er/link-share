@@ -3,6 +3,9 @@
 #include "utils.h"
 #include "room.hpp"
 #include "userinfo.hpp"
+#include "model.hpp"
+#include <experimental/filesystem>
+#include <fstream>
 
 
 template <class ResponseParser>
@@ -144,38 +147,64 @@ ExitStatus RemoveLinkReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &
 }
 
 template <class ResponseParser>
-ExitStatus ArchiveLinkReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
+ExitStatus MakeSnapshotReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
     fillDataFromJson(action, "name", &linkName);
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("linkname", linkName);
-
-    return SUCCESS;
-}
-
-template <class ResponseParser>
-ExitStatus ArchiveLinkReqHandler<ResponseParser>::HandleResponse(std::string &responseBody) { 
-    /* if (responseBody.find("success") == std::string::npos) {
-        return FAILURE;
-    }
-    size_t bodyStartpos = sizeof("success");
-
-    body = responseBody.substr(++bodyStartpos, responseBody.size()); */
-    return SUCCESS;
-}
-
-template <class ResponseParser>
-ExitStatus ArchiveLinkReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { return SUCCESS; }
-
-template <class ResponseParser>
-ExitStatus CreateRoomReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) { 
-    fillDataFromJson(action, "name", &roomName, "host", &roomHost, "private", &isPrivate);
 
     std::string info = model.GetUserInfoStr();
     std::string login, token;
     fillDataFromJson(info, "name", &login, "uuid", &token);
 
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 0, "login", login, "token", token, "name",
-                                                                     roomName, "host", roomHost, "private", isPrivate);
+    std::string linkInfo = model.GetLinkInfoStr(linkName);
+    fillDataFromJson(linkInfo, "uuid", &uuid);
 
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 6, "login", login, "token", token, "uuid", uuid);
+
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus MakeSnapshotReqHandler<ResponseParser>::HandleResponse(std::string &responseBody) { 
+    try {
+        RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
+    }
+
+    catch (...) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+
+    std::string error;
+    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+    if (error.empty()) {
+        (RequestHandler<ResponseParser>::parser->get_value("uuid", uuid));
+        std::cout << "success!" << std::endl;
+    } else {
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+
+template <class ResponseParser>
+ExitStatus MakeSnapshotReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    model.AddSnapshotUuid(linkName, uuid);
+    return SUCCESS;
+}
+
+
+template <class ResponseParser>
+ExitStatus CreateRoomReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) { 
+    fillDataFromJson(action, "name", &roomName, "private", &isPrivate);
+
+    std::string info = model.GetUserInfoStr();
+    std::string login, token;
+    fillDataFromJson(info, "name", &login, "uuid", &token);
+    roomHost = login;
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 0, "login", login, "token", token, "name",
+                                                                     roomName, "private", isPrivate);
     return SUCCESS;
 }
 
@@ -282,3 +311,68 @@ ExitStatus SignUpReqHandler<ResponseParser>::FillRequest(std::string action, Mod
 
 template <class ResponseParser>
 ExitStatus SignUpReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { return SUCCESS; }
+
+
+template <class ResponseParser>
+ExitStatus DownloadSnapshotReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
+    fillDataFromJson(action, "name", &linkName, "filesdir", &filesdir);
+
+    std::string info = model.GetUserInfoStr();
+    std::string login, token;
+    fillDataFromJson(info, "name", &login, "uuid", &token);
+
+    uuid = model.GetLinkSnapshotInfoStr(linkName);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 9, "login", login, "token", token, "uuid", uuid);
+
+    return SUCCESS;
+}
+
+/* template <class ResponseParser>
+ExitStatus MakeSnapshotReqHandler<ResponseParser>::HandleResponse(std::string &responseBody) { 
+    try {
+        RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
+    }
+
+    catch (...) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+
+    std::string error;
+    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+    if (error.empty()) {
+        (RequestHandler<ResponseParser>::parser->get_value("files_dir", filesdir));
+        std::cout << "success!" << std::endl;
+    } else {
+        return FAILURE;
+    }
+
+    return SUCCESS;
+} */
+
+
+template <class ResponseParser>
+ExitStatus DownloadSnapshotReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus DownloadSnapshotReqHandler<ResponseParser>::RecieveFile(recFile& newFile) {
+    std::string mainDir(filesdir);
+    std::experimental::filesystem::create_directories(mainDir);
+
+    std::string staticDir = mainDir + "/static";
+    std::experimental::filesystem::create_directories(staticDir);
+    
+    std::string pathToNewFile(mainDir);
+    pathToNewFile += newFile.name;
+
+    std::ofstream file(pathToNewFile, std::ios::binary);
+    for (auto i : newFile.body) {
+        file.write(&i, 1);
+    }
+    return SUCCESS;
+}

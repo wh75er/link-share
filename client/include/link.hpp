@@ -9,9 +9,9 @@ public:
     ~Link();
     std::string GetLinkName();
     std::string GetLinkInfo();
+    std::string GetSnapshotUuid();
     void SetLinkInfo();
-    void addSnapshot(std::string& path);
-
+    void AddSnapshot(const std::string& uuid);
 private:
     std::shared_ptr<LinkImpl> linkImpl;
 };

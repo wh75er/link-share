@@ -13,7 +13,9 @@ public:
     std::string getRoomHost();
     std::string getRoomName();
     std::string getLinkInfoStr(const std::string& linkName);
+    std::string getLinkSnapshotInfoStr(const std::string& linkName);
     void addUsers(std::vector<std::string> users);
+    void addSnapshot(const std::string& linkname, const std::string& uuid);
     void removeUsers(std::vector<std::string> users);
     void addLink(std::shared_ptr<Link> newLink);
     void removeLink(const std::string& linkName);
@@ -54,6 +56,11 @@ std::string Room::GetLinkInfoStr(const std::string& linkName) {
     return ret;
 }
 
+std::string Room::GetLinkSnapshotInfoStr(const std::string& linkName) {
+    std::string ret = roomImpl->getLinkSnapshotInfoStr(linkName);
+    return ret;
+}
+
 void Room::AddUsers(std::vector<std::string> users) {
     roomImpl->addUsers(users);
 }
@@ -64,6 +71,10 @@ void Room::RemoveUsers(std::vector<std::string> users) {
 
 void Room::AddLink(std::shared_ptr<Link> newLink) {
     roomImpl->addLink(newLink);
+}
+
+void Room::AddSnapshot(const std::string& linkname, const std::string& uuid) {
+    roomImpl->addSnapshot(linkname, uuid);
 }
 
 void Room::RemoveLink(const std::string& linkName) {
@@ -110,6 +121,19 @@ std::string RoomImpl::getLinkInfoStr(const std::string& linkName) {
     return ret;
 }
 
+std::string RoomImpl::getLinkSnapshotInfoStr(const std::string& linkName) {
+    std::string ret;
+    for(auto i : links) {
+        if (i->GetLinkName() == linkName) {
+            ret = i->GetSnapshotUuid();
+        }
+    }
+    if (ret.empty()) {
+        throw std::runtime_error("Link was not found");;
+    }
+    return ret;
+}
+
 void RoomImpl::addUsers(std::vector<std::string> users) {
     for (auto i : users) {
         auto it = std::find(participants.begin(), participants.end(), i);
@@ -119,11 +143,19 @@ void RoomImpl::addUsers(std::vector<std::string> users) {
     }
 }
 
+void RoomImpl::addSnapshot(const std::string& linkname, const std::string& uuid) {
+    auto it = std::find_if(links.begin(), links.end(),
+        [linkname](std::shared_ptr<Link> link) { return link->GetLinkName() == linkname; });
+    (*it)->AddSnapshot(uuid);
+}
+
 void RoomImpl::removeUsers(std::vector<std::string> users) {
     for (auto i : users) {
         participants.erase(std::remove(participants.begin(), participants.end(), i), participants.end());
     }
 }
+
+
 
 void RoomImpl::addLink(std::shared_ptr<Link> newLink) {
     links.push_back(newLink);

@@ -21,5 +21,6 @@ std::string deleteLinkInput();
 std::string makeSnapshotInput();
 std::string logInInput();
 std::string signUpInput();
+std::string downloadSnapshotInput();
 
 #include "inputUtils.tpp"

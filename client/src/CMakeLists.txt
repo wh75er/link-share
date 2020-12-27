@@ -6,6 +6,6 @@ target_include_directories(client PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 message(STATUS "Boost version: ${Boost_VERSION}")
-target_link_libraries(main PUBLIC ${Boost_LIBRARIES} PUBLIC client)
+target_link_libraries(main PUBLIC ${Boost_LIBRARIES} PUBLIC client stdc++fs)
 
-add_definitions(-Wall -Werror -Wpedantic)
+add_definitions(-Wall -Werror -Wpedantic -g)

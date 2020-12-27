@@ -5,6 +5,8 @@
 #include <sys/socket.h> 
 #include <stdexcept>
 #include <string.h>
+#include <algorithm>
+#include <iterator>
 #include <unistd.h>
 
 #include "socket.hpp"
@@ -117,7 +119,7 @@ std::string Socket::Recv() {
     return ret;
 }
 
-std::string Socket::RecvFile(bool endFlag) {
+std::string Socket::RecvFile(bool* endFlag) {
     char buf[BUFSIZE];
     std::string ret;
 
@@ -125,6 +127,9 @@ std::string Socket::RecvFile(bool endFlag) {
         int n = ::recv(sd, buf, sizeof(buf), MSG_NOSIGNAL);
         if (-1 == n && errno != EAGAIN) {
             throw std::runtime_error("read failed: " + std::string(strerror(errno)));
+        }
+        if (-1 == n && ret.empty()) {
+            continue;
         }
         if (0 == n || -1 == n) {
             break;
@@ -136,7 +141,38 @@ std::string Socket::RecvFile(bool endFlag) {
         if (buf[0] == 'e') {
             break;
         } else if (buf[0] == 'f') {
-            endFlag = true;
+            *endFlag = true;
+            break;
+        }
+    }
+    return ret;
+}
+
+
+std::vector<char> Socket::RecvFileVec(bool* endFlag) {
+    char buf[BUFSIZE];
+    std::vector<char> ret;
+
+    while (true) {
+        int n = ::recv(sd, buf, sizeof(buf), MSG_NOSIGNAL);
+        if (-1 == n && errno != EAGAIN) {
+            throw std::runtime_error("read failed: " + std::string(strerror(errno)));
+        }
+        if (0 == n && ret.empty()) {
+            continue;
+        }
+        if (0 == n || -1 == n) {
+            break;
+        }
+
+        std::copy(&buf[1], &buf[n-1], std::back_inserter(ret));
+        while (ret.back() == '\x1A') {
+            ret.pop_back();
+        }
+        if (buf[0] == 'e') {
+            break;
+        } else if (buf[0] == 'f') {
+            *endFlag = true;
             break;
         }
     }

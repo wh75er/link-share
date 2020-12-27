@@ -18,12 +18,11 @@ void fillObject(std::vector<std::string>* vec) {
 
 std::string createRoomInput() {
     std::string name;
-    std::string host;
     std::string isPrivate;
 
-    writeData(&name, &host, &isPrivate);
+    writeData(&name, &isPrivate);
 
-    std::string ret = packToJsonString("command", "0", "name", name, "host", host, "private", isPrivate);
+    std::string ret = packToJsonString("command", "0", "name", name, "private", isPrivate);
     return ret;
 }
 
@@ -94,5 +93,15 @@ std::string signUpInput() {
     writeData(&login, &password);
     
     std::string ret = packToJsonString("command","8", "login", login, "password", password);
+    return ret;
+}
+
+
+std::string downloadSnapshotInput() {
+    std::string name, filesdir;
+
+    writeData(&name, &filesdir);
+    
+    std::string ret = packToJsonString("command","9", "name", name, "filesdir", filesdir);
     return ret;
 }

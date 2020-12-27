@@ -3,6 +3,7 @@
 #include <unistd.h>  // close()
 #include <memory>
 #include <string>
+#include <vector>
 
 class Socket
 {
@@ -21,7 +22,8 @@ public:
     void Connect(const std::string& host, int port);
     void Send(const std::string& str);
     std::string Recv();
-    std::string RecvFile(bool endFlag);
+    std::string RecvFile(bool* endFlag);
+    std::vector<char> RecvFileVec(bool* endFlag);
     void Close();
 private:
     int sd;

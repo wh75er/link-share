@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 
+#include "requestHandler.hpp"
+
 template <class ResponseParser>
 Presenter<ResponseParser>::Presenter(const std::string& host, const size_t port) :
 client(host, port) { /* client.Connect(); */}
@@ -29,11 +31,27 @@ void Presenter<ResponseParser>::run() {
         connect();
         std::string request = model.FormRequest(action);
         client.writeToServer(request);
-        std::string response = client.readFromServer();
+        bool endFlag = false;
+        std::string response = client.readFromServer(&endFlag);
 
         std::cout << std::endl << response << std::endl;
-
+        
         model.HandleResponse(response);
+        while(!endFlag) {
+            if (model.IsHandlerRecievingFiles()) {
+                recFile newFile;
+                newFile.name = client.readFromServer(&endFlag);
+                newFile.body = client.readFileBodyFromServer(&endFlag);
+                std::cout << newFile.body.size() << std::endl;
+                model.HandleFile(newFile);
+            } else {
+                std::string response = client.readFromServer(&endFlag);
+
+                std::cout << std::endl << response << std::endl;
+
+                model.HandleResponse(response);
+            }
+        }
         action = view.GetRequest();
         disconnect();
     }

@@ -6,7 +6,7 @@
 #include "socket.hpp"
 
 
-
+ 
 class Client {
 public:
     Client(const std::string& _host, int _port);
@@ -14,7 +14,8 @@ public:
     void Connect();
     void Close();
     void writeToServer(std::string& req);
-    std::string readFromServer();
+    std::string readFromServer(bool* endFlag);
+    std::vector<char> readFileBodyFromServer(bool* endFlag);
 private:
     const std::string& host;
     int port;

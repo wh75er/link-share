@@ -23,8 +23,6 @@ std::string packToJsonString(T key, K value, Args... args) {
     return jsonStr;
 }
 
-
-
 // Все, что связано с распаковкой JSON'а
 
 
