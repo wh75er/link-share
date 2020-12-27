@@ -18,8 +18,6 @@ TcpStringBodyParser<Model, JsonParser>::TcpStringBodyParser() {
 
 template<class Model, class JsonParser>
 std::shared_ptr<BaseHandler<Model>> TcpStringBodyParser<Model, JsonParser>::parse(std::string data) {
-  data = "{\"command\": 9, \"uuid\": \"cde85da0-e8da-4190-8d0a-cd0d2e178439\", \"login\": \"test1\", \"token\": \"15a5acb4-9412-4ad1-91dc-b5d1d76f34b6\"}";
-
   if (data.empty()) {
     throw std::runtime_error("Input data is empty!");
   }

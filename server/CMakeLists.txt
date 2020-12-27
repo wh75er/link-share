@@ -39,6 +39,7 @@ add_library(${CMAKE_PROJECT_NAME}_lib SHARED ${lib_sources})
 target_include_directories(${CMAKE_PROJECT_NAME}_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${SCRAPER_INCLUDE_DIR})
 
 
+message("Postgesql include dirs: ${PostgreSQL_INCLUDE_DIRS}")
 add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${PostgreSQL_INCLUDE_DIRS})
 target_link_libraries(main ${Boost_LIBRARIES} ${PostgreSQL_LIBRARIES} ${CMAKE_PROJECT_NAME}_lib create_new_page)
