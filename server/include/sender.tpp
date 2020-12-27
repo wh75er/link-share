@@ -80,13 +80,14 @@ void Sender<Connection>::send(std::shared_ptr<Response>& response) {
     std::filesystem::recursive_directory_iterator d_it_end;
     for (; d_it != d_it_end;  d_it++) {
       if (std::filesystem::is_regular_file(d_it->status())) {
-        std::string file_path(d_it->path());
-        std::string::size_type start_pos = file_path.find_last_of('/');
-        files.push_back(file_path.substr(start_pos, file_path.size() - start_pos));
+        files.push_back(d_it->path());
       }
     }
     for (auto it = files.begin(); it != files.end(); it++) {
-      send_with_packages(*it, 'e');
+      std::string file_name = *it;
+      std::string::size_type start_pos = file_name.find_last_of('/');
+      files.push_back(file_name.substr(start_pos, file_name.size() - start_pos));
+      send_with_packages(file_name, 'e');
 
 #ifdef DEBUG
       std::cout << "Sending file: " << *it << std::endl;
