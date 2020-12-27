@@ -120,8 +120,8 @@ int create_new_page(const std::string &new_page_url,
                     }
                 }
 
-                if (buf_url.back() != '/' && css_url.front() != '/' &&
-                    buf_url.empty()) {
+              if (buf_url.back() != '/' && css_url.front() != '/' &&
+                    !buf_url.empty()) {
                     buf_url += '/';
                 }
 

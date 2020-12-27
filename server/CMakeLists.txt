@@ -1,16 +1,12 @@
 cmake_minimum_required(VERSION 3.11)
 
-project(TCPserver VERSION 0.1
-  DESCRIPTION "TCPserver"
-  LANGUAGES C CXX)
-
 find_package(Boost REQUIRED COMPONENTS system thread)
 find_package(PostgreSQL REQUIRED)
 message(STATUS "Boost version: ${Boost_VERSION}")
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
 set(PROJECT_BUILD_DIR ${PROJECT_SOURCE_DIR}/build)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wpedantic")
 
@@ -40,12 +36,12 @@ add_library(${CMAKE_PROJECT_NAME}_lib SHARED ${lib_sources})
 
 #target_link_libraries(${CMAKE_PROJECT_NAME}_lib PUBLIC ${Boost_LIBRARIES})
 
-target_include_directories(${CMAKE_PROJECT_NAME}_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${CMAKE_PROJECT_NAME}_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${SCRAPER_INCLUDE_DIR})
 
 
-add_executable(main ${PROJECT_SOURCE_DIR}/src/main.cpp)
+add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(main ${Boost_LIBRARIES} ${PostgreSQL_LIBRARIES} ${CMAKE_PROJECT_NAME}_lib)
+target_link_libraries(main ${Boost_LIBRARIES} ${PostgreSQL_LIBRARIES} ${CMAKE_PROJECT_NAME}_lib create_new_page)
 
 
 enable_testing()

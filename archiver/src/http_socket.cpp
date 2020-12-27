@@ -225,7 +225,7 @@ HttpResponse::HttpResponse(const char *buf, const int size) : body(nullptr) {
 }
 
 HttpResponse::~HttpResponse() {
-    if (body != nullptr && code != 404) {
+    if (body != nullptr && code >= 200 && code < 300) {
         delete[] body;
         body = nullptr;
     }
@@ -297,6 +297,9 @@ HttpResponse Socket::recv() {
 
     free(buf);
     buf = nullptr;
+
+  std::cout << "Request: " << request.query << std::endl;
+//  std::cout << "Response: " << response.query << std::endl;
 
     return response;
 }
