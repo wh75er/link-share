@@ -46,7 +46,7 @@ target_include_directories(${CMAKE_PROJECT_NAME}_lib PRIVATE ${CMAKE_CURRENT_SOU
 add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${PostgreSQL_INCLUDE_DIRS})
 link_directories(${PostgreSQL_LIBRARY_DIRS})
-target_link_libraries(main ${Boost_LIBRARIES} ${PostgreSQL_LIBRARIES} ${CMAKE_PROJECT_NAME}_lib create_new_page)
+target_link_libraries(main ${Boost_LIBRARIES}  ${CMAKE_PROJECT_NAME}_lib create_new_page ${PostgreSQL_LIBRARIES})
 
 
 enable_testing()
