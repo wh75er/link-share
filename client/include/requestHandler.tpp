@@ -34,36 +34,59 @@ ExitStatus RequestHandler<ResponseParser>::HandleResponse(std::string& responseB
 template <class ResponseParser>
 ExitStatus AddUsersReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
     fillDataFromJson(action, "users", &users);
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("users", users);
+
+    std::string userInfo = model.GetUserInfoStr();
+    std::string login, token;
+    fillDataFromJson(userInfo, "name", &login, "uuid", &token);
+
+    std::string roomInfo = model.GetCurrentRoomInfoStr();
+    fillDataFromJson(roomInfo, "uuid", &uuid);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 2, "login", login, "token", token, "uuid", uuid, "users", users);
     return SUCCESS;
 }
 
 template <class ResponseParser>
 ExitStatus AddUsersReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    model.AddUsers(users);
     return SUCCESS;
 }
 
 template <class ResponseParser>
 ExitStatus RemoveUsersReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
     fillDataFromJson(action, "users", &users);
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("users", users);
+
+    std::string userInfo = model.GetUserInfoStr();
+    std::string login, token;
+    fillDataFromJson(userInfo, "name", &login, "uuid", &token);
+
+    std::string roomInfo = model.GetCurrentRoomInfoStr();
+    fillDataFromJson(roomInfo, "uuid", &uuid);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 3, "login", login, "token", token, "uuid", uuid, "users", users);
     return SUCCESS;
 }
 
 //ExitStatus LogOutReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }
 template <class ResponseParser>
-ExitStatus RemoveUsersReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { return SUCCESS; }
+ExitStatus RemoveUsersReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    model.RemoveUsers(users);
+    return SUCCESS;
+}
 
 template <class ResponseParser>
 ExitStatus AddLinkReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
     
-    fillDataFromJson(action, "name", &linkName, "url", &url);
+    fillDataFromJson(action, "name", &linkName, "url", &url, "description", &description);
 
-    std::string info = model.GetUserInfo();
+    std::string info = model.GetUserInfoStr();
     std::string login, token;
     fillDataFromJson(info, "name", &login, "uuid", &token);
 
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 4, "login", login, "token", token, "name", linkName, "url", url, "description", " ");
+    std::string roomInfo = model.GetCurrentRoomInfoStr();
+    fillDataFromJson(roomInfo, "uuid", &uuid);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 4, "login", login, "token", token, "uuid", uuid, "name", linkName, "url", url, "description", description);
 
     return SUCCESS;
 }
@@ -93,22 +116,32 @@ ExitStatus AddLinkReqHandler<ResponseParser>::HandleResponse(std::string &respon
 }
 template <class ResponseParser>
 ExitStatus AddLinkReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    std::shared_ptr<Link> newLink = std::make_shared<Link>(linkName, url, uuid, description);
 
-    std::string linkInfo = packToJsonString("name", linkName, "url", url, "uuid", uuid);
-    model.AddLink(linkInfo);
+    model.AddLink(newLink);
     return SUCCESS;
 }
 
 template <class ResponseParser>
 ExitStatus RemoveLinkReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
     fillDataFromJson(action, "name", &linkName);
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("linkname", linkName);
+
+    std::string info = model.GetUserInfoStr();
+    std::string login, token;
+    fillDataFromJson(info, "name", &login, "uuid", &token);
+
+    std::string linkInfo = model.GetLinkInfoStr(linkName);
+    fillDataFromJson(linkInfo, "uuid", &uuid);
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 5, "login", login, "token", token, "uuid", uuid);
 
     return SUCCESS;
 }
-//ExitStatus RemoveLinkReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }
+
 template <class ResponseParser>
-ExitStatus RemoveLinkReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { return SUCCESS; }
+ExitStatus RemoveLinkReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) { 
+    model.RemoveLink(linkName);
+    return SUCCESS;
+}
 
 template <class ResponseParser>
 ExitStatus ArchiveLinkReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
@@ -136,7 +169,7 @@ template <class ResponseParser>
 ExitStatus CreateRoomReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) { 
     fillDataFromJson(action, "name", &roomName, "host", &roomHost, "private", &isPrivate);
 
-    std::string info = model.GetUserInfo();
+    std::string info = model.GetUserInfoStr();
     std::string login, token;
     fillDataFromJson(info, "name", &login, "uuid", &token);
 
@@ -170,20 +203,23 @@ ExitStatus CreateRoomReqHandler<ResponseParser>::HandleResponse(std::string &res
 
 template <class ResponseParser>
 ExitStatus CreateRoomReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
-    std::shared_ptr<Room> newRoom = std::make_shared<Room>(roomHost, roomName, uuid, isPrivate);
+    std::shared_ptr<Room> newRoom = std::make_shared<Room>(roomName, roomHost, uuid, isPrivate);
     model.AddRoom(newRoom);
     return SUCCESS;
 }
 
 template <class ResponseParser>
 ExitStatus RemoveRoomReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
-    fillDataFromJson(action, "name", &roomName, "host", &roomHost);
+    fillDataFromJson(action, "name", &roomName);
 
-    std::string info = model.GetUserInfo();
+    std::string userInfo = model.GetUserInfoStr();
     std::string login, token;
-    fillDataFromJson(info, "name", &login, "uuid", &token);
+    fillDataFromJson(userInfo, "name", &login, "uuid", &token);
 
-    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 1, "login", login, "token", token,"name", roomName, "host", roomHost);
+    std::string roomInfo = model.GetRoomInfoStr(roomName);
+    fillDataFromJson(roomInfo, "uuid", &uuid);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 1, "login", login, "token", token, "uuid", uuid);
     return SUCCESS;
 }
 //ExitStatus RemoveRoomReqHandler::HandleResponse(std::string &responseBody) { return SUCCESS; }

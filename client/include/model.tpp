@@ -7,6 +7,7 @@
 #include "model.hpp"
 #include "requestHandler.hpp"
 #include "room.hpp"
+#include "link.hpp"
 #include "userinfo.hpp"
 #include "utils.h"
 
@@ -15,30 +16,76 @@ template <class ResponseParser>
 class ModelImpl {
 public:
     ModelImpl();
-    //void passAction(std::string& action, Model& model);
-
-    /* Client& GetClient() {
-        return client;
-    } */
 
     std::string formRequest(std::string& action, Model<ResponseParser>& model);
     void handleResponse(std::string& response, Model<ResponseParser>& model);
 
     void SetUserInfoFromStr(std::shared_ptr<UserInfo> uinfo) {
-        info.swap(uinfo);
-        //std::swap(uinfo, info);
+        info = uinfo;
     }
 
-    std::string GetUserInfo() {
+    std::string getUserInfoStr() {
         return info->getInfoStr();
     }
 
-    void addLink(std::string& linkInfo) {
-        mainRoom->addLink(linkInfo);
+
+    std::string getCurrentRoomInfoStr() {
+        std::string ret = currentRoom->GetRoomInfoStr();
+        return ret;
+    }
+    
+    std::string getLinkInfoStr(const std::string& linkName) {
+        std::string ret = currentRoom->GetLinkInfoStr(linkName);
+        return ret;
+    }
+
+    std::string getRoomInfoStr(const std::string& roomName) {
+        std::string ret;
+        /* if (mainRoom->GetRoomName() == roomName) {
+            ret = mainRoom->GetRoomInfoStr();
+        } else {
+            for (auto i : rooms) {
+                if (i->GetRoomName() == roomName) {
+                    ret = i->GetRoomInfoStr();
+                    break;
+                }
+            }
+        } */
+        for (auto i : rooms) {
+            if (i->GetRoomName() == roomName) {
+                ret = i->GetRoomInfoStr();
+                break;
+            }
+        }
+        if (ret.empty()) {
+            throw std::runtime_error("Room is not found");
+        }
+
+        return ret;
+    }
+
+    void addUsers(std::vector<std::string> users) {
+        currentRoom->AddUsers(users);
+    }
+
+    void removeUsers(std::vector<std::string> users) {
+        currentRoom->RemoveUsers(users);
+    }
+
+    void addLink(std::shared_ptr<Link> newLink) {
+        currentRoom->AddLink(newLink);
+    }
+
+    void removeLink(const std::string& linkName) {
+        currentRoom->RemoveLink(linkName);
     }
 
     void addRoom(std::shared_ptr<Room> newRoom) {
-        rooms.push_back(newRoom);
+        if (currentRoom == nullptr) {
+            currentRoom = newRoom;
+        } else {
+            rooms.push_back(newRoom);
+        }
     }
 
     void removeRoom(const std::string& roomName) {
@@ -60,13 +107,15 @@ private:
 
     std::shared_ptr<UserInfo> info;
     std::shared_ptr<Room> mainRoom;
+    std::shared_ptr<Room> currentRoom;
     std::vector<std::shared_ptr<Room>> rooms;
 };
 
 template <class ResponseParser>
 ModelImpl<ResponseParser>::ModelImpl()
-: info(std::make_shared<UserInfo>()),
- mainRoom(std::make_shared<Room>()) {}
+: info(nullptr),
+ mainRoom(std::make_shared<Room>()),
+ currentRoom(nullptr) {}
 
 template <class ResponseParser>
 std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::CreateRequestHandler(std::string& action, Model<ResponseParser>& model) {
@@ -114,7 +163,6 @@ std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::Creat
     return handler;
 }
 
-
 /* void ModelImpl::passAction(std::string& action, Model& model) {
     std::shared_ptr<RequestHandler> handler = CreateRequestHandler(action, model);
 
@@ -148,8 +196,20 @@ template <class ResponseParser>
 Model<ResponseParser>::~Model() {}
 
 template <class ResponseParser>
-std::string Model<ResponseParser>::GetMainRoomInfo() {
-    std::string ret = modelImpl->GetMainRoom()->GetRoomName() + modelImpl->GetMainRoom()->GetRoomHost();
+std::string Model<ResponseParser>::GetCurrentRoomInfoStr() {
+    std::string ret = modelImpl->getCurrentRoomInfoStr();
+    return ret;
+}
+
+template <class ResponseParser>
+std::string Model<ResponseParser>::GetLinkInfoStr(const std::string& linkName) {
+    std::string ret = modelImpl->getLinkInfoStr(linkName);
+    return ret;
+}
+
+template <class ResponseParser>
+std::string Model<ResponseParser>::GetRoomInfoStr(const std::string& roomName) {
+    std::string ret = modelImpl->getRoomInfoStr(roomName);
     return ret;
 }
 
@@ -174,16 +234,31 @@ void Model<ResponseParser>::HandleResponse(std::string& response) {
 }
 
 template <class ResponseParser>
-std::string Model<ResponseParser>::GetUserInfo() {
-    std::string ret = modelImpl->GetUserInfo();
+std::string Model<ResponseParser>::GetUserInfoStr() {
+    std::string ret = modelImpl->getUserInfoStr();
     return ret;
 }
 
 template <class ResponseParser>
-void Model<ResponseParser>::AddLink(std::string& linkInfo) {
-    modelImpl->addLink(linkInfo);
+void Model<ResponseParser>::AddUsers(std::vector<std::string> users) {
+    modelImpl->addUsers(users);
 }
 
+template <class ResponseParser>
+void Model<ResponseParser>::RemoveUsers(std::vector<std::string> users) {
+    modelImpl->removeUsers(users);
+}
+
+template <class ResponseParser>
+void Model<ResponseParser>::AddLink(std::shared_ptr<Link> newLink) {
+    modelImpl->addLink(newLink);
+}
+
+
+template <class ResponseParser>
+void Model<ResponseParser>::RemoveLink(const std::string& linkName) {
+    modelImpl->removeLink(linkName);
+}
 
 template <class ResponseParser>
 void Model<ResponseParser>::AddRoom(std::shared_ptr<Room> newRoom) {

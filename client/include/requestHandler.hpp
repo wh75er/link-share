@@ -29,10 +29,10 @@ class AddUsersReqHandler : public RequestHandler<ResponseParser> {
 public:
     AddUsersReqHandler() = default;
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
-    //ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::vector<std::string> users;
+    std::string uuid;
 };
 
 template <class ResponseParser>
@@ -40,11 +40,10 @@ class RemoveUsersReqHandler : public RequestHandler<ResponseParser> {
 public:
     RemoveUsersReqHandler() = default;
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
-    //ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
-std::vector<std::string> users;
-    
+    std::vector<std::string> users;
+    std::string uuid;
 };
 
 template <class ResponseParser>
@@ -58,6 +57,7 @@ private:
     std::string uuid;
     std::string linkName;
     std::string url;
+    std::string description;
 };
 
 template <class ResponseParser>
@@ -65,10 +65,10 @@ class RemoveLinkReqHandler : public RequestHandler<ResponseParser> {
 public:
     RemoveLinkReqHandler() = default;
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
-    //ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string linkName;
+    std::string uuid;
 };
 
 template <class ResponseParser>
@@ -82,6 +82,7 @@ private:
     std::string linkName;
     std::string body;
 };
+
 
 template <class ResponseParser>
 class CreateRoomReqHandler : public RequestHandler<ResponseParser> {
@@ -105,7 +106,7 @@ public:
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
     std::string roomName;
-    std::string roomHost;
+    std::string uuid;
 };
 
 template <class ResponseParser>

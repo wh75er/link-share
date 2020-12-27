@@ -78,8 +78,10 @@ std::string serialize(const std::string &key, const std::vector<std::string> vec
     for (auto &v: vec) {
         serialized += "\"" + v + "\", ";
     }
-    serialized.erase(serialized.size() - 2, 1);
-    serialized += "]";
+    //serialized.erase(serialized.size() - 2, 1);
+    serialized.pop_back();
+    serialized.pop_back();
+    serialized += " ] ";
 
     return serialized;
 }
@@ -137,6 +139,7 @@ void fillData(const std::string& jsonStr, const std::string& key,  std::string* 
         *inputStr = *it;
     }
 }
+
 
 void fillData(const std::string& jsonStr, const std::string& key,  bool* val) {
     auto vec = splitString(jsonStr);

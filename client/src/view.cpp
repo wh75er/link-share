@@ -47,7 +47,7 @@ std::string ConsoleView::GetRequest() {
     }
         break;
     case ADD_LINK: {
-        std::cout << "Write name and url of link" << std::endl;
+        std::cout << "Write name, url and description of link" << std::endl;
         inputStr = addLinkInput();
         break;
     }

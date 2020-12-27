@@ -55,10 +55,11 @@ std::string deleteUsersInput() {
 std::string addLinkInput() {
     std::string name;
     std::string url;
+    std::string description;
 
-    writeData(&name, &url);
+    writeData(&name, &url, &description);
     
-    std::string ret = packToJsonString("command","4", "name", name, "url", url);
+    std::string ret = packToJsonString("command","4", "name", name, "url", url, "description", description);
     return ret;
 }
 std::string deleteLinkInput() {

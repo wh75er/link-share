@@ -10,10 +10,6 @@ UserInfo::UserInfo(std::string name, std::string password, std::string uuid)
 }
 
 std::string UserInfo::getInfoStr() {
-    /* if (name.empty() || name.empty() || name.empty()) {
-        throw std::runtime_error("User info is empty!");
-    } */
-
     std::string ret = packToJsonString("name", name, "password", password, "uuid", uuid);
     return ret;
 }
