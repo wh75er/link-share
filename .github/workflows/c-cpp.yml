@@ -15,6 +15,8 @@ jobs:
       run: sudo apt-get install python3-setuptools && sudo pip3 install git+https://github.com/gcovr/gcovr.git
     - name: Install boost
       run: sudo apt-get install libboost-all-dev
+    - name: Install boost
+      run: sudo apt-get install postgresql postgresql-contrib
     - name: Install cppcheck
       run: sudo apt-get install -y cppcheck
     - name: Run Linter For Server
