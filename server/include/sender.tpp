@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <string>
 
 #define PACKAGE_SIZE 400
 
@@ -84,9 +85,13 @@ void Sender<Connection>::send(std::shared_ptr<Response>& response) {
       }
     }
     for (auto it = files.begin(); it != files.end(); it++) {
-      std::string file_name = *it;
+#ifdef DEBUG
+      std::cout << "File before editing: " << *it << std::endl;
+#endif
+      std::string file_name(*it);
       std::string::size_type start_pos = file_name.find_last_of('/');
-      files.push_back(file_name.substr(start_pos, file_name.size() - start_pos));
+      file_name = file_name.substr(start_pos, file_name.size() - start_pos);
+
       send_with_packages(file_name, 'e');
 
 #ifdef DEBUG
