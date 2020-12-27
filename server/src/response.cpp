@@ -47,7 +47,7 @@ std::string Response::serialize() {
   }
 
   if (!files_dir.empty()) {
-    std::string json_uuid = "'files_dir': " + std::string("\"") + files_dir + std::string("\"");
+    std::string json_uuid = "\"files_dir\": " + std::string("\"") + files_dir + std::string("\"");
     json += ", " + json_uuid;
   }
 

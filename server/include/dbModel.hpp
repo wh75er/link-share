@@ -18,6 +18,8 @@ public:
   std::map<std::string, std::string> get_snapshot_by_uuid(std::string& uuid);
   std::map<std::string, std::string> get_comment_by_uuid(std::string& uuid);
 
+  std::vector<std::map<std::string, std::string>> get_all_public_rooms();
+  std::vector<std::map<std::string, std::string>> get_all_user_rooms(std::string& login);
   std::vector<std::map<std::string, std::string>> get_room_users_by_uuid(std::string& uuid);
   std::vector<std::map<std::string, std::string>> get_room_links_by_uuid(std::string& uuid);
   std::vector<std::map<std::string, std::string>> get_link_snapshots_by_uuid(std::string& uuid);
@@ -141,6 +143,39 @@ std::map<std::string, std::string> DbApi<DbOps>::get_comment_by_uuid(std::string
   }
 
   return row;
+}
+
+template<class DbOps>
+std::vector<std::map<std::string, std::string>> DbApi<DbOps>::get_all_public_rooms() {
+  std::string query = "select * from rooms where private = FALSE;";
+
+  std::vector<std::map<std::string, std::string>> rows;
+
+  try {
+    rows = dbops->get_rows_by_query(query);
+  }
+  catch (...) {
+    throw;
+  }
+
+  return rows;
+}
+
+template<class DbOps>
+std::vector<std::map<std::string, std::string>> DbApi<DbOps>::get_all_user_rooms(std::string &login) {
+  std::string query = "select * from rooms where user_id=(select id from users where login='" + login + "') UNION ALL "
+                      "select * from rooms where id in (select room_id from room_users where user_id=(select id from users where login='" + login + "'));";
+
+  std::vector<std::map<std::string, std::string>> rows;
+
+  try {
+    rows = dbops->get_rows_by_query(query);
+  }
+  catch (...) {
+    throw;
+  }
+
+  return rows;
 }
 
 template<class DbOps>
