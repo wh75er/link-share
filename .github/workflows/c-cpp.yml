@@ -16,7 +16,7 @@ jobs:
     - name: Install boost
       run: sudo apt-get install libboost-all-dev
     - name: Install libpq
-      run: sudo apt-get install libpq-dev
+      run: sudo apt-get install libpq-dev postgresql-server-dev-all
     - name: Install cppcheck
       run: sudo apt-get install -y cppcheck
     - name: Run Linter For Server
