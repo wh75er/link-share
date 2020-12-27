@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <cstdlib>
 
 #include "dbModel.hpp"
 
@@ -218,7 +219,21 @@ std::string Model<DbOps, Uuid>::create_snapshot(std::string& login, std::string 
 
   std::string snapshot_uuid = uuid.to_string();
 
-  std::string directory = std::string(SNAPSHOTS_DIR) + "/" + snapshot_uuid;
+  std::map<std::string, std::string> link;
+  try {
+    link = api.get_link_by_uuid(link_uuid);
+  }
+  catch (...) {
+    throw;
+  }
+
+  const char* snapshot_dir = std::getenv("SNAPSHOTS_DIR");
+  std::string directory;
+  if (snapshot_dir) {
+    directory = std::string(snapshot_dir) + "/" + snapshot_uuid;
+  } else {
+    directory = std::string(SNAPSHOTS_DIR) + "/" + snapshot_uuid;
+  }
 
   // Use library to get all the specified files
 

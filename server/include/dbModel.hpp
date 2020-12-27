@@ -97,7 +97,7 @@ std::map<std::string, std::string> DbApi<DbOps>::get_room_by_link_uuid(std::stri
 
 template<class DbOps>
 std::map<std::string, std::string> DbApi<DbOps>::get_link_by_uuid(std::string &uuid) {
-  std::string query = "SELECT * FROM link where link_uuid='" + uuid + "';";
+  std::string query = "SELECT * FROM web_links where link_uuid='" + uuid + "';";
 
   std::map<std::string, std::string> row;
 

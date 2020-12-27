@@ -18,10 +18,11 @@ public:
 #endif
   };
 
-  void send(std::shared_ptr<Response> response);
+  void send(std::shared_ptr<Response>& response);
 
 private:
   std::vector<std::string> form_packages(std::string data, char status);
+  void send_with_packages(std::string data, char status);
 
   std::shared_ptr<Connection> connection_;
 };
