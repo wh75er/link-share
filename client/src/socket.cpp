@@ -169,6 +169,9 @@ std::vector<char> Socket::RecvFileVec(bool* endFlag) {
         while (ret.back() == '\x1A') {
             ret.pop_back();
         }
+        //debug
+                    ret.push_back('@');
+        //debug
         if (buf[0] == 'e') {
             break;
         } else if (buf[0] == 'f') {
