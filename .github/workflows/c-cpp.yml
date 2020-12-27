@@ -17,9 +17,9 @@ jobs:
       run: sudo apt-get install libboost-all-dev
     - name: Install cppcheck
       run: sudo apt-get install -y cppcheck
-    - name: Run Linter
+    - name: Run Linter For Server
       run: cd server/src && cppcheck *.cpp
-    - name: Configure
+    - name: Run Linter For Scraper
       run: cd archiver/src && cppcheck *.cpp
     - name: Configure
       run: ./configure.sh
