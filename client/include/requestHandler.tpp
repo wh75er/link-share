@@ -355,20 +355,24 @@ ExitStatus MakeSnapshotReqHandler<ResponseParser>::HandleResponse(std::string &r
 
 template <class ResponseParser>
 ExitStatus DownloadSnapshotReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    std::string mainDir(filesdir);
+    std::experimental::filesystem::create_directories(mainDir);
 
+    std::string staticDir = mainDir + "/static";
+    std::experimental::filesystem::create_directories(staticDir);
     return SUCCESS;
 }
 
 template <class ResponseParser>
 ExitStatus DownloadSnapshotReqHandler<ResponseParser>::RecieveFile(recFile& newFile) {
     std::string mainDir(filesdir);
-    std::experimental::filesystem::create_directories(mainDir);
-
     std::string staticDir = mainDir + "/static";
-    std::experimental::filesystem::create_directories(staticDir);
-    
     std::string pathToNewFile(mainDir);
-    pathToNewFile += newFile.name;
+    if (newFile.name.find("index") != std::string::npos) {
+        pathToNewFile += newFile.name;   
+    } else {
+        pathToNewFile += "/static" + newFile.name;
+    }
 
     std::ofstream file(pathToNewFile, std::ios::binary);
     for (auto i : newFile.body) {
