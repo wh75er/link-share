@@ -43,10 +43,25 @@ std::vector<std::string> splitString(const std::string& data) {
                                  [](char c)  { return separator.find(c) != std::string::npos; });
     tempStr.erase(newEnd, tempStr.end());
 
+    bool elemStarted = false;
+
     for(auto it = tempStr.begin(); it != tempStr.end(); it++) {
         if ((*it == ':' || *it == ',') /* && !special_block */) {
-            elements.push_back(element);
-            element = "";
+            if (*it == ':') {
+                if (!elemStarted) {
+                    elements.push_back(element);
+                    element = "";
+                    elemStarted = true;
+                } else {
+                    element += *it;
+                }
+            }
+            if (*it == ',') {
+                elemStarted = false;
+                elements.push_back(element);
+                element = "";
+            }
+            
         } else {
             element += *it;
         }
