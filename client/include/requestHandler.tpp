@@ -28,7 +28,7 @@ ExitStatus RequestHandler<ResponseParser>::HandleResponse(std::string& responseB
         throw std::runtime_error("Failed to parse JSON!");
     }
     if (error.empty()) {
-        std::cout << "success!" << std::endl;
+        //std::cout << "success!" << std::endl;
     } else {
         return FAILURE;
     }
@@ -112,7 +112,7 @@ ExitStatus AddLinkReqHandler<ResponseParser>::HandleResponse(std::string &respon
     }
     if (error.empty()) {
         (RequestHandler<ResponseParser>::parser->get_value("uuid", uuid));
-        std::cout << "success!" << std::endl;
+       // std::cout << "success!" << std::endl;
     } else {
         return FAILURE;
     }
@@ -180,7 +180,7 @@ ExitStatus MakeSnapshotReqHandler<ResponseParser>::HandleResponse(std::string &r
     }
     if (error.empty()) {
         (RequestHandler<ResponseParser>::parser->get_value("uuid", uuid));
-        std::cout << "success!" << std::endl;
+       //!" << std::endl;
     } else {
         return FAILURE;
     }
@@ -228,7 +228,7 @@ ExitStatus CreateRoomReqHandler<ResponseParser>::HandleResponse(std::string &res
     } else {
         return FAILURE;
     }
-    std::cout << "success!" << std::endl;
+   // std::cout << "success!" << std::endl;
     return SUCCESS;
 }
 
@@ -287,7 +287,7 @@ ExitStatus LogInReqHandler<ResponseParser>::HandleResponse(std::string& response
     } else {
         return FAILURE;
     }
-    std::cout << "success!" << std::endl;
+    //std::cout << "success!" << std::endl;
     return SUCCESS;
 }
 
@@ -352,8 +352,6 @@ ExitStatus DownloadSnapshotReqHandler<ResponseParser>::RecieveFile(recFile& newF
         pathToNewFile += "/static" + newFile.name;
     }
 
-    std::cout << "PATH TO NEW FILE: " << pathToNewFile.substr(0, 80) << std::endl;
-
     std::ofstream file(pathToNewFile, std::ios::binary);
     for (auto i : newFile.body) {
         file.write(&i, 1);
@@ -388,7 +386,7 @@ ExitStatus GetUserRoomReqHandler<ResponseParser>::HandleResponse(std::string &re
     } else {
         return FAILURE;
     }
-    std::cout << "success!" << std::endl;
+    //std::cout << "success!" << std::endl;
     return SUCCESS;
 }
 
@@ -432,7 +430,7 @@ ExitStatus GetUserLinksReqHandler<ResponseParser>::HandleResponse(std::string &r
     } else {
         return FAILURE;
     }
-    std::cout << "success!" << std::endl;
+    //std::cout << "success!" << std::endl;
     return SUCCESS;
 }
 

@@ -39,6 +39,7 @@ public:
     void HandleFile(recFile& newFile);
     bool IsHandlerRecievingFiles();
     bool IsServRequired();
+    bool IsLogin();
 private:
     std::shared_ptr<ModelImpl<ResponseParser>> modelImpl;
 };

@@ -6,11 +6,23 @@
 IView::~IView() {}
 
 
-enum RequestCommand {
+/* enum RequestCommand {
     CREATE_ROOM,
     DELETE_ROOM,
     ADD_USERS,
     DELETE_USERS,
+    ADD_LINK,
+    DELETE_LINK,
+    MAKE_SNAPSHOT,
+    LOG_IN_USER,
+    SIGN_UP_USER,
+    DOWNLOAD_SNAPSHOT,
+    GET_USER_ROOM,
+    GET_USER_LINKS,
+    GET_LINK_SNAPSHOTS
+}; */
+
+enum RequestCommand {
     ADD_LINK,
     DELETE_LINK,
     MAKE_SNAPSHOT,
@@ -30,7 +42,7 @@ std::string ConsoleView::GetRequest() {
     int key = 0;
     std::cin >> key;
     switch (key) {
-    case CREATE_ROOM: {
+    /* case CREATE_ROOM: {
         std::cout << "Write name of room and is it private(true/false)" << std::endl;
         inputStr = createRoomInput();
     }
@@ -49,7 +61,7 @@ std::string ConsoleView::GetRequest() {
         std::cout << "Write amount of users and list of users" << std::endl;
         inputStr = deleteUsersInput();
     }
-        break;
+        break; */
     case ADD_LINK: {
         std::cout << "Write name, url and description of link" << std::endl;
         inputStr = addLinkInput();
@@ -103,7 +115,7 @@ std::string ConsoleView::GetRequest() {
     return inputStr;
 }
 
-void ConsoleView::PrintCommands() {
+/* void ConsoleView::PrintCommands() {
     std::cout << std::endl;
     std::cout << "Please choose command type:" << std::endl;
     std::cout << "- 0.Create Room" << std::endl
@@ -119,5 +131,21 @@ void ConsoleView::PrintCommands() {
               << "- 10.Get user room" << std::endl
               << "- 11.Get user links" << std::endl
               << "- 12.Get link snapshots" << std::endl
+              << "- (-1).Exit" << std::endl;
+} */
+
+
+void ConsoleView::PrintCommands() {
+    std::cout << std::endl;
+    std::cout << "Please choose command type:" << std::endl;
+    std::cout << "- 0.Add link" << std::endl
+              << "- 1.Remove link" << std::endl
+              << "- 2.Make snapshot" << std::endl
+              << "- 3.Log in" << std::endl
+              << "- 4.Sign up" << std::endl
+              << "- 5.Download snapshot" << std::endl
+              << "- 6.Create link storage" << std::endl
+              << "- 7.Get user links" << std::endl
+              << "- 8.Get link snapshots" << std::endl
               << "- (-1).Exit" << std::endl;
 }

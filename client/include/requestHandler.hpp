@@ -17,25 +17,27 @@ typedef enum ExitStatus {
 template <class ResponseParser>
 class RequestHandler { 
 public:
-    RequestHandler(bool recvFiles, bool servIsReq) : recievingFiles(recvFiles), servIsRequired(servIsReq) {}
+    RequestHandler(bool recvFiles, bool servIsReq, bool isLogin) : recievingFiles(recvFiles), servIsRequired(servIsReq) , isLogin(isLogin){}
     virtual ExitStatus FillRequest(std::string action, Model<ResponseParser>& model) = 0;
     virtual ExitStatus HandleResponse(std::string& responseBody);
     virtual ExitStatus DoLogic(Model<ResponseParser>& app) = 0;
     virtual ExitStatus RecieveFile(recFile& newFile) { return SUCCESS;}
     bool RecievingFiles() { return recievingFiles; }
     bool ServRequired() { return servIsRequired; }
+    bool IsLogin() { return isLogin; }
     std::string&  GetRequestToSend();
 protected:
     std::string requestToSend;
     std::shared_ptr<ResponseParser> parser;
     bool recievingFiles;
     bool servIsRequired;
+    bool isLogin;
 };
 
 template <class ResponseParser>
 class AddUsersReqHandler : public RequestHandler<ResponseParser> {
 public:
-    AddUsersReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    AddUsersReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
@@ -46,7 +48,7 @@ private:
 template <class ResponseParser>
 class RemoveUsersReqHandler : public RequestHandler<ResponseParser> {
 public:
-    RemoveUsersReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    RemoveUsersReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
@@ -57,7 +59,7 @@ private:
 template <class ResponseParser>
 class AddLinkReqHandler : public RequestHandler<ResponseParser> {
 public:
-    AddLinkReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    AddLinkReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
@@ -71,7 +73,7 @@ private:
 template <class ResponseParser>
 class RemoveLinkReqHandler : public RequestHandler<ResponseParser> {
 public:
-    RemoveLinkReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    RemoveLinkReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
@@ -82,7 +84,7 @@ private:
 template <class ResponseParser>
 class MakeSnapshotReqHandler : public RequestHandler<ResponseParser> {
 public:
-    MakeSnapshotReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    MakeSnapshotReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
@@ -95,7 +97,7 @@ private:
 template <class ResponseParser>
 class CreateRoomReqHandler : public RequestHandler<ResponseParser> {
 public:
-    CreateRoomReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    CreateRoomReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
@@ -109,7 +111,7 @@ private:
 template <class ResponseParser>
 class RemoveRoomReqHandler : public RequestHandler<ResponseParser> {
 public:
-    RemoveRoomReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    RemoveRoomReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus DoLogic(Model<ResponseParser>& app);
 private:
@@ -120,7 +122,7 @@ private:
 template <class ResponseParser>
 class LogInReqHandler : public RequestHandler<ResponseParser> {
 public:
-    LogInReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    LogInReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
@@ -133,7 +135,7 @@ private:
 template <class ResponseParser>
 class SignUpReqHandler : public RequestHandler<ResponseParser> {
 public:
-    SignUpReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    SignUpReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     //ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
@@ -145,7 +147,7 @@ private:
 template <class ResponseParser>
 class DownloadSnapshotReqHandler : public RequestHandler<ResponseParser> {
 public:
-    DownloadSnapshotReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    DownloadSnapshotReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     //ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
@@ -159,7 +161,7 @@ private:
 template <class ResponseParser>
 class GetUserRoomReqHandler : public RequestHandler<ResponseParser> {
 public:
-    GetUserRoomReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    GetUserRoomReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
@@ -170,7 +172,7 @@ private:
 template <class ResponseParser>
 class GetUserLinksReqHandler : public RequestHandler<ResponseParser> {
 public:
-    GetUserLinksReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    GetUserLinksReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);
@@ -183,7 +185,7 @@ private:
 template <class ResponseParser>
 class GetLinkSnapshotReqHandler : public RequestHandler<ResponseParser> {
 public:
-    GetLinkSnapshotReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    GetLinkSnapshotReqHandler(bool recvFiles, bool servIsReq, bool isLogin) : RequestHandler<ResponseParser>(recvFiles, servIsReq, isLogin) {};
     ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
     ExitStatus HandleResponse(std::string& responseBody);
     ExitStatus DoLogic(Model<ResponseParser>& app);

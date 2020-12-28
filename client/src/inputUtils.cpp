@@ -16,7 +16,7 @@ void fillObject(std::vector<std::string>* vec) {
 }
 
 
-std::string createRoomInput() {
+/* std::string createRoomInput() {
     std::string name;
     std::string isPrivate;
 
@@ -24,9 +24,9 @@ std::string createRoomInput() {
 
     std::string ret = packToJsonString("command", "0", "name", name, "private", isPrivate);
     return ret;
-}
+} */
 
-std::string deleteRoomInput() {
+/* std::string deleteRoomInput() {
     std::string name;
     std::string host;
 
@@ -34,23 +34,23 @@ std::string deleteRoomInput() {
     
     std::string ret = packToJsonString("command","1", "name", name, "host", host);
     return ret;
-}
+} */
 
-std::string addUsersInput() {
+/* std::string addUsersInput() {
     std::vector<std::string> vec;
     writeData(&vec);
 
     std::string ret = packToJsonString("command","2", "users", vec);
     return ret;
-}
+} */
 
-std::string deleteUsersInput() {
+/* std::string deleteUsersInput() {
     std::vector<std::string> vec;
     writeData(&vec);
 
     std::string ret = packToJsonString("command","3", "users", vec);
     return ret;
-}
+} */
 std::string addLinkInput() {
     std::string name;
     std::string url;

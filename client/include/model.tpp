@@ -109,6 +109,10 @@ public:
     bool isServRequired() {
         return currentHandler->ServRequired();
     }
+
+    bool isLogin() {
+        return currentHandler->IsLogin();
+    }
 private:
     std::shared_ptr<RequestHandler<ResponseParser>> CreateRequestHandler(std::string& action, Model<ResponseParser>& model);
     std::shared_ptr<RequestHandler<ResponseParser>> currentHandler;
@@ -136,43 +140,43 @@ std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::Creat
     switch (atoi(type.c_str()) )
     {
     case 0:
-        handler = std::make_shared<CreateRoomReqHandler<ResponseParser>>(false, true);
+        handler = std::make_shared<CreateRoomReqHandler<ResponseParser>>(false, true, false);
         break;
     case 1:
-        handler = std::make_shared<RemoveRoomReqHandler<ResponseParser>>(false, true);
+        handler = std::make_shared<RemoveRoomReqHandler<ResponseParser>>(false, true, false);
         break;
     case 2:
-        handler = std::make_shared<AddUsersReqHandler<ResponseParser>>(false, true);
+        handler = std::make_shared<AddUsersReqHandler<ResponseParser>>(false, true, false);
         break;
     case 3:
-        handler = std::make_shared<RemoveUsersReqHandler<ResponseParser>>(false, true);
+        handler = std::make_shared<RemoveUsersReqHandler<ResponseParser>>(false, true, false);
         break;
     case 4:
-        handler = std::make_shared<AddLinkReqHandler<ResponseParser>>(false, true);
+        handler = std::make_shared<AddLinkReqHandler<ResponseParser>>(false, true, false);
         break;
     case 5:
-        handler = std::make_shared<RemoveLinkReqHandler<ResponseParser>>(true, true);
+        handler = std::make_shared<RemoveLinkReqHandler<ResponseParser>>(true, true, false);
         break;
     case 6:
-        handler = std::make_shared<MakeSnapshotReqHandler<ResponseParser>>(true, true);
+        handler = std::make_shared<MakeSnapshotReqHandler<ResponseParser>>(true, true, false);
         break;
     case 7:
-        handler = std::make_shared<LogInReqHandler<ResponseParser>>(false, true);
+        handler = std::make_shared<LogInReqHandler<ResponseParser>>(false, true, true);
         break;
     case 8:
-        handler = std::make_shared<SignUpReqHandler<ResponseParser>>(false, true);
+        handler = std::make_shared<SignUpReqHandler<ResponseParser>>(false, true, false);
         break;
     case 9:
-        handler = std::make_shared<DownloadSnapshotReqHandler<ResponseParser>>(true, true);
+        handler = std::make_shared<DownloadSnapshotReqHandler<ResponseParser>>(true, true, false);
         break;
     case 10:
-        handler = std::make_shared<GetUserRoomReqHandler<ResponseParser>>(true, true);
+        handler = std::make_shared<GetUserRoomReqHandler<ResponseParser>>(true, true, false);
         break;
     case 11:
-        handler = std::make_shared<GetUserLinksReqHandler<ResponseParser>>(true, true);
+        handler = std::make_shared<GetUserLinksReqHandler<ResponseParser>>(true, true, false);
         break;
     case 12:
-        handler = std::make_shared<GetLinkSnapshotReqHandler<ResponseParser>>(true, true);
+        handler = std::make_shared<GetLinkSnapshotReqHandler<ResponseParser>>(true, true, false);
         break;
     default:
         break;
@@ -306,4 +310,9 @@ bool Model<ResponseParser>::IsHandlerRecievingFiles() {
 template <class ResponseParser>
 bool Model<ResponseParser>::IsServRequired() {
     return modelImpl->isServRequired();
+}
+
+template <class ResponseParser>
+bool Model<ResponseParser>::IsLogin() {
+    return modelImpl->isLogin();
 }
