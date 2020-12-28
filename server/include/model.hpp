@@ -330,10 +330,6 @@ std::vector<std::map<std::string, std::string>> Model<DbOps, Uuid>::get_link_sna
     throw;
   }
 
-  if (link_snapshots.empty()) {
-    throw std::runtime_error("There's no snapshots available for that link!");
-  }
-
   return link_snapshots;
 }
 
