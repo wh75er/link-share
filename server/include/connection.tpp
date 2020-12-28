@@ -21,7 +21,6 @@ std::string Connection<DbOps, Uuid, JsonParser>::read() {
   std::string pkg;
 
   while (true) {
-//    break;
     int n = socket_->recv_(buf, sizeof(buf));
 
     if (n == 0) {

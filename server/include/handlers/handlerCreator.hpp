@@ -155,3 +155,14 @@ public:
     return std::make_shared<GetUserLinksHandler<Model>>(request);
   }
 };
+
+template<typename T, class Model>
+class GetLinkSnapshotsHandlerCreator : public Creator<T, Model> {
+public:
+  GetLinkSnapshotsHandlerCreator() = default;
+  ~GetLinkSnapshotsHandlerCreator() = default;
+
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<GetLinkSnapshotsHandler<Model>>(request);
+  }
+};

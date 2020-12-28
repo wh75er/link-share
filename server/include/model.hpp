@@ -32,6 +32,8 @@ public:
 
   std::vector<std::map<std::string, std::string>> get_room_links(std::string& room_uuid);
 
+  std::vector<std::map<std::string, std::string>> get_link_snapshots(std::string& room_uuid);
+
   void delete_snapshot(std::string& snapshot_uuid);
 
   void delete_room(std::string& login, std::string& room_uuid);
@@ -316,6 +318,23 @@ std::vector<std::map<std::string, std::string>> Model<DbOps, Uuid>::get_room_lin
   }
 
   return room_links;
+}
+
+template<class DbOps, class Uuid>
+std::vector<std::map<std::string, std::string>> Model<DbOps, Uuid>::get_link_snapshots(std::string& link_uuid) {
+  std::vector<std::map<std::string, std::string>> link_snapshots;
+  try {
+    link_snapshots = api.get_link_snapshots_by_uuid(link_uuid);
+  }
+  catch (...) {
+    throw;
+  }
+
+  if (link_snapshots.empty()) {
+    throw std::runtime_error("There's no snapshots available for that link!");
+  }
+
+  return link_snapshots;
 }
 
 template<class DbOps, class Uuid>

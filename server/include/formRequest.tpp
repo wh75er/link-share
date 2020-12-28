@@ -396,3 +396,32 @@ std::shared_ptr<BaseHandler<Model>> FormGetUserLinksRequest<Json, Model>::spawn_
 
   return creator->factory_method(request);
 }
+
+template<class Json, class Model>
+bool FormGetLinkSnapshotsRequest<Json, Model>::can_handle(int command) {
+  return command == GET_LINK_SNAPSHOTS;
+}
+
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormGetLinkSnapshotsRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
+  std::string login;
+  if (!request_elements->get_value("login", login)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
+  }
+
+  std::string token;
+  if (!request_elements->get_value("token", token)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "token value is not presented in JSON!");
+  }
+
+  std::string uuid;
+  if (!request_elements->get_value("uuid", uuid)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "uuid value is not presented in JSON!");
+  }
+
+  SnapshotRequest request(login, token, uuid);
+
+  std::shared_ptr<Creator<SnapshotRequest, Model>> creator = std::make_unique<GetLinkSnapshotsHandlerCreator<SnapshotRequest, Model>>();
+
+  return creator->factory_method(request);
+}

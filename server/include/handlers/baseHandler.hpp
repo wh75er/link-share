@@ -46,3 +46,4 @@ private:
 #include "signUpUserHandler.hpp"
 #include "GetUserRoomHandler.hpp"
 #include "GetUserLinksHandler.hpp"
+#include "GetLinkSnapshotsHandler.hpp"
