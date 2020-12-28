@@ -40,14 +40,14 @@ void Presenter<ResponseParser>::run() {
         bool endFlag = false;
         std::string response = client.readFromServer(&endFlag);
 
-        std::cout << std::endl << response << std::endl;
+        //std::cout << std::endl << response << std::endl;
         
         model.HandleResponse(response);
         while(!endFlag) {
             if (model.IsHandlerRecievingFiles()) {
                 recFile newFile;
                 newFile.name = client.readFromServer(&endFlag);
-                std::cout << "FILENAME: " << newFile.name.substr(0, 80) << std::endl << std::endl << std::endl;
+                //std::cout << "FILENAME: " << newFile.name.substr(0, 80) << std::endl << std::endl << std::endl;
                 newFile.body = client.readFileBodyFromServer(&endFlag);
 
                 model.HandleFile(newFile);
