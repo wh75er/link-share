@@ -343,3 +343,27 @@ std::shared_ptr<BaseHandler<Model>> FormGetSnapshotRequest<Json, Model>::spawn_h
 
   return creator->factory_method(request);
 }
+
+template<class Json, class Model>
+bool FormGetUserRoomRequest<Json, Model>::can_handle(int command) {
+  return command == GET_USER_ROOM;
+}
+
+template<class Json, class Model>
+std::shared_ptr<BaseHandler<Model>> FormGetUserRoomRequest<Json, Model>::spawn_handler(std::shared_ptr<Json> request_elements) {
+  std::string login;
+  if (!request_elements->get_value("login", login)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "login value is not presented in JSON!");
+  }
+
+  std::string token;
+  if (!request_elements->get_value("token", token)) {
+    throw ParserException(std::make_shared<ParseError>(ParseErrorCode::VALUE_NOT_FOUND), "token value is not presented in JSON!");
+  }
+
+  BaseRequest request(login, token);
+
+  std::shared_ptr<Creator<BaseRequest, Model>> creator = std::make_unique<GetUserRoomHandlerCreator<BaseRequest, Model>>();
+
+  return creator->factory_method(request);
+}

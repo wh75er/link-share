@@ -14,10 +14,13 @@ TcpStringBodyParser<Model, JsonParser>::TcpStringBodyParser() {
   registeredRequestFormers.push_back(std::make_unique<FormLogInUserRequest<JsonParser, Model>>());
   registeredRequestFormers.push_back(std::make_unique<FormSignUpUserRequest<JsonParser, Model>>());
   registeredRequestFormers.push_back(std::make_unique<FormGetSnapshotRequest<JsonParser, Model>>());
+  registeredRequestFormers.push_back(std::make_unique<FormGetUserRoomRequest<JsonParser, Model>>());
 }
 
 template<class Model, class JsonParser>
 std::shared_ptr<BaseHandler<Model>> TcpStringBodyParser<Model, JsonParser>::parse(std::string data) {
+//  data.clear();
+//  data = "{\"command\": 10, \"login\": \"test1\", \"token\": \"80359bbd-9b5b-4830-8f7e-78f3abfba477\"}";
   if (data.empty()) {
     throw std::runtime_error("Input data is empty!");
   }

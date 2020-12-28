@@ -44,3 +44,4 @@ private:
 #include "createSnapshotHandler.hpp"
 #include "logInUserHandler.hpp"
 #include "signUpUserHandler.hpp"
+#include "GetUserRoomHandler.hpp"

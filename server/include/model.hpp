@@ -28,6 +28,8 @@ public:
 
   std::string get_snapshot(std::string& login, std::string& snapshot_uuid);
 
+  std::string get_room_for_user(std::string& login);
+
   void delete_snapshot(std::string& snapshot_uuid);
 
   void delete_room(std::string& login, std::string& room_uuid);
@@ -62,6 +64,12 @@ bool Model<DbOps, Uuid>::identify(std::string& login, std::string& token) {
   catch (...) {
     throw;
   }
+
+  std::cout << "User login true <" << login << ">" << std::endl;
+  std::cout << "User token true <" << token << ">" << std::endl;
+
+  std::cout << "User login <" << user["login"] << ">" << std::endl;
+  std::cout << "User token <" << user["token"] << ">" << std::endl;
 
   return user["token"] == token;
 }
@@ -254,8 +262,8 @@ std::string Model<DbOps, Uuid>::create_snapshot(std::string& login, std::string 
   return snapshot_uuid;
 }
 
-template<class DbOpos, class Uuid>
-std::string Model<DbOpos, Uuid>::get_snapshot(std::string& login, std::string& snapshot_uuid) {
+template<class DbOps, class Uuid>
+std::string Model<DbOps, Uuid>::get_snapshot(std::string& login, std::string& snapshot_uuid) {
   std::map<std::string, std::string> snapshot;
   try {
     snapshot = api.get_snapshot_by_uuid(snapshot_uuid);
@@ -269,6 +277,36 @@ std::string Model<DbOpos, Uuid>::get_snapshot(std::string& login, std::string& s
   }
 
   return snapshot["dir_name"];
+}
+
+template<class DbOps, class Uuid>
+std::string Model<DbOps, Uuid>::get_room_for_user(std::string& login) {
+  std::vector<std::map<std::string, std::string>> user_rooms;
+  try {
+    user_rooms = api.get_all_user_rooms(login);
+  }
+  catch (...) {
+    throw;
+  }
+
+
+  std::string room_uuid;
+  if (user_rooms.empty()) {
+    uuid.generate();
+    room_uuid = uuid.to_string();
+
+    try {
+      std::string room_name("room");
+      api.add_room(login, room_name, true, room_uuid);
+    }
+    catch (...) {
+
+    }
+  } else {
+    room_uuid = user_rooms[0]["room_uuid"];
+  }
+
+  return room_uuid;
 }
 
 template<class DbOps, class Uuid>

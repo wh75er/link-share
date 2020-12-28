@@ -11,5 +11,8 @@ enum RequestCommand {
   LOG_IN_USER,
   SIGN_UP_USER,
   GET_SNAPSHOT,
+  GET_USER_ROOM,
+  GET_USER_LINKS,
+  GET_LINK_SNAPSHOTS,
 };
 

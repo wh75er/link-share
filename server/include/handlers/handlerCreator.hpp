@@ -133,3 +133,14 @@ public:
     return std::make_shared<GetSnapshotHandler<Model>>(request);
   }
 };
+
+template<typename T, class Model>
+class GetUserRoomHandlerCreator : public Creator<T, Model> {
+public:
+  GetUserRoomHandlerCreator() = default;
+  ~GetUserRoomHandlerCreator() = default;
+
+  std::shared_ptr<BaseHandler<Model>> factory_method(T request) const override {
+    return std::make_shared<GetUserRoomHandler<Model>>(request);
+  }
+};
