@@ -10,6 +10,7 @@ class RoomImpl;
 class Room {
 public:
     Room();
+    
     Room(std::string& roomName, std::string& roomId, std::string& uuid, bool isPrivate);
     std::string GetRoomInfoStr();
     std::string GetRoomHost();

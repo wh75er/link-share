@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iterator>
 #include <unistd.h>
+#include <iostream>
 
 #include "socket.hpp"
 
@@ -63,38 +64,61 @@ void Socket::Connect(const std::string& host, int port) {
     sd = _sd;
 }
 
-/* void Socket::Send(const std::string& str) {
-    size_t left = str.size();
-    ssize_t sent = 0;
 
-    int flags = 0;
-    while (left > 0) {
-        sent = ::send(sd, str.data() + sent, str.size() - sent, flags);
-        if (-1 == sent) {
-            throw std::runtime_error("write failed: " + std::string(strerror(errno)));
-        }
-        left -= sent;
-  }
-} */
+std::vector<std::string> form_packages(std::string data, char status) {
+    std::vector<std::string> pkgs;
 
-void Socket::Send(const std::string& str) {
-    std::string temp = "f" + str;
-    while(temp.size() != 400) {
-        temp.push_back('\x1A');
+  std::string pkg;
+  if (data.size() <= BUFSIZE-1) {
+    pkg += status;
+    pkg += data;
+    
+    for (size_t i = 0; i < BUFSIZE - 1 - data.size(); i++) {
+      pkg += '\x1A';
     }
+    pkgs.push_back(pkg);
+    pkg.clear();
+  } else {
+    while(!data.empty()) {
+      if (data.size() <= BUFSIZE-1) {
+        pkg += status;
+      } else {
+        pkg += 'c';
+      }
 
-    size_t left = temp.size();
-    ssize_t sent = 0;
+      pkg += data.substr(0, BUFSIZE-1);
+      data.erase(0, BUFSIZE-1);
 
-    int flags = 0;
-    while (left > 0) {
-        sent = ::send(sd, temp.data() + sent, temp.size() - sent, flags);
-        if (-1 == sent) {
-            throw std::runtime_error("write failed: " + std::string(strerror(errno)));
-        }
-        left -= sent;
+      while (pkg.size() < BUFSIZE) {
+        pkg += '\x1A';
+      }
+
+      pkgs.push_back(pkg);
+      pkg.clear();
+    }
   }
+
+  return pkgs;
 }
+
+void Socket::Send(const std::string& data) {
+    std::vector<std::string> pkgs = form_packages(data, 'f');
+    for(auto& str : pkgs) {
+        size_t left = str.size();
+
+        ssize_t sent = 0;
+
+        while (left > 0) {
+            sent = ::send(sd, str.data() + sent, str.size() - sent, 0);
+            if (-1 == sent)
+            throw std::runtime_error("write failed: " + std::string(strerror(errno)));
+
+            left -= sent;
+        }
+    }
+}
+
+
 
 
 
@@ -124,7 +148,14 @@ std::string Socket::RecvFile(bool* endFlag) {
     std::string ret;
 
     while (true) {
-        int n = ::recv(sd, buf, sizeof(buf), MSG_NOSIGNAL);
+        int n = ::recv(sd, buf, BUFSIZE, MSG_NOSIGNAL);
+        std::string str(buf);
+        if (n > 0)
+        if (n != BUFSIZE && n != -1) {
+            char* bufPtr = buf + n;
+            n = ::recv(sd, bufPtr, BUFSIZE - n, MSG_NOSIGNAL);
+        }
+
         if (-1 == n && errno != EAGAIN) {
             throw std::runtime_error("read failed: " + std::string(strerror(errno)));
         }
@@ -134,11 +165,14 @@ std::string Socket::RecvFile(bool* endFlag) {
         if (0 == n || -1 == n) {
             break;
         }
-        ret.append(buf, 1, n - 1);
+        ret.append(buf, 1, BUFSIZE - 1);
         while (ret.back() == '\x1A') {
             ret.pop_back();
         }
+
+    
         if (buf[0] == 'e') {
+            
             break;
         } else if (buf[0] == 'f') {
             *endFlag = true;
@@ -152,26 +186,34 @@ std::string Socket::RecvFile(bool* endFlag) {
 std::vector<char> Socket::RecvFileVec(bool* endFlag) {
     char buf[BUFSIZE];
     std::vector<char> ret;
-
+    size_t i = 0;
     while (true) {
         int n = ::recv(sd, buf, sizeof(buf), MSG_NOSIGNAL);
+        std::string str(buf);
+        if (n > 0) {
+        }
+
+        if (n != BUFSIZE && n != -1) {
+            char* bufPtr = buf + n;
+            n = ::recv(sd, bufPtr, BUFSIZE - n, MSG_NOSIGNAL);
+        }
         if (-1 == n && errno != EAGAIN) {
             throw std::runtime_error("read failed: " + std::string(strerror(errno)));
         }
-        if (0 == n && ret.empty()) {
+        if (-1 == n && ret.empty() && i < 3) {
+            sleep(2);
+            i++;
             continue;
         }
         if (0 == n || -1 == n) {
             break;
         }
 
-        std::copy(&buf[1], &buf[n-1], std::back_inserter(ret));
+        std::copy(&buf[1], &buf[BUFSIZE], std::back_inserter(ret));
         while (ret.back() == '\x1A') {
             ret.pop_back();
         }
-        //debug
-                    ret.push_back('@');
-        //debug
+
         if (buf[0] == 'e') {
             break;
         } else if (buf[0] == 'f') {

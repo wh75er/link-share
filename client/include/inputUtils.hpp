@@ -22,5 +22,8 @@ std::string makeSnapshotInput();
 std::string logInInput();
 std::string signUpInput();
 std::string downloadSnapshotInput();
+std::string getUserRoomInput();
+std::string getUserLinksInput();
+std::string getLinkSnapshotsInput();
 
 #include "inputUtils.tpp"

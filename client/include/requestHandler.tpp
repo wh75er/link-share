@@ -6,6 +6,8 @@
 #include "model.hpp"
 #include <experimental/filesystem>
 #include <fstream>
+#include <string>
+
 
 
 template <class ResponseParser>
@@ -328,30 +330,6 @@ ExitStatus DownloadSnapshotReqHandler<ResponseParser>::FillRequest(std::string a
     return SUCCESS;
 }
 
-/* template <class ResponseParser>
-ExitStatus MakeSnapshotReqHandler<ResponseParser>::HandleResponse(std::string &responseBody) { 
-    try {
-        RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
-    }
-
-    catch (...) {
-        throw std::runtime_error("Failed to parse JSON!");
-    }
-
-    std::string error;
-    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
-        throw std::runtime_error("Failed to parse JSON!");
-    }
-    if (error.empty()) {
-        (RequestHandler<ResponseParser>::parser->get_value("files_dir", filesdir));
-        std::cout << "success!" << std::endl;
-    } else {
-        return FAILURE;
-    }
-
-    return SUCCESS;
-} */
-
 
 template <class ResponseParser>
 ExitStatus DownloadSnapshotReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
@@ -374,9 +352,146 @@ ExitStatus DownloadSnapshotReqHandler<ResponseParser>::RecieveFile(recFile& newF
         pathToNewFile += "/static" + newFile.name;
     }
 
+    std::cout << "PATH TO NEW FILE: " << pathToNewFile.substr(0, 80) << std::endl;
+
     std::ofstream file(pathToNewFile, std::ios::binary);
     for (auto i : newFile.body) {
         file.write(&i, 1);
+    }
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus GetUserRoomReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
+    std::string info = model.GetUserInfoStr();
+    std::string login, token;
+    fillDataFromJson(info, "name", &login, "uuid", &token);
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 10, "login", login, "token", token);
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus GetUserRoomReqHandler<ResponseParser>::HandleResponse(std::string &responseBody) {
+    try {
+        RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
+    }
+    catch (...) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+
+    std::string error;
+    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+    if (error.empty()) {
+        (RequestHandler<ResponseParser>::parser->get_value("uuid", uuid));
+    } else {
+        return FAILURE;
+    }
+    std::cout << "success!" << std::endl;
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus GetUserRoomReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    std::string roomName = "roomName", roomHost = "roomHost";
+    std::shared_ptr<Room> newRoom = std::make_shared<Room>(roomName, roomHost, uuid, true);
+    model.AddRoom(newRoom);
+    return SUCCESS;
+}
+
+
+template <class ResponseParser>
+ExitStatus GetUserLinksReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
+    std::string info = model.GetUserInfoStr();
+    std::string login, token;
+    fillDataFromJson(info, "name", &login, "uuid", &token);
+
+    std::string roomInfo = model.GetCurrentRoomInfoStr();
+    fillDataFromJson(roomInfo, "uuid", &uuid);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 11, "login", login, "token", token, "uuid", uuid);
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus GetUserLinksReqHandler<ResponseParser>::HandleResponse(std::string &responseBody) {
+    try {
+        RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
+    }
+    catch (...) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+
+    std::string error;
+    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+    if (error.empty()) {
+        (RequestHandler<ResponseParser>::parser->get_value("objects", map));
+    } else {
+        return FAILURE;
+    }
+    std::cout << "success!" << std::endl;
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus GetUserLinksReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    for (auto i : map) {
+        std::string description = i.find("description")->second;
+        std::string uuid = i.find("link_uuid")->second;
+        std::string linkname = i.find("name")->second;
+        std::string url = i.find("url")->second;
+
+        std::shared_ptr<Link> newLink = std::make_shared<Link>(linkname, url, uuid, description);
+        model.AddLink(newLink);
+    }
+    return SUCCESS;
+}
+
+
+template <class ResponseParser>
+ExitStatus GetLinkSnapshotReqHandler<ResponseParser>::FillRequest(std::string action, Model<ResponseParser>& model) {
+    std::string info = model.GetUserInfoStr();
+    std::string login, token;
+    fillDataFromJson(info, "name", &login, "uuid", &token);
+
+    fillDataFromJson(action, "linkname", &linkName);
+    std::string linkInfo = model.GetLinkInfoStr(linkName);
+    fillDataFromJson(linkInfo, "uuid", &uuid);
+
+    RequestHandler<ResponseParser>::requestToSend = packToJsonString("command", 12, "login", login, "token", token, "uuid", uuid);
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus GetLinkSnapshotReqHandler<ResponseParser>::HandleResponse(std::string &responseBody) {
+    try {
+        RequestHandler<ResponseParser>::parser = std::make_shared<ResponseParser>(responseBody);
+    }
+    catch (...) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+
+    std::string error;
+    if (!RequestHandler<ResponseParser>::parser->get_value("error", error)) {
+        throw std::runtime_error("Failed to parse JSON!");
+    }
+    if (error.empty()) {
+        (RequestHandler<ResponseParser>::parser->get_value("objects", map));
+    } else {
+        return FAILURE;
+    }
+    return SUCCESS;
+}
+
+template <class ResponseParser>
+ExitStatus GetLinkSnapshotReqHandler<ResponseParser>::DoLogic(Model<ResponseParser> &model) {
+    for (auto i : map) {
+        std::string snapuuid = i.find("snapshot_uuid")->second;
+        
+        model.AddSnapshotUuid(linkName, snapuuid);
     }
     return SUCCESS;
 }

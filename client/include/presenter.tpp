@@ -30,6 +30,7 @@ void Presenter<ResponseParser>::run() {
     while(!action.empty()) {
         connect();
         std::string request = model.FormRequest(action);
+
         client.writeToServer(request);
         bool endFlag = false;
         std::string response = client.readFromServer(&endFlag);
@@ -41,8 +42,9 @@ void Presenter<ResponseParser>::run() {
             if (model.IsHandlerRecievingFiles()) {
                 recFile newFile;
                 newFile.name = client.readFromServer(&endFlag);
+                std::cout << "FILENAME: " << newFile.name.substr(0, 80) << std::endl << std::endl << std::endl;
                 newFile.body = client.readFileBodyFromServer(&endFlag);
-                std::cout << newFile.body.size() << std::endl;
+
                 model.HandleFile(newFile);
             } else {
                 std::string response = client.readFromServer(&endFlag);

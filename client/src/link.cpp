@@ -18,7 +18,7 @@ private:
     std::string url;
     std::string uuid;
     std::string description;
-    std::string snapshotPath;
+    std::vector<std::string> snapshotPath;
 };
 
 LinkImpl::LinkImpl(std::string name, std::string url, std::string uuid, std::string description)
@@ -37,7 +37,7 @@ std::string LinkImpl::getLinkInfo() {
 }
 
 std::string LinkImpl::getSnapshotUuid() {
-    std::string ret = snapshotPath;
+    std::string ret = snapshotPath[0];
     return ret;
 }
 
@@ -46,13 +46,18 @@ void LinkImpl::setLinkInfo() {
 }
 
 void LinkImpl::addSnaphot(const std::string& uuid) {
-    snapshotPath = uuid;
+    snapshotPath.push_back(uuid);
 }
 
 Link::Link(std::string& name, std::string& url, std::string& uuid, std::string& description)
 : linkImpl(new LinkImpl(name, url, uuid, description)){}
 Link::~Link() {}
 
+Link::Link(Link& link) : linkImpl(link.getLinkImpl()) {}
+
+std::shared_ptr<LinkImpl> Link::getLinkImpl() {
+    return linkImpl;
+}
 
 std::string Link::GetLinkName() {
     std::string ret = linkImpl->getLinkName();

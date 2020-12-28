@@ -127,7 +127,7 @@ ModelImpl<ResponseParser>::ModelImpl()
 
 template <class ResponseParser>
 std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::CreateRequestHandler(std::string& action, Model<ResponseParser>& model) {
-    std::cout << action << std::endl;
+    //std::cout << action << std::endl;
     std::string type;
     fillDataFromJson(action, "command", &type);
 
@@ -165,6 +165,15 @@ std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::Creat
     case 9:
         handler = std::make_shared<DownloadSnapshotReqHandler<ResponseParser>>(true, true);
         break;
+    case 10:
+        handler = std::make_shared<GetUserRoomReqHandler<ResponseParser>>(true, true);
+        break;
+    case 11:
+        handler = std::make_shared<GetUserLinksReqHandler<ResponseParser>>(true, true);
+        break;
+    case 12:
+        handler = std::make_shared<GetLinkSnapshotReqHandler<ResponseParser>>(true, true);
+        break;
     default:
         break;
     }
@@ -173,19 +182,6 @@ std::shared_ptr<RequestHandler<ResponseParser>> ModelImpl<ResponseParser>::Creat
 
     return handler;
 }
-
-/* void ModelImpl::passAction(std::string& action, Model& model) {
-    std::shared_ptr<RequestHandler> handler = CreateRequestHandler(action, model);
-
-    std::string req = handler->GetRequestToSend();
-    
-    client.writeToServer(req);
-    std::string response = client.readFromServer();
-    std::cout << std::endl << response << std::endl;
-    if (handler->HandleResponse(response) == SUCCESS) {
-        handler->DoLogic(model);
-    }
-} */
 
 template <class ResponseParser>
 std::string ModelImpl<ResponseParser>::formRequest(std::string& action, Model<ResponseParser>& model) {

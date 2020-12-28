@@ -1,4 +1,5 @@
 #include "client.hpp"
+#include <iostream>
 
 Client::Client(const std::string& _host, int _port) : host(_host), port(_port), sock(-1) {}
 
@@ -19,6 +20,5 @@ std::vector<char> Client::readFileBodyFromServer(bool* endFlag) {
 }
 
 void Client::writeToServer(std::string& req) {
-    
     sock.Send(req);
 }

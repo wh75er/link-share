@@ -16,7 +16,10 @@ enum RequestCommand {
     MAKE_SNAPSHOT,
     LOG_IN_USER,
     SIGN_UP_USER,
-    DOWNLOAD_SNAPSHOT
+    DOWNLOAD_SNAPSHOT,
+    GET_USER_ROOM,
+    GET_USER_LINKS,
+    GET_LINK_SNAPSHOTS
 };
 
 
@@ -77,6 +80,20 @@ std::string ConsoleView::GetRequest() {
         inputStr = downloadSnapshotInput();
         break;
     }
+    case GET_USER_ROOM: {
+        //std::cout << "Write name of link and directory " << std::endl;
+        inputStr = getUserRoomInput();
+        break;
+    }
+    case GET_USER_LINKS: {
+        inputStr = getUserLinksInput();
+        break;
+    }
+    case GET_LINK_SNAPSHOTS: {
+        std::cout << "Write name of link" << std::endl;
+        inputStr = getLinkSnapshotsInput();
+        break;
+    }
     case -1:
         break;
     default:
@@ -99,5 +116,8 @@ void ConsoleView::PrintCommands() {
               << "- 7.Log in" << std::endl
               << "- 8.Sign up" << std::endl
               << "- 9.Download snapshot" << std::endl
+              << "- 10.Get user room" << std::endl
+              << "- 11.Get user links" << std::endl
+              << "- 12.Get link snapshots" << std::endl
               << "- (-1).Exit" << std::endl;
 }

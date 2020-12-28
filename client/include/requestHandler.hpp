@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "model.hpp"
 
@@ -153,6 +154,43 @@ private:
     std::string linkName;
     std::string uuid;
     std::string filesdir;
+};
+
+template <class ResponseParser>
+class GetUserRoomReqHandler : public RequestHandler<ResponseParser> {
+public:
+    GetUserRoomReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
+    ExitStatus HandleResponse(std::string& responseBody);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
+private:
+    std::string uuid;
+};
+
+template <class ResponseParser>
+class GetUserLinksReqHandler : public RequestHandler<ResponseParser> {
+public:
+    GetUserLinksReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
+    ExitStatus HandleResponse(std::string& responseBody);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
+private:
+    std::vector<std::map<std::string, std::string>> map;
+    std::vector<Link> links;
+    std::string uuid;
+};
+
+template <class ResponseParser>
+class GetLinkSnapshotReqHandler : public RequestHandler<ResponseParser> {
+public:
+    GetLinkSnapshotReqHandler(bool recvFiles, bool servIsReq) : RequestHandler<ResponseParser>(recvFiles, servIsReq) {};
+    ExitStatus FillRequest(std::string action, Model<ResponseParser>& model);
+    ExitStatus HandleResponse(std::string& responseBody);
+    ExitStatus DoLogic(Model<ResponseParser>& app);
+private:
+    std::string linkName;
+    std::string uuid;
+    std::vector<std::map<std::string, std::string>> map;
 };
 
 #include "requestHandler.tpp"

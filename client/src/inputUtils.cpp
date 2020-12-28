@@ -105,3 +105,22 @@ std::string downloadSnapshotInput() {
     std::string ret = packToJsonString("command","9", "name", name, "filesdir", filesdir);
     return ret;
 }
+
+
+std::string getUserRoomInput() {
+    std::string ret = packToJsonString("command","10");
+    return ret;
+}
+
+std::string getUserLinksInput() {
+    std::string ret = packToJsonString("command","11");
+    return ret;
+}
+
+std::string getLinkSnapshotsInput() {
+    std::string linkName;
+
+    writeData(&linkName);
+    std::string ret = packToJsonString("command","12", "linkname", linkName);
+    return ret;
+}

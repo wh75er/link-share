@@ -8,7 +8,7 @@
 
 class RoomImpl {
 public:
-    RoomImpl(std::string name, std::string host, std::string uuid, bool isPrivate);
+    RoomImpl(std::string& name, std::string& host, std::string& uuid, bool isPrivate);
     std::string getRoomInfoStr();
     std::string getRoomHost();
     std::string getRoomName();
@@ -36,7 +36,9 @@ private:
 Room::Room() {}
 
 Room::Room(std::string& name, std::string& host, std::string& uuid, bool isPrivate)
-: roomImpl(new RoomImpl(name, host, uuid, isPrivate)) {}
+/* : roomImpl(std::make_shared<RoomImpl>(name, host, uuid, isPrivate)) */ {
+    roomImpl = std::make_shared<RoomImpl>(name, host, uuid, isPrivate);
+}
 
 std::string Room::GetRoomInfoStr() {
     return roomImpl->getRoomInfoStr();
@@ -89,7 +91,7 @@ std::string Room::archiveLink(std::string& linkName) {
 }
 
 
-RoomImpl::RoomImpl(std::string name, std::string host, std::string uuid, bool isPrivate)
+RoomImpl::RoomImpl(std::string& name, std::string& host, std::string& uuid, bool isPrivate)
 : roomName(name),
 roomHost(host),
 uuid(uuid),
