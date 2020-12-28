@@ -124,11 +124,11 @@ std::string signUpInput()
 
 std::string downloadSnapshotInput()
 {
-    std::string name, filesdir;
+    std::string uuid, filesdir;
 
-    writeData(&name, &filesdir);
+    writeData(&uuid, &filesdir);
 
-    std::string ret = packToJsonString("command", "9", "name", name, "filesdir", filesdir);
+    std::string ret = packToJsonString("command", "9", "uuid", uuid,  "filesdir", filesdir);
     return ret;
 }
 
@@ -146,9 +146,9 @@ std::string getUserLinksInput()
 
 std::string getLinkSnapshotsInput()
 {
-    std::string linkName;
+    std::string name;
 
-    writeData(&linkName);
-    std::string ret = packToJsonString("command", "12", "linkname", linkName);
+    writeData(&name);
+    std::string ret = packToJsonString("command", "12", "name", name);
     return ret;
 }

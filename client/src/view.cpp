@@ -91,7 +91,7 @@ std::string ConsoleView::GetRequest() {
         break;
     }
     case DOWNLOAD_SNAPSHOT: {
-        std::cout << "Write name of link and directory " << std::endl;
+        std::cout << "Write uuid of snapshot and directory " << std::endl;
         inputStr = downloadSnapshotInput();
         break;
     }
