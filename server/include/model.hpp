@@ -30,6 +30,8 @@ public:
 
   std::string get_room_for_user(std::string& login);
 
+  std::vector<std::map<std::string, std::string>> get_room_links(std::string& room_uuid);
+
   void delete_snapshot(std::string& snapshot_uuid);
 
   void delete_room(std::string& login, std::string& room_uuid);
@@ -64,12 +66,6 @@ bool Model<DbOps, Uuid>::identify(std::string& login, std::string& token) {
   catch (...) {
     throw;
   }
-
-  std::cout << "User login true <" << login << ">" << std::endl;
-  std::cout << "User token true <" << token << ">" << std::endl;
-
-  std::cout << "User login <" << user["login"] << ">" << std::endl;
-  std::cout << "User token <" << user["token"] << ">" << std::endl;
 
   return user["token"] == token;
 }
@@ -307,6 +303,19 @@ std::string Model<DbOps, Uuid>::get_room_for_user(std::string& login) {
   }
 
   return room_uuid;
+}
+
+template<class DbOps, class Uuid>
+std::vector<std::map<std::string, std::string>> Model<DbOps, Uuid>::get_room_links(std::string& room_uuid) {
+  std::vector<std::map<std::string, std::string>> room_links;
+  try {
+    room_links = api.get_room_links_by_uuid(room_uuid);
+  }
+  catch (...) {
+    throw;
+  }
+
+  return room_links;
 }
 
 template<class DbOps, class Uuid>

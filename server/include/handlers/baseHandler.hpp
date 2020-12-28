@@ -45,3 +45,4 @@ private:
 #include "logInUserHandler.hpp"
 #include "signUpUserHandler.hpp"
 #include "GetUserRoomHandler.hpp"
+#include "GetUserLinksHandler.hpp"

@@ -39,6 +39,7 @@ std::string Response::serialize() {
       json_objects_array += json_object + ", ";
     }
     json_objects_array.pop_back();
+    json_objects_array.pop_back();
     json_objects_array += "]";
 
     json_objects += json_objects_array;

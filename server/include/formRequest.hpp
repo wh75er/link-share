@@ -143,4 +143,15 @@ public:
   std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
 };
 
+template<class Json, class Model>
+class FormGetUserLinksRequest : public AbstractFormRequest<Json, Model> {
+public:
+  FormGetUserLinksRequest() = default;
+  ~FormGetUserLinksRequest() override = default;
+
+  bool can_handle(int command) override;
+
+  std::shared_ptr<BaseHandler<Model>> spawn_handler(std::shared_ptr<Json> request_elements) override;
+};
+
 #include "formRequest.tpp"
