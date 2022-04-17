@@ -1,0 +1,36 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install valgrind
+      run: sudo apt-get install -y valgrind
+    - name: Install gcovr
+      run: sudo apt-get install python3-setuptools && sudo pip3 install git+https://github.com/gcovr/gcovr.git
+    - name: Install boost
+      run: sudo apt-get install libboost-all-dev
+    - name: Install libpq
+      run: sudo apt-get install libpq-dev postgresql-server-dev-all
+    - name: Install cppcheck
+      run: sudo apt-get install -y cppcheck
+    - name: Run Linter For Server
+      run: cd server/src && cppcheck *.cpp
+    - name: Run Linter For Scraper
+      run: cd archiver/src && cppcheck *.cpp
+    - name: Configure
+      run: ./configure.sh
+    - name: Make
+      run: cd build && make
+    - name: Test
+      run:  cd build && make coverage
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-coverage-report
+        path: build/coverage
